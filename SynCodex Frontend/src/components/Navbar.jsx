@@ -14,7 +14,7 @@ const Navbar = () => {
               </>            
             </a>
           </div>
-          <div className="flex w-full items-center justify-around px-4">
+          <div className="flex w-full items-center justify-around">
             <div>
               <button
                 onClick={() => setOpen(!open)}
@@ -30,30 +30,32 @@ const Navbar = () => {
               <nav
                 // :className="!navbarOpen && 'hidden' "
                 id="navbarCollapse"
-                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg px-6 py-5 shadow bg-[#21232F] lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
+                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg py-5 shadow bg-[#21232F] lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
                   !open && "hidden"
                 } `}
               >
                 <ul className="block lg:flex">
-                  <ListItem NavLink="/#" ><span className="text-white text-2xl font-normal font-[Open_Sans]">Home</span></ListItem>
-                  <ListItem NavLink="/#" ><span className="text-white text-2xl font-normal font-[Open_Sans]">About Us</span></ListItem>
-                  <ListItem NavLink="/#" ><span className="text-white text-2xl font-normal font-[Open_Sans]">Contact Us</span></ListItem>
+                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">Home</span></ListItem>
+                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">About Us</span></ListItem>
+                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</span></ListItem>
                 </ul>
               </nav>
             </div>
-            <div className="hidden justify-end pr-16 sm:flex lg:pr-0">
+            <div className="hidden justify-end pr-16 sm:flex lg:pr-0 space-x-4">
               <a
                 href="/#"
-                className="px-7 py-3 text-base font-medium text-dark hover:text-primary dark:text-white"
+                className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
-                Sign in
+                Start Coding
               </a>
 
               <a
                 href="/#"
-                className="rounded-md bg-primary px-7 py-3 text-base font-medium text-white hover:bg-primary/90"
+                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
-                Sign Up
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                  Login
+                </div>
               </a>
             </div>
           </div>
