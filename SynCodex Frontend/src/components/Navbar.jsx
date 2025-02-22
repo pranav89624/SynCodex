@@ -3,7 +3,7 @@ const Navbar = () => {
   const [open, setOpen] = useState(false);
 
   return (
-    <header className={`flex w-full items-center bg-[#21232F] justify-center sticky top-0 z-50`}>
+    <header className={`flex w-full items-center bg-[#21232F] justify-center sticky top-0 z-50 shadow-sm`}>
       <div className="container px-4">
         <div className="relative flex items-center justify-end">
           <div className="w-auto max-w-full flex">

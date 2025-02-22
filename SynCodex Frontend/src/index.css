@@ -6,3 +6,16 @@
     --font-Chakra: "Chakra Petch", sans-serif;
     --font-open-sans: "Open Sans", serif;
 }
+
+.bg1 {
+    background-image: url("./assets/background.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: top left;
+    background-color: #21232F;   
+}
+
+.img1{
+    
+}
+  

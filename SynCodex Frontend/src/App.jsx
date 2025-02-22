@@ -1,12 +1,9 @@
 import { useState } from 'react';
-import Navbar from './components/navbar';
-
+import Homepage from './pages/homepage';
 function App() {
   return (
-    <>  <Navbar />    
-      <div className='h-screen bg-[#8a91b9]'>
-        
-      </div>
+    <>      
+      <Homepage />
     </>
   )
 }
