@@ -1,20 +1,26 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = ({ hideStartCoding }) => {
   const [open, setOpen] = useState(false);
+
+  const location = useLocation(); // Get current route
+
+  // Check if the current page is Login or Sign Up
+  const isLoginPage = location.pathname === "/login";
+  const isSignUpPage = location.pathname === "/signup";
 
   return (
     <header className={`flex w-full items-center bg-[#21232F] justify-center sticky top-0 z-50 shadow-sm`}>
       <div className="container px-4">
         <div className="relative flex items-center justify-end">
           <div className="w-auto max-w-full flex">
-            <a href="/#" className="flex items-center space-x-4">              
-              <>
-                <img src="/SynCodex icon.png" alt="icon" className="w-17 md:hidden"/>
+            <div className="flex items-center space-x-4">              
+              
+                <Link to={"/"}><img src="/SynCodex icon.png" alt="icon" className="w-17 md:hidden"/></Link>
                 <Link to="/" className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</Link>
-              </>            
-            </a>
+                         
+            </div>
           </div>
           <div className="flex w-full items-center justify-around">
             <div>
@@ -36,7 +42,7 @@ const Navbar = () => {
                   !open && "hidden"
                 } `}
               >
-                <div className="flex justify-evenly space-x-8 px-5">
+                <div className="flex justify-evenly max-lg:flex-col space-x-8 px-5">
                   <Link to="/" className="text-white text-center text-2xl font-normal font-open-sans">Home</Link>
                   <Link to="/about" className="text-white text-center text-2xl font-normal font-open-sans">About Us</Link>
                   <Link to="/contact" className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</Link>
@@ -44,20 +50,40 @@ const Navbar = () => {
               </nav>
             </div>
             <div className="hidden justify-end pr-16 sm:flex lg:pr-0 space-x-4">
-              <a
-                href="/#"
-                className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+            {!hideStartCoding && (
+              <Link
+                to="/start-coding"
+                className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] "
               >
                 Start Coding
-              </a>
+              </Link>
+            )}
 
+            {isLoginPage ? (
+              <Link to="/signup"
+                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+              >
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                  Sign Up
+                </div>
+              </Link>
+             ) : isSignUpPage ? (
               <Link to="/login"
                 className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
                 <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
                   Login
                 </div>
-                </Link>
+              </Link>
+            ) : (
+              <Link to="/login"
+                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+              >
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                  Login
+                </div>
+              </Link>
+            )}
             </div>
           </div>
         </div>

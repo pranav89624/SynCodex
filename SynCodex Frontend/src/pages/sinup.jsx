@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import lockIcon from "../assets/password_11817746 1.svg";
+import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
 import openEye from "../assets/view.png";
 import closedEye from "../assets/hidden.png";
@@ -45,16 +45,23 @@ return (
 
         <div className="w-full max-w-3xl bg-[#3D415A] p-8 rounded-lg border-3 border-blue-500 shadow-lg flex flex-col md:flex-row items-center animate-glow transition-all duration-500 hover:border-blue-400">
         <div className="flex flex-col items-center text-center md:w-1/2 p-6">
-          <img src={lockIcon} alt="Secure Login" className="w-50 mb-4" />
-          <h2 className="text-xl font-semibold">Welcome back to <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</span>.</h2>
-          <p className="text-gray-400">Code, collaborate, and conquer in real-time.</p>
+          <img src={SignupNow} alt="Secure Sign UP" className="w-50 mb-4" />
+          <h2 className="text-xl font-semibold">Join <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</span> now.</h2>
+          <p className="text-gray-400">code smarter, collaborate faster, and innovate together seamlessly</p>
         </div>
 
-        {/* Right Side - Login Form */}
         <div className="md:w-1/2 w-full p-6">
-          <h2 className="text-2xl font-bold mb-4">Login</h2>
+          <h2 className="text-2xl font-bold mb-4">Sign UP</h2>
           <form onSubmit={handleSubmit}>
-            <label className="block text-gray-300 text-sm mb-1">Email</label>
+
+          <label className="block text-gray-300 text-sm mb-1">Full Name</label>
+            <input
+             type="text" 
+             className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-blue-400"
+             required  
+            />
+
+            <label className="block text-gray-300 text-sm mt-3 mb-1">Email</label>
             <input
              type="email" 
              value={email} 
@@ -101,7 +108,7 @@ return (
                 </button>
             </div>
           <p className="text-sm text-gray-400 mt-4">
-            Don't have an account? <Link to="/signup" className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text ">Sign Up</Link>
+            Already have an account? <Link to="/login" className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text ">Login</Link>
           </p>
         </div>
       </div>
