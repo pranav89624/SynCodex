@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
 const Navbar = () => {
   const [open, setOpen] = useState(false);
 
@@ -10,7 +12,7 @@ const Navbar = () => {
             <a href="/#" className="flex items-center space-x-4">              
               <>
                 <img src="/SynCodex icon.png" alt="icon" className="w-17 md:hidden"/>
-                <h1 className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</h1>
+                <Link to="/" className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</Link>
               </>            
             </a>
           </div>
@@ -30,15 +32,15 @@ const Navbar = () => {
               <nav
                 // :className="!navbarOpen && 'hidden' "
                 id="navbarCollapse"
-                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg py-5 shadow bg-[#21232F] lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
+                className={`absolute right-4 top-full w-full max-w-[250px] rounded-lg py-7 shadow bg-[#21232F] lg:static lg:block lg:w-full lg:max-w-full lg:shadow-none ${
                   !open && "hidden"
                 } `}
               >
-                <ul className="block lg:flex">
-                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">Home</span></ListItem>
-                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">About Us</span></ListItem>
-                  <ListItem NavLink="/#" ><span className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</span></ListItem>
-                </ul>
+                <div className="flex justify-evenly space-x-8 px-5">
+                  <Link to="/" className="text-white text-center text-2xl font-normal font-open-sans">Home</Link>
+                  <Link to="/about" className="text-white text-center text-2xl font-normal font-open-sans">About Us</Link>
+                  <Link to="/contact" className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</Link>
+                </div>
               </nav>
             </div>
             <div className="hidden justify-end pr-16 sm:flex lg:pr-0 space-x-4">
@@ -49,14 +51,13 @@ const Navbar = () => {
                 Start Coding
               </a>
 
-              <a
-                href="/#"
+              <Link to="/login"
                 className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
                 <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
                   Login
                 </div>
-              </a>
+                </Link>
             </div>
           </div>
         </div>
