@@ -43,7 +43,6 @@ const Navbar = ({ hideStartCoding }) => {
                 } `}
               >
                 <div className="flex justify-evenly max-lg:flex-col space-x-8 px-5">
-                  <Link to="/" className="text-white text-center text-2xl font-normal font-open-sans">Home</Link>
                   <Link to="/about" className="text-white text-center text-2xl font-normal font-open-sans">About Us</Link>
                   <Link to="/contact" className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</Link>
                 </div>
@@ -63,7 +62,7 @@ const Navbar = ({ hideStartCoding }) => {
               <Link to="/signup"
                 className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
                   Sign Up
                 </div>
               </Link>
@@ -71,7 +70,7 @@ const Navbar = ({ hideStartCoding }) => {
               <Link to="/login"
                 className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
                   Login
                 </div>
               </Link>
@@ -79,7 +78,7 @@ const Navbar = ({ hideStartCoding }) => {
               <Link to="/login"
                 className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
               >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] lg:py-6 xl:py-3 ">
+                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
                   Login
                 </div>
               </Link>

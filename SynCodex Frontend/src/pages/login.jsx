@@ -4,8 +4,9 @@ import { useState } from "react";
 import openEye from "../assets/view.png";
 import closedEye from "../assets/hidden.png";
 import google from "../assets/icons8-google-48.png"
-import Navbar from "../components/Navbar"
-import Footer from "../components/Footer"
+import Navbar from "../components/navbar";
+import Footer from "../components/footer";
+import { easeInOut, motion } from "motion/react"
 
 
 const Login = () => {
@@ -42,7 +43,14 @@ return (
     <Navbar hideStartCoding={true}/>
 
     <div className="flex items-center justify-center h-screen bg-[#21232F] text-white">
-
+    <motion.div
+      initial={{ opacity: 0.4,scale:0.7}}
+      animate={{ opacity: 1, scale: 1}}
+      transition={{
+          duration: 0.5,
+          ease: easeInOut,
+      }}
+    >
         <div className="w-full max-w-3xl bg-[#3D415A] p-8 rounded-lg border-3 border-blue-500 shadow-lg flex flex-col md:flex-row items-center animate-glow transition-all duration-500 hover:border-blue-400">
         <div className="flex flex-col items-center text-center md:w-1/2 p-6">
           <img src={lockIcon} alt="Secure Login" className="w-50 mb-4" />
@@ -105,7 +113,7 @@ return (
           </p>
         </div>
       </div>
-
+  </motion.div>
     </div>
     <Footer />
     </>

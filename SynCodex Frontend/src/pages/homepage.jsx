@@ -7,7 +7,7 @@ import Footer from "../components/footer";
 function Homepage() {
     return (
       <>  
-        <Navbar />    
+        <Navbar /> 
         <Welcome />
         <Features />
         <Footer />

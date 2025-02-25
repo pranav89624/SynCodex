@@ -6,7 +6,6 @@ import Signup from "./pages/sinup"
 function App() {
   return (
     <>      
-      {/* <Homepage /> */}
       <Router>
       <Routes>
         <Route path="/" element={<Homepage />} />
