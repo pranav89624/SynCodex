@@ -11,15 +11,26 @@ const Navbar = ({ hideStartCoding }) => {
   const isSignUpPage = location.pathname === "/signup";
 
   return (
-    <header className={`flex w-full items-center bg-[#21232F] justify-center sticky top-0 z-50 shadow-sm`}>
+    <header
+      className={`flex w-full items-center bg-[#21232F] justify-center sticky top-0 z-40 shadow-sm`}
+    >
       <div className="container px-4">
         <div className="relative flex items-center justify-end">
           <div className="w-auto max-w-full flex">
-            <div className="flex items-center space-x-4">              
-              
-                <Link to={"/"}><img src="/SynCodex icon.png" alt="icon" className="w-17 md:hidden"/></Link>
-                <Link to="/" className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">SynCodex</Link>
-                         
+            <div className="flex items-center space-x-4">
+              <Link to={"/"}>
+                <img
+                  src="/SynCodex icon.png"
+                  alt="icon"
+                  className="w-17 md:hidden"
+                />
+              </Link>
+              <Link
+                to="/"
+                className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text"
+              >
+                SynCodex
+              </Link>
             </div>
           </div>
           <div className="flex w-full items-center justify-around">
@@ -43,46 +54,59 @@ const Navbar = ({ hideStartCoding }) => {
                 } `}
               >
                 <div className="flex justify-evenly max-lg:flex-col space-x-8 px-5">
-                  <Link to="/about" className="text-white text-center text-2xl font-normal font-open-sans">About Us</Link>
-                  <Link to="/contact" className="text-white text-center text-2xl font-normal font-open-sans">Contact Us</Link>
+                  <Link
+                    to="/about"
+                    className="text-white text-center text-2xl font-normal font-open-sans"
+                  >
+                    About Us
+                  </Link>
+                  <Link
+                    to="/contact"
+                    className="text-white text-center text-2xl font-normal font-open-sans"
+                  >
+                    Contact Us
+                  </Link>
                 </div>
               </nav>
             </div>
             <div className="hidden justify-end pr-16 sm:flex lg:pr-0 space-x-4">
-            {!hideStartCoding && (
-              <Link
-                to="/start-coding"
-                className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] "
-              >
-                Start Coding
-              </Link>
-            )}
+              {!hideStartCoding && (
+                <Link
+                  to="/start-coding"
+                  className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] "
+                >
+                  Start Coding
+                </Link>
+              )}
 
-            {isLoginPage ? (
-              <Link to="/signup"
-                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
-              >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
-                  Sign Up
-                </div>
-              </Link>
-             ) : isSignUpPage ? (
-              <Link to="/login"
-                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
-              >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
-                  Login
-                </div>
-              </Link>
-            ) : (
-              <Link to="/login"
-                className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
-              >
-                <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
-                  Login
-                </div>
-              </Link>
-            )}
+              {isLoginPage ? (
+                <Link
+                  to="/signup"
+                  className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+                >
+                  <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
+                    Sign Up
+                  </div>
+                </Link>
+              ) : isSignUpPage ? (
+                <Link
+                  to="/login"
+                  className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+                >
+                  <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
+                    Login
+                  </div>
+                </Link>
+              ) : (
+                <Link
+                  to="/login"
+                  className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2]"
+                >
+                  <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
+                    Login
+                  </div>
+                </Link>
+              )}
             </div>
           </div>
         </div>

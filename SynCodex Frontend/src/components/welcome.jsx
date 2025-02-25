@@ -8,13 +8,14 @@ const Welcome = () => {
         {/* Left Content */}
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-3xl md:text-5xl font-bold font-Chakra">
-            Bridging the Gap Between <br /> 
+            Bridging the Gap Between <br />
             Coding and Communication.
           </h1>
           <p className="text-gray-400 mt-15 text-xl font-open-sans">
-            An advanced online collaborative code editor with live text streaming 
-            and video calling, built for seamless technical interviews. Code together, 
-            communicate instantly, and tackle challenges in real time!
+            An advanced online collaborative code editor with live text
+            streaming and video calling, built for seamless technical
+            interviews. Code together, communicate instantly, and tackle
+            challenges in real time!
           </p>
           <div className="w-[100%] flex justify-center">
             <button className="px-7 py-3 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] cursor-pointer mt-15">
@@ -25,13 +26,12 @@ const Welcome = () => {
 
         {/* Right Image */}
         <div className="md:w-1/2 mt-8 md:mt-0 flex justify-end max-md:hidden">
-        <img 
-            src={laptopImage} 
+          <img
+            src={laptopImage}
             alt="Laptop with Code"
             className="w-[80%] md:w-[90%] opacity-70 "
-        />
+          />
         </div>
-
       </div>
     </section>
   );
