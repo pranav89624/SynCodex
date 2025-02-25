@@ -6,16 +6,16 @@ const Footer = () => {
     <footer className="bg-[#21232F] text-white text-center py-6">
       <div className="w-full bg-[#3D415A] py-7 ">
         <div className="w-[60%] flex justify-around items-center flex-wrap text-center m-auto space-x-8">
-          <Link to="faq" className="text-white hover:underline">
+          <Link to="/faq" className="text-white hover:underline">
             FAQ’s
           </Link>
-          <Link to="about" className="text-white hover:underline">
+          <Link to="/about" className="text-white hover:underline">
             About Us
           </Link>
-          <Link to="contact" className="text-white hover:underline">
+          <Link to="/contact" className="text-white hover:underline">
             Contact Us
           </Link>
-          <Link to="licences" className="text-white hover:underline">
+          <Link to="/licences" className="text-white hover:underline">
             Licences
           </Link>
         </div>
