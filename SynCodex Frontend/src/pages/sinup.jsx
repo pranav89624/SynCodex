@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
 import openEye from "../assets/view.png";
@@ -8,12 +8,16 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
 import Scroll from "../components/scroll";
+import { auth, db } from "../firebase";
+import { createUserWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
-const Login = () => {
+const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
-
+  const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
@@ -22,7 +26,7 @@ const Login = () => {
   const validateEmail = (email) => emailRegex.test(email);
   const validatePassword = (password) => passwordRegex.test(password);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
@@ -37,7 +41,42 @@ const Login = () => {
       return;
     }
 
-    alert("Login Successful!");
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Store additional user information in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fullName,
+        email,
+      });
+
+      alert("Signup Successful!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during signup:", error);
+      alert(error.message);
+    }
+  };
+
+  const handleGoogleSignup = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      const userCredential = await signInWithPopup(auth, provider);
+      const user = userCredential.user;
+
+      // Store additional user information in Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fullName: user.displayName,
+        email: user.email,
+      });
+
+      alert("Signup Successful!");
+      navigate("/login");
+    } catch (error) {
+      console.error("Error during Google signup:", error);
+      alert(error.message);
+    }
   };
 
   return (
@@ -78,6 +117,8 @@ const Login = () => {
                 </label>
                 <input
                   type="text"
+                  value={fullName}
+                  onChange={(e) => setFullName(e.target.value)}
                   className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#21232f]"
                   required
                 />
@@ -126,7 +167,10 @@ const Login = () => {
               </form>
 
               <div className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] p-[1px] rounded-lg mt-3">
-                <button className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer">
+                <button
+                  className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
+                  onClick={handleGoogleSignup}
+                >
                   <span className="font-bold flex items-center gap-2.5">
                     <img src={google} className="w-7" />
                     Sign Up with Google
@@ -152,4 +196,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default Signup;
