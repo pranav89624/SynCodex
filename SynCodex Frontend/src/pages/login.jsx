@@ -1,4 +1,5 @@
-import { Link } from "react-router-dom";
+// filepath: /C:/Users/Asus/OneDrive/Desktop/Minor/SynCodex/SynCodex Frontend/src/pages/login.jsx
+import { Link, useNavigate } from "react-router-dom";
 import lockIcon from "../assets/password_11817746 1.svg";
 import { useState } from "react";
 import openEye from "../assets/view.png";
@@ -8,12 +9,14 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
 import Scroll from "../components/scroll";
+import { auth } from "../firebase";
+import { signInWithEmailAndPassword, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
@@ -22,7 +25,7 @@ const Login = () => {
   const validateEmail = (email) => emailRegex.test(email);
   const validatePassword = (password) => passwordRegex.test(password);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!validateEmail(email)) {
@@ -37,7 +40,24 @@ const Login = () => {
       return;
     }
 
-    alert("Login Successful!");
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Login Successful!");
+      navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const provider = new GoogleAuthProvider();
+    try {
+      await signInWithPopup(auth, provider);
+      alert("Login Successful!");
+      navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -117,7 +137,10 @@ const Login = () => {
               </form>
 
               <div className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] p-[1px] rounded-lg mt-3">
-                <button className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer">
+                <button
+                  className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
+                  onClick={handleGoogleLogin}
+                >
                   <span className="font-bold flex items-center gap-2.5">
                     <img src={google} className="w-7" />
                     Login with Google
