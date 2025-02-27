@@ -4,6 +4,7 @@ import Homepage from "./pages/homepage";
 import Signup from "./pages/sinup";
 import About from "./pages/about";
 import Contact from "./pages/contactUs";
+import FAQSection from "./pages/faq";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -28,6 +29,7 @@ function App() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/faq" element={<FAQSection />} />
           <Route path="/dashboard" element={<h1>Dashboard</h1>} />
         </Routes>
       </Router>
