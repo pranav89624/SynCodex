@@ -1,19 +1,27 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
-import openEye from "../assets/view.png";
-import closedEye from "../assets/hidden.png";
-import google from "../assets/icons8-google-48.png";
+import api from "../services/api";;
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
 import Scroll from "../components/scroll";
+import { loginWithGoogle } from "../firebase";
+import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
-const Login = () => {
+const SignUP = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+  });
+
+  const navigate = useNavigate();
 
   const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
   const passwordRegex =
@@ -22,22 +30,48 @@ const Login = () => {
   const validateEmail = (email) => emailRegex.test(email);
   const validatePassword = (password) => passwordRegex.test(password);
 
-  const handleSubmit = (e) => {
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateEmail(email)) {
-      alert("Invalid Email!");
+    if (!validateEmail(formData.email)) {
+      toast.error("Invalid Email!");
       return;
     }
 
-    if (!validatePassword(password)) {
-      alert(
+    if (!validatePassword(formData.password)) {
+      toast.error(
         "Password must be at least 8 characters, with one uppercase, one number, and one special character!"
       );
       return;
     }
 
-    alert("Login Successful!");
+    setLoading(true);
+
+    try {
+      const res = await api.post("/auth/register", formData);
+      console.log("User registered:", res.data);
+      toast.success("User registered successfully! Please login.");
+      navigate("/login");
+    } catch (error) {
+      console.error("Registration failed:", error.response?.data || error);
+      toast.error(error.response?.data.message || error);
+    }finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    const user = await loginWithGoogle();
+    if (user) {
+      toast.success("Login successful!");
+      navigate("/dashboard");
+    } else {
+      toast.error("Google login failed!");
+    }
   };
 
   return (
@@ -78,6 +112,8 @@ const Login = () => {
                 </label>
                 <input
                   type="text"
+                  name="fullName"
+                  onChange={handleChange}
                   className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#21232f]"
                   required
                 />
@@ -87,8 +123,8 @@ const Login = () => {
                 </label>
                 <input
                   type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  name="email"
+                  onChange={handleChange}
                   className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#21232f]"
                   required
                 />
@@ -99,36 +135,43 @@ const Login = () => {
                 <div className="relative w-full">
                   <input
                     type={showPassword ? "text" : "password"}
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    name="password"
+                    onChange={handleChange}
                     className="w-full p-2 rounded bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-[#21232f] pr-10"
                     required
                   />
 
                   <button
                     type="button"
-                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <img
-                      src={showPassword ? openEye : closedEye}
-                      alt="Toggle Password Visibility"
-                      className="w-6 h-6 opacity-70 hover:opacity-100 transition cursor-pointer"
-                    />
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
 
-                <button className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold">
-                  Sign Up
+                <button
+                  type="submit"
+                  className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold flex items-center justify-center gap-2 relative"
+                  disabled={loading}
+                >
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
 
                 <hr className="mt-3 border-gray-500" />
               </form>
 
               <div className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] p-[1px] rounded-lg mt-3">
-                <button className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer">
+                <button
+                  onClick={handleGoogleLogin}
+                  className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
+                >
                   <span className="font-bold flex items-center gap-2.5">
-                    <img src={google} className="w-7" />
+                    <FcGoogle size={28} />
                     Sign Up with Google
                   </span>
                 </button>
@@ -152,4 +195,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUP;

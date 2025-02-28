@@ -13,3 +13,12 @@
   background-position: top left;
   background-color: #21232f;
 }
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+body {
+  -ms-overflow-style: none;  
+  scrollbar-width: none;     
+}
