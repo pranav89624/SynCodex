@@ -17,10 +17,12 @@ const Welcome = () => {
             interviews. Code together, communicate instantly, and tackle
             challenges in real time!
           </p>
-          <div className="w-[100%] flex justify-center">
-            <button className="px-7 py-3 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] cursor-pointer mt-15">
-              Create Room
-            </button>
+          <div className="w-[100%] flex justify-start text-3xl mt-15">
+            <p>
+              Code <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Together,</span><br />
+              Solve <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Faster,</span><br />
+              Interview <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Smarter.</span> <br />
+            </p>
           </div>
         </div>
 
@@ -29,7 +31,7 @@ const Welcome = () => {
           <img
             src={laptopImage}
             alt="Laptop with Code"
-            className="w-[80%] md:w-[90%] opacity-70 "
+            className="w-[80%] md:w-[90%] opacity-70 select-none pointer-events-none"
           />
         </div>
       </div>

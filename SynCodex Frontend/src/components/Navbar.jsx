@@ -72,10 +72,12 @@ const Navbar = ({ hideStartCoding }) => {
             <div className="hidden justify-end pr-16 sm:flex lg:pr-0 space-x-4">
               {!hideStartCoding && (
                 <Link
-                  to="/start-coding"
-                  className="px-7 py-3 max-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] "
+                  to="/signup"
+                  className="p-[2.5px] min-w-45 text-center text-white text-xl font-bold font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-2xl transition hover:from-[#506DFF] hover:to-[#94fff2] "
                 >
-                  Start Coding
+                  <div className="bg-[#21232F] max-w-45 py-3 rounded-[calc(16px-2.5px)] xl:py-3 ">
+                    Sign UP
+                  </div>
                 </Link>
               )}
 
