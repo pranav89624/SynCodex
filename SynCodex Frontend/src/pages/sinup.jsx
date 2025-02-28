@@ -66,17 +66,11 @@ const SignUP = () => {
   };
 
   const handleGoogleLogin = async () => {
-    try {
-      const result = await loginWithGoogle();
-      const user = result.user;
-
-      // Save token & user details
-      localStorage.setItem("user", JSON.stringify(user));
-
-      toast.success("Google Login Successful!");
-
+    const user = await loginWithGoogle();
+    if (user) {
+      toast.success("Login successful!");
       navigate("/dashboard");
-    } catch (error) {
+    } else {
       toast.error("Google login failed!");
     }
   };

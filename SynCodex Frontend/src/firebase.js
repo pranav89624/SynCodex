@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, signInWithPopup, signOut} from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAttributes } from "./firebaseAttributes";
 
 const firebaseConfig = {
@@ -8,27 +8,30 @@ const firebaseConfig = {
   projectId: firebaseAttributes.projectId,
   storageBucket: firebaseAttributes.storageBucket,
   messagingSenderId: firebaseAttributes.messagingSenderId,
-  appId: firebaseAttributes.appId
+  appId: firebaseAttributes.appId,
 };
 
-// Initialize Firebase
+// ✅ Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const googleProvider = new GoogleAuthProvider();
 
-// Google Sign-Up/Login
+// ✅ Google Sign-Up/Login
 const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
-    return result.user;
+    const user = result.user;
+
+    if (user) {
+      const token = await user.getIdToken();  // ✅ Get token
+      console.log("Google Token:", token);    // Debugging
+      localStorage.setItem("token", token);   // ✅ Store token in localStorage
+
+      return user;
+    }
   } catch (error) {
     console.error("Google Login Error:", error);
   }
 };
 
-// Logout
-const logout = async () => {
-  await signOut(auth);
-};
-
-export { loginWithGoogle, logout };
+export { auth, loginWithGoogle }; 
