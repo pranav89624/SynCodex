@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import transporter from "../config/nodemailer.js"; // Import Nodemailer Config
 import dotenv from "dotenv";
 import { db } from "../config/firebase.js";  // ✅ Import the initialized Firestore instance
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -100,5 +101,82 @@ export const loginUser = async (req, res) => {
 
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const usersRef = db.collection("users");
+    const snapshot = await usersRef.where("email", "==", email).get();
+
+    if (snapshot.empty) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Generate a unique reset token
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    const resetTokenExpires = Date.now() + 3600000; // Token valid for 1 hour
+
+    // Update Firestore with reset token & expiration
+    snapshot.forEach(async (doc) => {
+      await doc.ref.update({ resetToken, resetTokenExpires });
+    });
+
+    // Send reset email
+    await sendResetEmail(email, resetToken);
+
+    return res.status(200).json({ message: "Reset email sent successfully" });
+  } catch (error) {
+    console.error("Forgot Password Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+const sendResetEmail = async (email, resetToken) => {
+  const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
+
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: email,
+    subject: "Password Reset Request",
+    html: `<p>You requested a password reset. Click the link below:</p>
+           <a target="_blank" href="${resetLink}">${resetLink}</a>
+           <p>This link will expire in 1 hour.</p>`,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log("Reset email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+};
+
+export const resetPassword = async (req, res) => {
+  try {
+    const { token, password } = req.body;
+    const usersRef = db.collection("users");
+    const snapshot = await usersRef.where("resetToken", "==", token).get();
+
+    if (snapshot.empty) {
+      return res.status(400).json({ message: "Invalid or expired token" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    snapshot.forEach(async (doc) => {
+      await doc.ref.update({
+        password: hashedPassword,
+        resetToken: null, // Remove the token after reset
+        resetTokenExpires: null,
+      });
+    });
+
+    return res.status(200).json({ message: "Password reset successful" });
+  } catch (error) {
+    console.error("Reset Password Error:", error);
+    return res.status(500).json({ message: "Internal server error" });
   }
 };

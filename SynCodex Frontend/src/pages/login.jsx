@@ -2,15 +2,14 @@ import { Link, useNavigate } from "react-router-dom";
 import lockIcon from "../assets/password_11817746 1.svg";
 import { useState } from "react";
 import api from "../services/api";
-import openEye from "../assets/view.png";
-import closedEye from "../assets/hidden.png";
-import google from "../assets/icons8-google-48.png";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
 import Scroll from "../components/scroll";
 import { loginWithGoogle } from "../firebase";
 import { toast } from "react-toastify";
+import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -119,14 +118,10 @@ const Login = () => {
 
                   <button
                     type="button"
-                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
-                    <img
-                      src={showPassword ? openEye : closedEye}
-                      alt="Toggle Password Visibility"
-                      className="w-6 h-6 opacity-70 hover:opacity-100 transition cursor-pointer"
-                    />
+                    {showPassword ? <FaEyeSlash /> : <FaEye />}
                   </button>
                 </div>
 
@@ -142,6 +137,9 @@ const Login = () => {
                   )}
                 </button>
 
+                <p>
+                  <Link to="/forgot-password" className="text-xs text-blue-600">Forgot Password?</Link>
+                </p>
                 <hr className="mt-3 border-gray-500" />
               </form>
 
@@ -151,7 +149,7 @@ const Login = () => {
                   className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
                 >
                   <span className="font-bold flex items-center gap-2.5">
-                    <img src={google} className="w-7" />
+                   <FcGoogle size={28} />
                     Login with Google
                   </span>
                 </button>
