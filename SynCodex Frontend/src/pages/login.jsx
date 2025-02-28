@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -28,6 +29,7 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
     try {
       const res = await api.post("/auth/login", formData);
@@ -43,6 +45,8 @@ const Login = () => {
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -134,9 +138,14 @@ const Login = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold"
+                  className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold flex items-center justify-center gap-2 relative"
+                  disabled={loading}
                 >
-                  Login
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    "Login"
+                  )}
                 </button>
 
                 <hr className="mt-3 border-gray-500" />

@@ -4,6 +4,7 @@ import ContactImage from "../assets/Contact-Us.svg";
 import Navbar from "../components/navbar";
 import Scroll from "../components/scroll";
 import Footer from "../components/footer";
+import { toast } from "react-toastify";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({ fullName: "", email: "", message: "" });
@@ -46,12 +47,12 @@ const ContactUs = () => {
         headers: { "Content-Type": "application/json" },
       });
 
-      alert("Message sent successfully!");
+      toast.success("Message sent successfully!");
       setFormData({ fullName: "", email: "", message: "" });
       setErrors({});
     } catch (error) {
       console.error("Error sending message:", error);
-      alert(error.response?.data?.error || "Failed to send message.");
+      toast.error(error.response?.data?.error || "Failed to send message.");
     } finally {
       setLoading(false); // Stop loading
     }

@@ -14,6 +14,7 @@ import { toast } from "react-toastify";
 
 const SignUP = () => {
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -49,6 +50,8 @@ const SignUP = () => {
       return;
     }
 
+    setLoading(true);
+
     try {
       const res = await api.post("/auth/register", formData);
       console.log("User registered:", res.data);
@@ -57,6 +60,8 @@ const SignUP = () => {
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error);
       toast.error(error.response?.data.message || error);
+    }finally {
+      setLoading(false);
     }
   };
 
@@ -158,9 +163,14 @@ const SignUP = () => {
 
                 <button
                   type="submit"
-                  className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold"
+                  className="w-full mt-4 bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-white py-2 rounded-lg hover:opacity-90 cursor-pointer font-bold flex items-center justify-center gap-2 relative"
+                  disabled={loading}
                 >
-                  Register
+                  {loading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    "Register"
+                  )}
                 </button>
 
                 <hr className="mt-3 border-gray-500" />
