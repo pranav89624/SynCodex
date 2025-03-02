@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import lockIcon from "../assets/password_11817746 1.svg";
 import { useState } from "react";
-import api from "../services/api";
+import API from "../services/api";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
@@ -31,16 +31,17 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/login", formData);
-      toast.success("Login successful!");
+      const res = await API.post("/api/auth/login", formData);
+
       console.log("User logged in:", res.data);
+      console.log("Token received:", res.data.token);
 
-      // Save token in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // Redirect to Dashboard
-      navigate("/dashboard");
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token); // Store token
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      }
+      
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");

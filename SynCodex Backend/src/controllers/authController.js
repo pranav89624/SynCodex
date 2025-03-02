@@ -7,6 +7,11 @@ import crypto from "crypto";
 
 dotenv.config();
 
+// Generate JWT Token
+const generateToken = (user) => {
+  return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+};
+
 // ✅ User Registration Function
 export const registerUser = async (req, res) => {
   try {
@@ -88,20 +93,44 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Generate JWT token
-    const token = jwt.sign({ email: userData.email }, "your_jwt_secret", {
-      expiresIn: "2d",
-    });
+    // Generate JWT tokens
+    const token = generateToken(userData);
+    // const refreshToken = generateRefreshToken(userData);
+
+    // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 3600000 });
+    // res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 604800000 });
 
     res.json({
       message: "Login successful",
-      token,
       user: { fullName: userData.fullName, email: userData.email },
+      token,
     });
 
   } catch (error) {
     res.status(500).json({ message: "Server error", error: error.message });
   }
+};
+
+// Refresh Token
+export const refreshToken = (req, res) => {
+  const refreshToken = req.cookies.refreshToken;
+  if (!refreshToken) return res.status(401).json({ message: "Unauthorized - No Refresh Token" });
+
+  try {
+      const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+      const newToken = generateToken({ email: decoded.email });
+      res.cookie("token", newToken, { httpOnly: true, secure: true, sameSite: "Strict", maxAge: 3600000 });
+      res.json({ accessToken: newToken });
+  } catch (err) {
+      return res.status(403).json({ message: "Invalid Refresh Token" });
+  }
+};
+
+// Logout
+export const logout = (req, res) => {
+  res.clearCookie("token");
+  res.clearCookie("refreshToken");
+  res.json({ message: "Logged out successfully" });
 };
 
 export const forgotPassword = async (req, res) => {

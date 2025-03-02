@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
-import api from "../services/api";;
+import API from "../services/api";;
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
@@ -52,7 +52,7 @@ const SignUP = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/register", formData);
+      const res = await API.post("/api/auth/register", formData);
       console.log("User registered:", res.data);
       toast.success("User registered successfully! Please login.");
       navigate("/login");

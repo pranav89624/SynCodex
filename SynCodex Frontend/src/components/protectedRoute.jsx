@@ -1,22 +1,40 @@
+import { useEffect, useState } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import API from "../services/api"; // Ensure this is configured to send credentials
 
 const ProtectedRoute = ({ children }) => {
-  const isAuthenticated = localStorage.getItem("token") !== null;
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
   const location = useLocation();
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      toast.error("Please login to access the dashboard!");
-    }
-  }, [isAuthenticated]);
+    const checkAuth = async () => {
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
+      const token = localStorage.getItem("token");
 
-  return children;
+      if (!token) {
+        setIsAuthenticated(false);
+        return;
+      }
+
+      try {
+        const res = await API.get("/api/auth/protected", {
+          headers: { Authorization: `Bearer ${token}` },
+        }); // Backend route to verify authentication
+
+        setIsAuthenticated(res.data ? true : false);
+      } catch (error) {
+        setIsAuthenticated(false);
+        toast.error("Please login to access the dashboard!");
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  if (isAuthenticated === null) return <div>Loading...</div>; // Show a loader while checking auth
+
+  return isAuthenticated ? children : <Navigate to="/login" state={{ from: location }} replace />;
 };
 
 export default ProtectedRoute;

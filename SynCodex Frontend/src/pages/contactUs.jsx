@@ -1,10 +1,10 @@
-import axios from "axios";
 import { useState } from "react";
 import ContactImage from "../assets/Contact-Us.svg";
 import Navbar from "../components/navbar";
 import Scroll from "../components/scroll";
 import Footer from "../components/footer";
 import { toast } from "react-toastify";
+import API from "../services/api";
 
 const ContactUs = () => {
   const [formData, setFormData] = useState({ fullName: "", email: "", message: "" });
@@ -43,7 +43,7 @@ const ContactUs = () => {
     setLoading(true); // Start loading
 
     try {
-      const response = await axios.post("http://localhost:5000/api/contact", formData, {
+      const response = await API.post("/api/contact", formData, {
         headers: { "Content-Type": "application/json" },
       });
 
