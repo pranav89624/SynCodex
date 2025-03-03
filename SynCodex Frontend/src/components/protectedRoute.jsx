@@ -5,6 +5,7 @@ import API from "../services/api"; // Ensure this is configured to send credenti
 
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [toastShown, setToastShown] = useState(false); // Track toast display
   const location = useLocation();
 
   useEffect(() => {
@@ -14,27 +15,33 @@ const ProtectedRoute = ({ children }) => {
 
       if (!token) {
         setIsAuthenticated(false);
+        if (!toastShown) {
+          toast.error("You are not authenticated. Please login to continue.");
+          setToastShown(true);
+        } 
         return;
       }
 
       try {
-        const res = await API.get("/api/auth/protected", {
+          const res = await API.get("/api/auth/protected", {
           headers: { Authorization: `Bearer ${token}` },
         }); // Backend route to verify authentication
 
         setIsAuthenticated(res.data ? true : false);
       } catch (error) {
         setIsAuthenticated(false);
-        toast.error("Please login to access the dashboard!");
+        toast.error("Session expired! Please login again.");
       }
     };
 
     checkAuth();
-  }, []);
+  }, [toastShown]); // Dependency array ensures the toast isn't fired twice
 
   if (isAuthenticated === null) return <div>Loading...</div>; // Show a loader while checking auth
 
-  return isAuthenticated ? children : <Navigate to="/login" state={{ from: location }} replace />;
+  return isAuthenticated ?( children ): (
+      <Navigate to="/login" state={{ from: location }} replace />
+);
 };
 
 export default ProtectedRoute;

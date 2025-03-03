@@ -1,13 +1,16 @@
 import express from "express";
-import { registerUser, loginUser, forgotPassword, resetPassword, refreshToken, logout } from "../controllers/authController.js";
+import { registerUser, loginUser, forgotPassword, resetPassword, refreshToken, googleLogin} from "../controllers/authController.js";
 import {verifyToken} from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
-//Route for verifing users
+//Route for verifing users with Email & Password
 router.get("/protected", verifyToken, (req, res) => {
     res.json({ message: "Access Granted", user: req.user });
 });
+
+//Route fo verifing users with google
+router.post("/google",googleLogin);
 
 // Route for user registration
 router.post("/register", registerUser);
@@ -24,6 +27,4 @@ router.post("/reset-password", resetPassword);
 //Route for refresh token
 router.post("/refresh", refreshToken);
 
-//Route for logout
-router.post("/logout", logout);
 export default router;

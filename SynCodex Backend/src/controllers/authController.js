@@ -8,7 +8,7 @@ import crypto from "crypto";
 dotenv.config();
 
 // Generate JWT Token
-const generateToken = (user) => {
+export const generateToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
@@ -95,10 +95,6 @@ export const loginUser = async (req, res) => {
 
     // Generate JWT tokens
     const token = generateToken(userData);
-    // const refreshToken = generateRefreshToken(userData);
-
-    // res.cookie("token", token, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 3600000 });
-    // res.cookie("refreshToken", refreshToken, { httpOnly: true, secure: true, sameSite: "lax", maxAge: 604800000 });
 
     res.json({
       message: "Login successful",
@@ -124,13 +120,6 @@ export const refreshToken = (req, res) => {
   } catch (err) {
       return res.status(403).json({ message: "Invalid Refresh Token" });
   }
-};
-
-// Logout
-export const logout = (req, res) => {
-  res.clearCookie("token");
-  res.clearCookie("refreshToken");
-  res.json({ message: "Logged out successfully" });
 };
 
 export const forgotPassword = async (req, res) => {
@@ -207,5 +196,52 @@ export const resetPassword = async (req, res) => {
   } catch (error) {
     console.error("Reset Password Error:", error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+export const googleLogin = async (req, res) => {
+  try {
+      const { email, name, googleId } = req.body; // Assuming you receive these details
+
+      if (!email) {
+        return res.status(400).json({ error: "Email is required" });
+      }
+
+
+      // Check if the user exists in Firestore
+      const userRef = db.collection("users").doc(email);
+      const userDoc = await userRef.get();
+
+      let isFirstLogin = false;
+
+      if (!userDoc.exists) {
+          // New user → Save to Firestore
+          isFirstLogin = true;
+          const hashedGoogleId = await bcrypt.hash(googleId, 10);
+          await userRef.set({
+              name,
+              email,
+              hashedGoogleId,
+              createdAt: new Date(),
+          });
+      }
+
+      // Generate JWT Token
+      const token = generateToken(email);
+
+      // Send welcome email only on first login
+      if (isFirstLogin) {
+          await sendWelcomeEmail(email, name);
+      }
+
+      res.json({
+        message: "Login successful",
+        user: { fullName: userDoc.exists ? userDoc.data().name : name, email },
+        token,
+      });
+
+  } catch (error) {
+    console.error("🔥 Google Login Error:", error);  // Improved error logging
+    res.status(500).json({ error: "Login failed", details: error.message });
   }
 };

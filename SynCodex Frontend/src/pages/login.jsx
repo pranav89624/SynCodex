@@ -14,6 +14,7 @@ import { FcGoogle } from "react-icons/fc";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [Gloading, GsetLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -51,13 +52,15 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
+    GsetLoading(true);
     const user = await loginWithGoogle();
     if (user) {
       toast.success("Login successful!");
       navigate("/dashboard");
     } else {
-      toast.error("Google login failed!");
+      toast.error("Google login failed! Please try again.");
     }
+    GsetLoading(false);
   };
 
   return (
@@ -148,11 +151,17 @@ const Login = () => {
                 <button
                   onClick={handleGoogleLogin}
                   className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
+                  disabled={loading}
                 >
-                  <span className="font-bold flex items-center gap-2.5">
+                  {Gloading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <span className="font-bold flex items-center gap-2.5">
                    <FcGoogle size={28} />
                     Login with Google
                   </span>
+                  )}
+                  
                 </button>
               </div>
               <p className="text-sm text-gray-400 mt-4">

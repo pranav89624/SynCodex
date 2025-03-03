@@ -67,10 +67,10 @@ const SignUP = () => {
   const handleGoogleLogin = async () => {
     const user = await loginWithGoogle();
     if (user) {
-      toast.success("Login successful!");
+      toast.success("Google Signup Successful!");
       navigate("/dashboard");
     } else {
-      toast.error("Google login failed!");
+      toast.error("Google signup failed! Try again.");
     }
   };
 

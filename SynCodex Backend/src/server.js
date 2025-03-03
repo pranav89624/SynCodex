@@ -15,10 +15,8 @@ app.use(cors({
   origin: "http://localhost:5173", // Allow frontend URL
   credentials: true,
 })); // Enable CORS for cross-origin requests
-
 app.use(express.json()); // Parse JSON request bodies
 app.use(bodyParser.json()); // Body parser middleware
-
 
 // API Routes
 app.use("/api/auth", authRoutes);

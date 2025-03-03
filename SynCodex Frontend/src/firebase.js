@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { firebaseAttributes } from "./firebaseAttributes";
+import API from "./services/api";
 
 const firebaseConfig = {
   apiKey: firebaseAttributes.apiKey,
@@ -21,11 +22,18 @@ const loginWithGoogle = async () => {
   try {
     const result = await signInWithPopup(auth, googleProvider);
     const user = result.user;
-
+    
     if (user) {
-      const token = await user.getIdToken();  // ✅ Get token
-      console.log("Google Token:", token);    // Debugging
-      localStorage.setItem("token", token);   // ✅ Store token in localStorage
+       // Verify token with backend server
+      const res = await API.post('/api/auth/google', { 
+        email: user.email,
+        name: user.displayName,
+        googleId: user.uid
+       });
+      const newToken = res.data.token;
+
+      // Store new token in local storage
+      localStorage.setItem("token", newToken);   // ✅ Store token in localStorage
 
       return user;
     }
