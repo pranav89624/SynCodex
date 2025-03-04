@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import transporter from "../config/nodemailer.js"; // Import Nodemailer Config
+import transporter from "../config/nodemailer.js";
 import dotenv from "dotenv";
-import { db } from "../config/firebase.js";  // ✅ Import the initialized Firestore instance
+import { db } from "../config/firebase.js";
 import crypto from "crypto";
 
 dotenv.config();
@@ -12,12 +12,11 @@ export const generateToken = (user) => {
   return jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 };
 
-// ✅ User Registration Function
+// User Registration Function
 export const registerUser = async (req, res) => {
   try {
     const { fullName, email, password } = req.body;
 
-    // 1️⃣ Check if the user already exists
     const userRef = db.collection("users").doc(email);
     const userSnapshot = await userRef.get();
 
@@ -25,21 +24,17 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // 2️⃣ Hash the password before storing it
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // 3️⃣ Store user data in Firebase Firestore
     await userRef.set({
       fullName,
       email,
-      password: hashedPassword, // Hashed password
+      password: hashedPassword,
       createdAt: new Date(),
     });
 
-    // 4️⃣ Send Welcome Email
     await sendWelcomeEmail(email, fullName);
 
-    // 5️⃣ Return success response with token
     res.status(201).json({
       message: "User registered successfully! Please login.",
       user: { fullName, email },
@@ -51,7 +46,7 @@ export const registerUser = async (req, res) => {
   }
 };
 
-// ✅ Function to Send Welcome Email
+// Function to Send Welcome Email
 const sendWelcomeEmail = async (email, fullName) => {
   try {
     await transporter.sendMail({
@@ -77,7 +72,6 @@ export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Fetch user from Firestore
     const userRef = db.collection("users").doc(email);
     const userSnap = await userRef.get();
 
@@ -87,13 +81,11 @@ export const loginUser = async (req, res) => {
 
     const userData = userSnap.data();
 
-    // Compare hashed password
     const isMatch = await bcrypt.compare(password, userData.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Incorrect password" });
     }
 
-    // Generate JWT tokens
     const token = generateToken(userData);
 
     res.json({
@@ -122,6 +114,7 @@ export const refreshToken = (req, res) => {
   }
 };
 
+//forgot password function
 export const forgotPassword = async (req, res) => {
   try {
     const { email } = req.body;
@@ -132,16 +125,13 @@ export const forgotPassword = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    // Generate a unique reset token
     const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenExpires = Date.now() + 3600000; // Token valid for 1 hour
+    const resetTokenExpires = Date.now() + 3600000;
 
-    // Update Firestore with reset token & expiration
     snapshot.forEach(async (doc) => {
       await doc.ref.update({ resetToken, resetTokenExpires });
     });
 
-    // Send reset email
     await sendResetEmail(email, resetToken);
 
     return res.status(200).json({ message: "Reset email sent successfully" });
@@ -151,6 +141,7 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
+//reset password email send function
 const sendResetEmail = async (email, resetToken) => {
   const resetLink = `http://localhost:5173/reset-password?token=${resetToken}`;
 
@@ -171,6 +162,7 @@ const sendResetEmail = async (email, resetToken) => {
   }
 };
 
+//reset password function
 export const resetPassword = async (req, res) => {
   try {
     const { token, password } = req.body;
@@ -181,13 +173,12 @@ export const resetPassword = async (req, res) => {
       return res.status(400).json({ message: "Invalid or expired token" });
     }
 
-    // Hash the new password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     snapshot.forEach(async (doc) => {
       await doc.ref.update({
         password: hashedPassword,
-        resetToken: null, // Remove the token after reset
+        resetToken: null,
         resetTokenExpires: null,
       });
     });
@@ -199,23 +190,21 @@ export const resetPassword = async (req, res) => {
   }
 };
 
+//google login function
 export const googleLogin = async (req, res) => {
   try {
-      const { email, name, googleId } = req.body; // Assuming you receive these details
+      const { email, name, googleId } = req.body;
 
       if (!email) {
         return res.status(400).json({ error: "Email is required" });
       }
 
-
-      // Check if the user exists in Firestore
       const userRef = db.collection("users").doc(email);
       const userDoc = await userRef.get();
 
       let isFirstLogin = false;
 
       if (!userDoc.exists) {
-          // New user → Save to Firestore
           isFirstLogin = true;
           const hashedGoogleId = await bcrypt.hash(googleId, 10);
           await userRef.set({
@@ -226,10 +215,8 @@ export const googleLogin = async (req, res) => {
           });
       }
 
-      // Generate JWT Token
       const token = generateToken(email);
 
-      // Send welcome email only on first login
       if (isFirstLogin) {
           await sendWelcomeEmail(email, name);
       }
@@ -241,7 +228,7 @@ export const googleLogin = async (req, res) => {
       });
 
   } catch (error) {
-    console.error("🔥 Google Login Error:", error);  // Improved error logging
+    console.error("🔥 Google Login Error:", error);
     res.status(500).json({ error: "Login failed", details: error.message });
   }
 };

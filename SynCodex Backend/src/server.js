@@ -5,18 +5,16 @@ import authRoutes from "./routes/authRoutes.js";
 import bodyParser from "body-parser";
 import contactRoutes from "./routes/contactRoutes.js";
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(cors({
-  origin: "http://localhost:5173", // Allow frontend URL
+  origin: "http://localhost:5173",
   credentials: true,
-})); // Enable CORS for cross-origin requests
-app.use(express.json()); // Parse JSON request bodies
-app.use(bodyParser.json()); // Body parser middleware
+}));
+app.use(express.json()); 
+app.use(bodyParser.json());
 
 // API Routes
 app.use("/api/auth", authRoutes);
