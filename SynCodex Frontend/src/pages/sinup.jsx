@@ -93,7 +93,7 @@ const SignUP = () => {
               <img src={SignupNow} alt="Secure Sign UP" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
                 Join{" "}
-                <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">
+                <span className="font-gradient">
                   SynCodex
                 </span>{" "}
                 now.
@@ -180,7 +180,7 @@ const SignUP = () => {
                 Already have an account?{" "}
                 <Link
                   to="/login"
-                  className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text "
+                  className="font-gradient "
                 >
                   Login
                 </Link>

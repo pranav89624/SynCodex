@@ -39,6 +39,7 @@ const Login = () => {
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token); // Store token
+        localStorage.setItem("name", res.data.user.fullName);
         toast.success("Login successful!");
         navigate("/dashboard");
       }
@@ -82,7 +83,7 @@ const Login = () => {
               <img src={lockIcon} alt="Secure Login" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
                 Welcome back to{" "}
-                <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">
+                <span className="font-gradient">
                   SynCodex
                 </span>
                 .
@@ -168,14 +169,14 @@ const Login = () => {
                 Don't have an account?{" "}
                 <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text "
+                  className="font-gradient"
                 >
                   Sign Up
                 </Link>
               </p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> 
       </div>
       <Footer />
     </>

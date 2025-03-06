@@ -34,7 +34,7 @@ const loginWithGoogle = async () => {
 
       // Store new token in local storage
       localStorage.setItem("token", newToken);   // ✅ Store token in localStorage
-
+      localStorage.setItem("name", user.displayName);
       return user;
     }
   } catch (error) {
