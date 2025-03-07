@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import API from "../services/api";
 
 const ResetPassword = () => {
   const [password, setPassword] = useState("");
@@ -26,7 +26,7 @@ const ResetPassword = () => {
     }
 
     try {
-      const res = await axios.post("http://localhost:5000/api/auth/reset-password", {
+      const res = await API.post("/api/auth/reset-password", {
         token,
         password,
       });

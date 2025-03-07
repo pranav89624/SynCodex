@@ -3,8 +3,8 @@ import transporter from "../config/nodemailer.js";
 const sendEmail = async ({ fullName, email, message }) => {
     try {
       const mailOptions = {
-        from: email, // Sender's email (user)
-        to: process.env.EMAIL_USER, // Your email (admin email)
+        from: email,
+        to: process.env.EMAIL_USER,
         subject: `New Contact Form Submission from ${fullName}`,
         text: `Name: ${fullName}\nEmail: ${email}\n\nMessage:\n${message}`,
       };

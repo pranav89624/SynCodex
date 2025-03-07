@@ -27,7 +27,7 @@ const Navbar = ({ hideStartCoding }) => {
               </Link>
               <Link
                 to="/"
-                className="max-md:hidden font-Chakra text-[48px] font-semibold bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text"
+                className="max-md:hidden font-Chakra text-[48px] font-semibold font-gradient"
               >
                 SynCodex
               </Link>

@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
-import api from "../services/api";;
+import API from "../services/api";;
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
@@ -52,7 +52,7 @@ const SignUP = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/register", formData);
+      const res = await API.post("/api/auth/register", formData);
       console.log("User registered:", res.data);
       toast.success("User registered successfully! Please login.");
       navigate("/login");
@@ -67,10 +67,10 @@ const SignUP = () => {
   const handleGoogleLogin = async () => {
     const user = await loginWithGoogle();
     if (user) {
-      toast.success("Login successful!");
+      toast.success("Google Signup Successful!");
       navigate("/dashboard");
     } else {
-      toast.error("Google login failed!");
+      toast.error("Google signup failed! Try again.");
     }
   };
 
@@ -93,7 +93,7 @@ const SignUP = () => {
               <img src={SignupNow} alt="Secure Sign UP" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
                 Join{" "}
-                <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">
+                <span className="font-gradient">
                   SynCodex
                 </span>{" "}
                 now.
@@ -180,7 +180,7 @@ const SignUP = () => {
                 Already have an account?{" "}
                 <Link
                   to="/login"
-                  className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text "
+                  className="font-gradient "
                 >
                   Login
                 </Link>

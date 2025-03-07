@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import lockIcon from "../assets/password_11817746 1.svg";
 import { useState } from "react";
-import api from "../services/api";
+import API from "../services/api";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
@@ -14,6 +14,7 @@ import { FcGoogle } from "react-icons/fc";
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [Gloading, GsetLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     email: "",
@@ -31,16 +32,18 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const res = await api.post("/auth/login", formData);
-      toast.success("Login successful!");
+      const res = await API.post("/api/auth/login", formData);
+
       console.log("User logged in:", res.data);
+      console.log("Token received:", res.data.token);
 
-      // Save token in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("user", JSON.stringify(res.data.user));
-
-      // Redirect to Dashboard
-      navigate("/dashboard");
+      if (res.data.token) {
+        localStorage.setItem("token", res.data.token); // Store token
+        localStorage.setItem("name", res.data.user.fullName);
+        toast.success("Login successful!");
+        navigate("/dashboard");
+      }
+      
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");
@@ -50,13 +53,15 @@ const Login = () => {
   };
 
   const handleGoogleLogin = async () => {
+    GsetLoading(true);
     const user = await loginWithGoogle();
     if (user) {
       toast.success("Login successful!");
       navigate("/dashboard");
     } else {
-      toast.error("Google login failed!");
+      toast.error("Google login failed! Please try again.");
     }
+    GsetLoading(false);
   };
 
   return (
@@ -78,7 +83,7 @@ const Login = () => {
               <img src={lockIcon} alt="Secure Login" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
                 Welcome back to{" "}
-                <span className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text">
+                <span className="font-gradient">
                   SynCodex
                 </span>
                 .
@@ -147,25 +152,31 @@ const Login = () => {
                 <button
                   onClick={handleGoogleLogin}
                   className="w-full bg-gray-700 py-2 rounded-lg flex items-center justify-center hover:bg-gray-600 cursor-pointer"
+                  disabled={loading}
                 >
-                  <span className="font-bold flex items-center gap-2.5">
+                  {Gloading ? (
+                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  ) : (
+                    <span className="font-bold flex items-center gap-2.5">
                    <FcGoogle size={28} />
                     Login with Google
                   </span>
+                  )}
+                  
                 </button>
               </div>
               <p className="text-sm text-gray-400 mt-4">
                 Don't have an account?{" "}
                 <Link
                   to="/signup"
-                  className="bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text "
+                  className="font-gradient"
                 >
                   Sign Up
                 </Link>
               </p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> 
       </div>
       <Footer />
     </>

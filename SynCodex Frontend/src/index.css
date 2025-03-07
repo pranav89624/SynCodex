@@ -22,3 +22,9 @@ body {
   -ms-overflow-style: none;  
   scrollbar-width: none;     
 }
+
+.font-gradient{
+  background-image: linear-gradient(to right, #94FFF2, #506DFF);
+  color: transparent;
+  background-clip: text;
+}

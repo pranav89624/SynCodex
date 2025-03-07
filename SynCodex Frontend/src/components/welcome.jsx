@@ -19,9 +19,9 @@ const Welcome = () => {
           </p>
           <div className="w-[100%] flex justify-start text-3xl mt-15">
             <p>
-              Code <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Together,</span><br />
-              Solve <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Faster,</span><br />
-              Interview <span className="font-Chakra bg-gradient-to-r from-[#94FFF2] to-[#506DFF] text-transparent bg-clip-text font-semibold">Smarter.</span> <br />
+              Code <span className="font-Chakra font-gradient font-semibold">Together,</span><br />
+              Solve <span className="font-Chakra font-gradient font-semibold">Faster,</span><br />
+              Interview <span className="font-Chakra font-gradient font-semibold">Smarter.</span> <br />
             </p>
           </div>
         </div>
