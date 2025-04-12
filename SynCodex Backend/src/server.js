@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import authRoutes from "./routes/authRoutes.js";
 import bodyParser from "body-parser";
 import contactRoutes from "./routes/contactRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
 dotenv.config();
 
@@ -19,6 +20,7 @@ app.use(bodyParser.json());
 // API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api", contactRoutes);
+app.use("/api/user", userRoutes); 
 
 // Root Endpoint (for testing)
 app.get("/", (req, res) => {

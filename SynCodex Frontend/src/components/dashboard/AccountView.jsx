@@ -1,8 +1,12 @@
 import { useState, useEffect, use } from "react";
 import { Pencil, Trash } from "lucide-react";
+import API from "../../services/api";
+import { toast } from "react-toastify";
 
 export default function AccountView() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showPasswords, setShowPasswords] = useState(false);
   const [userName, setUserName] = useState("");
   const [userEmail, setUserEmail] = useState("");
 
@@ -18,6 +22,35 @@ export default function AccountView() {
 
   const avatarUrl = `https://robohash.org/${userName}?set=set5&size=148x148`;
 
+  const handleChangePassword = async (e) => {
+    e.preventDefault();
+  
+    const currentPassword = e.target.currentPassword.value;
+    const newPassword = e.target.newPassword.value;
+    const confirmPassword = e.target.confirmPassword.value;
+
+    if (newPassword !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+
+    try {
+      const res = await API.post("/api/user/change-password", {
+        currentPassword,
+        newPassword
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+  
+      toast.success(res.data.message);
+      setShowPasswordModal(false);
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Something went wrong");
+    }
+  };
+  
   return (
     <>
       <h1 className="text-3xl font-bold p-6 font-Chakra">Account Management</h1>
@@ -39,7 +72,12 @@ export default function AccountView() {
               <div className="items-center mb-3 grid grid-cols-3">
                 <span className="text-gray-400">Password</span>
                 <span></span>
-                <span className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2">Change password</span>
+                <span
+                 className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2"
+                 onClick={() => setShowPasswordModal(true)} 
+                >
+                  Change password
+                </span>
               </div>
             </div>
           </div>
@@ -61,6 +99,62 @@ export default function AccountView() {
             </div>
           </div>
         )}
+        
+        {showPasswordModal && (
+          <div className="fixed inset-0 bg-[#00000093] bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-[#3D415A] p-6 rounded-2xl w-[300px] shadow-lg border border-gray-700">
+              <h2 className="text-white text-lg font-semibold mb-4 text-center font-Chakra">Change Password</h2>
+              <form onSubmit={handleChangePassword}>
+                <label className="block font-open-sans mb-2">Enter Current Password</label>
+                <input
+                  name="currentPassword"
+                  type={showPasswords ? "text" : "password"}
+                  className="w-full mb-3 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                />
+
+                <label className="block font-open-sans mb-2">Enter New Password</label>
+                <input
+                  name="newPassword"
+                  type={showPasswords ? "text" : "password"}
+                  className="w-full mb-3 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                />
+
+                <label className="block font-open-sans mb-2">Re-Enter New Password</label>
+                <input
+                  name="confirmPassword"
+                  type={showPasswords ? "text" : "password"}
+                  className="w-full mb-4 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                />
+
+                <span
+                  onClick={() => setShowPasswords(prev => !prev)}
+                  className="text-sm text-blue-300 cursor-pointer text-right hover:underline"
+                >
+                  {showPasswords ? "Hide Passwords 🔒" : "Show Passwords 🔓"}
+                </span>
+
+                <div className="flex justify-between">
+                  <button
+                    onClick={() => {setShowPasswordModal(false); setShowPasswords(false);} }
+                    className="p-0.5 font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-lg transition hover:from-[#506DFF] hover:to-[#94fff2] flex items-center justify-center"
+                  >
+                    <div className="bg-[#21232F] px-4 py-1 rounded-[calc(8px-2px)] ">
+                      Cancle
+                    </div>
+                  </button>
+                  <button
+                    type="submit"
+                    className="px-4 py-1 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer hover:opacity-90 rounded-lg"
+                  >
+                    Change
+                  </button>
+                </div>
+              </form>
+
+            </div>
+          </div>
+        )}
+
       </div>
     </>
   );
