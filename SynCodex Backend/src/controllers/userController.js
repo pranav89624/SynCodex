@@ -63,3 +63,57 @@ export const changeName = async (req, res) => {
     res.status(500).json({ error: "Something went wrong. Try again." });
   }
 };
+
+export const changeEmail = async (req, res) => {
+  const { password, newEmail } = req.body;
+  const currentEmail = req.user.email;
+
+  if (!password || !newEmail) {
+    return res.status(400).json({ error: "All fields are required." });
+  }
+
+  try {
+    const userRef = db.collection("users").doc(currentEmail);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const userData = userSnap.data();
+
+    const isMatch = await bcrypt.compare(password, userData.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Incorrect password." });
+    }
+
+    const existingSnap = await db.collection("users").doc(newEmail).get();
+    if (existingSnap.exists) {
+      return res.status(409).json({ error: "Email already in use." });
+    }
+
+    await db.collection("users").doc(newEmail).set({ ...userData, email: newEmail });
+
+    await userRef.delete();
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: currentEmail,
+      subject: "SynCodex Email Removed",
+      html: `<p>Your email <strong>${currentEmail}</strong> has been removed from your account. If this wasn't you, contact support immediately.</p>`
+    });
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: newEmail,
+      subject: "SynCodex Email Added",
+      html: `<p>Welcome! Your email <strong>${newEmail}</strong> is now associated with your SynCodex account.</p>`
+    });
+
+    res.status(200).json({ message: "Email updated successfully", newEmail });
+
+  } catch (err) {
+    console.error("Email change error:", err.message);
+    res.status(500).json({ error: "Internal server error." });
+  }
+};

@@ -8,6 +8,9 @@ export default function AccountView() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showNameModal, setShowNameModal] = useState(false);
+  const [showEmailModal, setShowEmailModal] = useState(false);
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newEmail, setNewEmail] = useState("");
   const [showPasswords, setShowPasswords] = useState(false);
   const { userName, updateUserName } = useUser();
   const [userEmail, setUserEmail] = useState("");
@@ -54,6 +57,7 @@ export default function AccountView() {
   };
 
   const handleChangeName = async () => {
+    setLoading(true);
     try {
       const res = await API.patch("/api/user/change-name", { fullName: updatedName }, {
         headers: {
@@ -67,8 +71,38 @@ export default function AccountView() {
       toast.success("Name updated successfully");
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to update name");
+    }finally {
+      setLoading(false);
     }
   };
+
+  const handleChangeEmail = async () => {
+    setLoading(true);
+    try {
+      const res = await API.patch("/api/user/change-email", {
+        password: currentPassword,
+        newEmail
+      }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+  
+      localStorage.setItem("email", res.data.newEmail);
+      setUserEmail(res.data.newEmail);
+      toast.success("Email updated successfully");
+  
+      // Cleanup
+      setShowEmailModal(false);
+      setCurrentPassword("");
+      setNewEmail("");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to update email");
+    }finally {
+      setLoading(false);
+    }
+  };
+  
  
   return (
     <>
@@ -88,8 +122,8 @@ export default function AccountView() {
               </div>
               <div className="items-center mb-3 grid grid-cols-3">
                 <span className="text-gray-400">Email</span>
-                <span className="flex items-center">{userEmail}</span> 
-                <span className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2">Change email</span>
+                <span className="flex items-center overflow-auto">{userEmail}</span> 
+                <span className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2" onClick={() => setShowEmailModal(true)}>Change email</span>
               </div>
               <div className="items-center mb-3 grid grid-cols-3">
                 <span className="text-gray-400">Password</span>
@@ -129,9 +163,14 @@ export default function AccountView() {
                 </button>
                 <button
                   onClick={handleChangeName}
-                  className="px-4 py-1 bg-gradient-to-b from-[#94FFF2] to-[#506DFF] hover:opacity-90 rounded-lg"
+                  className="px-4 py-1 bg-gradient-to-b from-[#94FFF2] to-[#506DFF] hover:opacity-90 rounded-lg cursor-pointer"
+                  disabled={loading}
                 >
-                  Change
+                  {loading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      "Change"
+                  )}
                 </button>
               </div>
             </div>
@@ -207,6 +246,56 @@ export default function AccountView() {
                 </div>
               </form>
 
+            </div>
+          </div>
+        )}
+
+        {showEmailModal && (
+          <div className="fixed inset-0 bg-[#00000093] bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-[#3D415A] p-6 rounded-2xl w-[300px] shadow-lg border border-gray-700">
+              <h2 className="text-white text-lg font-semibold mb-4 text-center font-Chakra">Change Email</h2>
+
+              <label className="block font-open-sans mb-2">Current Password</label>
+              <input
+                type="password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                className="w-full mb-3 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                placeholder="Enter current password"
+              />
+
+              <label className="block font-open-sans mb-2">New Email</label>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                className="w-full mb-4 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                placeholder="Enter new email"
+              />
+
+              <div className="flex justify-between">
+                <button
+                  onClick={() => {
+                    setShowEmailModal(false);
+                    setCurrentPassword("");
+                    setNewEmail("");
+                  }}
+                  className="p-0.5 font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-lg hover:from-[#506DFF] hover:to-[#94fff2]"
+                >
+                  <div className="bg-[#21232F] px-4 py-1 rounded-[calc(8px-2px)]">Cancel</div>
+                </button>
+                <button
+                  onClick={handleChangeEmail}
+                  className="px-4 py-1 bg-gradient-to-b from-[#94FFF2] to-[#506DFF] hover:opacity-90 rounded-lg cursor-pointer"
+                  disabled={loading}
+                >
+                  {loading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      "Change"
+                  )}
+                </button>
+              </div>
             </div>
           </div>
         )}
