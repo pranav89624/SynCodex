@@ -2,18 +2,17 @@ import { useState, useEffect, use } from "react";
 import { Pencil, Trash } from "lucide-react";
 import API from "../../services/api";
 import { toast } from "react-toastify";
+import { useUser } from "../../context/UserContext";
 
 export default function AccountView() {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
   const [showPasswords, setShowPasswords] = useState(false);
-  const [userName, setUserName] = useState("");
+  const { userName, updateUserName } = useUser();
   const [userEmail, setUserEmail] = useState("");
-
-  useEffect(() => {
-    const storedName = localStorage.getItem("name");
-    if (storedName) setUserName(storedName);
-  }, []);
+  const [updatedName, setUpdatedName] = useState("");
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const storedEmail = localStorage.getItem("email");
@@ -24,7 +23,8 @@ export default function AccountView() {
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
-  
+    setLoading(true);
+
     const currentPassword = e.target.currentPassword.value;
     const newPassword = e.target.newPassword.value;
     const confirmPassword = e.target.confirmPassword.value;
@@ -48,9 +48,28 @@ export default function AccountView() {
       setShowPasswordModal(false);
     } catch (err) {
       toast.error(err.response?.data?.error || "Something went wrong");
+    }finally {
+      setLoading(false);
     }
   };
-  
+
+  const handleChangeName = async () => {
+    try {
+      const res = await API.patch("/api/user/change-name", { fullName: updatedName }, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`
+        }
+      });
+
+      updateUserName(res.data.fullName);
+
+      setShowNameModal(false);
+      toast.success("Name updated successfully");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to update name");
+    }
+  };
+ 
   return (
     <>
       <h1 className="text-3xl font-bold p-6 font-Chakra">Account Management</h1>
@@ -62,7 +81,10 @@ export default function AccountView() {
               <div className="items-center mb-3 grid grid-cols-3">
                 <span className="text-gray-400">Full Name</span>
                 <span className="flex items-center">{userName}</span> 
-                <Pencil className="w-4 h-4 ml-2 text-blue-400 hover:text-blue-300 cursor-pointer" />
+                <Pencil
+                  className="w-4 h-4 ml-2 text-blue-400 hover:text-blue-300 cursor-pointer"
+                  onClick={() => { setUpdatedName(userName); setShowNameModal(true); }}
+                />
               </div>
               <div className="items-center mb-3 grid grid-cols-3">
                 <span className="text-gray-400">Email</span>
@@ -87,6 +109,35 @@ export default function AccountView() {
             </button>
           </div>
         </div>
+
+        {showNameModal && (
+          <div className="fixed inset-0 bg-[#00000093] flex justify-center items-center z-50">
+            <div className="bg-[#3D415A] p-6 rounded-2xl w-[300px] shadow-lg border border-gray-700">
+              <h2 className="text-white text-lg font-semibold mb-4 text-center font-Chakra">Change Full Name</h2>
+              <input
+                value={updatedName}
+                onChange={(e) => setUpdatedName(e.target.value)}
+                className="w-full mb-4 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                placeholder="Enter your full name"
+              />
+              <div className="flex justify-between">
+                <button
+                  onClick={() => setShowNameModal(false)}
+                  className="p-0.5 font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-lg hover:from-[#506DFF] hover:to-[#94fff2]"
+                >
+                  <div className="bg-[#21232F] px-4 py-1 rounded-[calc(8px-2px)]">Cancel</div>
+                </button>
+                <button
+                  onClick={handleChangeName}
+                  className="px-4 py-1 bg-gradient-to-b from-[#94FFF2] to-[#506DFF] hover:opacity-90 rounded-lg"
+                >
+                  Change
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {showDeleteModal && (
           <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
             <div className="bg-gray-800 p-6 rounded-lg shadow-lg text-white max-w-sm w-full">
@@ -144,9 +195,14 @@ export default function AccountView() {
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-1 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer hover:opacity-90 rounded-lg"
+                    className="px-4 py-1 min-w-[90px] bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer hover:opacity-90 rounded-lg flex justify-center items-center"
+                    disabled={loading}
                   >
-                    Change
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    ) : (
+                      "Change"
+                    )}
                   </button>
                 </div>
               </form>

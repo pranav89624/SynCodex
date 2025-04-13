@@ -1,23 +1,20 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, LogOut, ClipboardList, UserRound, Bell } from "lucide-react";
+import { toast } from "react-toastify";
 
 import UserAvatar from "../components/userAvatar";
 import DashboardView from "../components/dashboard/DashboardView";
 import AccountView from "../components/dashboard/AccountView";
-import { toast } from "react-toastify";
+import { useUser } from "../context/UserContext";
 
 export default function Dashboard() {
   const [activeTab, setActiveTab] = useState("sessions");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [Box, setBox] = useState(false);
-  const [userName, setUserName] = useState("");
+  const { userName } = useUser();
+  const avatarUrl = `https://robohash.org/${userName}?set=set5&size=50x50`;
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedName = localStorage.getItem("name");
-    if (storedName) setUserName(storedName);
-  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsSidebarOpen(window.innerWidth >= 768);
@@ -45,7 +42,6 @@ export default function Dashboard() {
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
   const toggleBox = () => setBox(!Box);
-  const avatarUrl = `https://robohash.org/${userName}?set=set5&size=50x50`;
 
   return (
     <div className="flex h-screen bg-[#21232f] text-white">

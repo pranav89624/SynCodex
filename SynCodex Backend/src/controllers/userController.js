@@ -44,3 +44,22 @@ export const changePassword = async (req, res) => {
     res.status(500).json({ error: "Failed to change password" });
   }
 };
+
+export const changeName = async (req, res) => {
+  const { fullName } = req.body;
+  const email = req.user.email;
+
+  if (!fullName || fullName.trim() === "") {
+    return res.status(400).json({ error: "Full name is required." });
+  }
+
+  try {
+    const userRef = db.collection("users").doc(email);
+    await userRef.update({ fullName });
+
+    res.status(200).json({ message: "Name updated successfully", fullName });
+  } catch (err) {
+    console.error("Error updating name:", err.message);
+    res.status(500).json({ error: "Something went wrong. Try again." });
+  }
+};

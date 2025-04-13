@@ -11,10 +11,11 @@ import ProtectedRoute from "./components/protectedRoute";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import Dashboard from "./pages/dashboard";
+import { UserProvider } from "./context/UserContext";
 
 function App() {
   return (
-    <>
+    <UserProvider>
 
       <ToastContainer
               position="top-center" // Change position
@@ -40,7 +41,7 @@ function App() {
         </Routes>
       </Router>
       
-    </>
+    </UserProvider>
   );
 }
 
