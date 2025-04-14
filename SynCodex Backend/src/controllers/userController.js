@@ -117,3 +117,47 @@ export const changeEmail = async (req, res) => {
     res.status(500).json({ error: "Internal server error." });
   }
 };
+
+export const deleteAccount = async (req, res) => {
+  const { password } = req.body;
+  const email = req.user.email;
+
+  if (!password) {
+    return res.status(400).json({ error: "Password is required." });
+  }
+
+  try {
+    const userRef = db.collection("users").doc(email);
+    const userSnap = await userRef.get();
+
+    if (!userSnap.exists) {
+      return res.status(404).json({ error: "User not found." });
+    }
+
+    const userData = userSnap.data();
+
+    const isMatch = await bcrypt.compare(password, userData.password);
+    if (!isMatch) {
+      return res.status(401).json({ error: "Incorrect password." });
+    }
+
+    await userRef.delete();
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Your SynCodex Account Was Deleted",
+      html: `
+        <h3>We're sorry to see you go.</h3>
+        <p>Your SynCodex account has been successfully deleted.</p>
+        <p>If this wasn’t you, please contact our support team immediately.</p>
+      `
+    });
+
+    res.status(200).json({ message: "Account deleted and email sent." });
+
+  } catch (err) {
+    console.error("Account deletion error:", err.message);
+    res.status(500).json({ error: "Failed to delete account." });
+  }
+};
