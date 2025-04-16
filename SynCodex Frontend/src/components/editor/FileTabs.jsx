@@ -20,7 +20,7 @@ export const FileTabs = ({ openFiles, activeFile, setActiveFile, setOpenFiles })
           className={`flex items-center px-4 py-2 text-sm cursor-pointer border-r border-[#e4e6f3ab] transition-all ${
             activeFile === file
               ? "bg-[#3D415A] text-white font-bold"
-              : "bg-[#21232f] text-gray-400 hover:bg-[#24263b]"
+              : "bg-[#21232f] text-gray-400 hover:bg-[#3d415ab2]"
           }`}
           onClick={() => setActiveFile(file)}
         >
