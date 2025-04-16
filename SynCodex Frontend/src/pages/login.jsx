@@ -35,11 +35,11 @@ const Login = () => {
       const res = await API.post("/api/auth/login", formData);
 
       console.log("User logged in:", res.data);
-      console.log("Token received:", res.data.token);
 
       if (res.data.token) {
         localStorage.setItem("token", res.data.token); // Store token
         localStorage.setItem("name", res.data.user.fullName);
+        localStorage.setItem("email", res.data.user.email);
         toast.success("Login successful!");
         navigate("/dashboard");
       }

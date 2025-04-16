@@ -28,3 +28,14 @@ body {
   color: transparent;
   background-clip: text;
 }
+
+.editor-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

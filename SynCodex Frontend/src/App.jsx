@@ -11,10 +11,12 @@ import ProtectedRoute from "./components/protectedRoute";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import Dashboard from "./pages/dashboard";
+import { UserProvider } from "./context/UserContext";
+import EditorPage from "./pages/editor";
 
 function App() {
   return (
-    <>
+    <UserProvider>
 
       <ToastContainer
               position="top-center" // Change position
@@ -37,10 +39,11 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/editor" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
         </Routes>
       </Router>
       
-    </>
+    </UserProvider>
   );
 }
 
