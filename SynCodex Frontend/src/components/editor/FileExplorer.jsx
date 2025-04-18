@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { FilePlus, FolderPlus, FolderClosed, FolderOpen, File } from 'lucide-react';
 
 export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
   const [folders, setFolders] = useState([]);
@@ -67,22 +68,25 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
 
   return (
     <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] h-full bg-[#21232f]">
-       <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end">
+       <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
         {projectName}
        </div>
-      <div className="flex justify-between mb-4">
+      <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
+
         <button
-          className="text-xs bg-[#506DFF] w-full py-1 mb-2 rounded hover:bg-[#3D415A]"
-          onClick={handleAddFolder}
-        >
-          + Folder
-        </button>
-        <button
-          className="text-xs bg-[#506DFF] w-full py-1 rounded hover:bg-[#3D415A]"
+          className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
           onClick={handleAddFile}
         >
-          + File
+          <FilePlus color="white" height={24} />
         </button>
+
+        <button
+          className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
+          onClick={handleAddFolder}
+        >
+          <FolderPlus color="white" height={24} />
+        </button>
+        
       </div>
 
       {/* Folder/File Tree */}
@@ -90,17 +94,17 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
         {folders.map((folder) => (
           <div key={folder.name}>
             <div
-              className="font-semibold cursor-pointer text-cyan-300"
+              className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2 "
               onClick={() => handleToggleFolder(folder.name)}
             >
-              {expanded[folder.name] ? "📂" : "📁"} {folder.name}
+              {expanded[folder.name] ? <FolderOpen color="white" height={"20"}/> : <FolderClosed color="white" height={"20"}/>} {folder.name}
             </div>
 
             {expanded[folder.name] &&
               folder.files.map((file) => (
                 <div
                   key={file.name}
-                  className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3D415A] cursor-pointer"
+                  className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3d415ab2] cursor-pointer flex items-center text-white gap-1 font-open-sans font-semibold"
                   onClick={() => {
                     if (!openFiles.includes(file.name)) {
                       setOpenFiles([...openFiles, file.name]);
@@ -108,7 +112,7 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
                     setActiveFile(file.name);
                   }}
                 >
-                  📄 {file.name}
+                  <File color="white" height={"20"}/> {file.name}
                 </div>
               ))}
           </div>
