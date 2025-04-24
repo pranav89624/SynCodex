@@ -6,8 +6,8 @@ import { FaPlay } from "react-icons/fa";
 import { PanelLeft, PanelRight } from 'lucide-react';
 
 export default function EditorPage() {
-  const [openFiles, setOpenFiles] = useState(["index.html"]);
-  const [activeFile, setActiveFile] = useState("index.html");
+  const [openFiles, setOpenFiles] = useState([]);
+  const [activeFile, setActiveFile] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [projectName, setProjectName] = useState("Loading...");
 
@@ -30,7 +30,6 @@ export default function EditorPage() {
   return (
     <>
 
-      {/* 🟦 Top Navbar */}
       <div className="flex items-center bg-[#21232f] h-16 px-4 border-b border-[#e4e6f3ab]">
         <h1 className="text-4xl font-bold font-Chakra font-gradient cursor-default">SynCodex</h1>
         <div className="w-full flex justify-center items-center">
@@ -42,7 +41,6 @@ export default function EditorPage() {
 
       <div className="h-[calc(100vh-4rem)] flex overflow-x-clip bg-[#21232f]">
        
-        {/* Sidebar */}
         <div
           className={`h-full bg-[#21232f] transition-all duration-300 ease-in-out ${
             isSidebarOpen ? 'w-[255px]' : 'w-0 overflow-hidden'
@@ -55,11 +53,8 @@ export default function EditorPage() {
           />}
         </div>
 
-        {/* Main area (TabBar + Editor) */}
         <div className="flex flex-col flex-1 h-full">
-        {/* Tabs aligned to bottom of navbar and right of sidebar */}
         <div className="bg-[#21232f] flex items-center border-b border-[#e4e6f3ab]">
-          {/* Toggle Button */}
           <button
             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
             className="absolute top-16 left-0 flex z-20 bg-[#3D415A] hover:opacity-90 cursor-pointer text-white p-2 rounded-md transition-all duration-300"
