@@ -6,6 +6,7 @@ import ToggleButton from "../toggleButton";
 export default function CreateRoomModal({ onClose }) {
   const [sessionName, setSessionName] = useState("");
   const [sessionDescription, setSessionDescription] = useState("");
+  const [interviewMode, setInterviewMode] = useState(false);
 
   const handleRoomCreation = () => {
     if (!sessionName.trim()) {
@@ -21,7 +22,12 @@ export default function CreateRoomModal({ onClose }) {
 
     localStorage.setItem("synSession", JSON.stringify(sessionData));
     onClose();
-    window.open("/editor", "_blank");
+    
+    if (interviewMode) {
+      window.open("/interview-guidelines", "_blank");
+    } else {
+      window.open("/collab-editor", "_blank");
+    }
   };
 
   return (
@@ -68,7 +74,7 @@ export default function CreateRoomModal({ onClose }) {
         </div>
         <div className="flex justify-between items-center mb-4">
           <span className="text-lg">Interview Mode</span>
-          <ToggleButton />
+          <ToggleButton isToggled={interviewMode} setIsToggled={setInterviewMode} />
         </div>
         <button
           onClick={handleRoomCreation}

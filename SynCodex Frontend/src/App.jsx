@@ -13,6 +13,9 @@ import ResetPassword from "./pages/resetPassword";
 import Dashboard from "./pages/dashboard";
 import { UserProvider } from "./context/UserContext";
 import EditorPage from "./pages/editor";
+import InterviewEditorPage from "./pages/interviewEditor";
+import CollabEditorPage from "./pages/collabEditor";
+import InterviewGuidelines from "./pages/interview-guidelines";
 
 function App() {
   return (
@@ -40,6 +43,9 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/editor" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
+          <Route path="/interview-editor" element={<ProtectedRoute><InterviewEditorPage /></ProtectedRoute>} />
+          <Route path="/collab-editor" element={<ProtectedRoute><CollabEditorPage /></ProtectedRoute>} />
+          <Route path="/interview-guidelines" element={<ProtectedRoute><InterviewGuidelines /></ProtectedRoute>} />
         </Routes>
       </Router>
       

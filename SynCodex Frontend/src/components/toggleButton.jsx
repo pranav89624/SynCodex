@@ -1,8 +1,4 @@
-import { useState } from "react";
-
-const ToggleButton = () => {
-  const [isToggled, setIsToggled] = useState(false);
-
+const ToggleButton = ({ isToggled, setIsToggled }) => {
   return (
     <div
       className={`w-10 h-4.5 flex items-center rounded-full cursor-pointer transition-all duration-300 ${
