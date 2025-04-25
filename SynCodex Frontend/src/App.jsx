@@ -36,10 +36,10 @@ function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/faq" element={<FAQSection />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/editor" element={<ProtectedRoute><EditorPage /></ProtectedRoute>} />
+          <Route path="/editor" element={<EditorPage />} />
         </Routes>
       </Router>
       
