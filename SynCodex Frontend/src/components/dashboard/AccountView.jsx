@@ -152,7 +152,7 @@ export default function AccountView() {
             />
             <div className="w-full">
               <div className="items-center mb-3 grid grid-cols-3">
-                <span className="text-gray-400">Full Name</span>
+                <span className="text-white">Full Name</span>
                 <span className="flex items-center">{userName}</span>
                 <Pencil
                   className="w-4 h-4 ml-2 text-blue-400 hover:text-blue-300 cursor-pointer"
@@ -163,7 +163,7 @@ export default function AccountView() {
                 />
               </div>
               <div className="items-center mb-3 grid grid-cols-3">
-                <span className="text-gray-400">Email</span>
+                <span className="text-white">Email</span>
                 <span className="flex items-center overflow-auto">
                   {userEmail}
                 </span>
@@ -175,7 +175,7 @@ export default function AccountView() {
                 </span>
               </div>
               <div className="items-center mb-3 grid grid-cols-3">
-                <span className="text-gray-400">Password</span>
+                <span className="text-white">Password</span>
                 <span></span>
                 <span
                   className="text-blue-400 hover:text-blue-300 cursor-pointer ml-2"
@@ -318,7 +318,7 @@ export default function AccountView() {
                 <input
                   name="confirmPassword"
                   type={showPasswords ? "text" : "password"}
-                  className="w-full mb-4 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                  className="w-full mb-2 p-2 rounded bg-gray-800 text-white focus:outline-none"
                 />
 
                 <span
@@ -328,7 +328,7 @@ export default function AccountView() {
                   {showPasswords ? "Hide Passwords 🔒" : "Show Passwords 🔓"}
                 </span>
 
-                <div className="flex justify-between">
+                <div className="flex justify-between mt-4">
                   <button
                     onClick={() => {
                       setShowPasswordModal(false);
@@ -337,7 +337,7 @@ export default function AccountView() {
                     className="p-0.5 font-open-sans bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-lg transition hover:from-[#506DFF] hover:to-[#94fff2] flex items-center justify-center"
                   >
                     <div className="bg-[#21232F] px-4 py-1 rounded-[calc(8px-2px)] ">
-                      Cancle
+                      Cancel
                     </div>
                   </button>
                   <button
@@ -380,7 +380,7 @@ export default function AccountView() {
                 type="email"
                 value={newEmail}
                 onChange={(e) => setNewEmail(e.target.value)}
-                className="w-full mb-4 p-2 rounded bg-gray-800 text-white focus:outline-none"
+                className="w-full mb-2 p-2 rounded bg-gray-800 text-white focus:outline-none"
                 placeholder="Enter new email"
               />
 
@@ -391,7 +391,7 @@ export default function AccountView() {
                 {showPasswords ? "Hide Password 🔒" : "Show Password 🔓"}
               </span>
 
-              <div className="flex justify-between">
+              <div className="flex justify-between mt-4">
                 <button
                   onClick={() => {
                     setShowEmailModal(false);

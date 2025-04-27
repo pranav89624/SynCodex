@@ -1,23 +1,42 @@
 import { useState, useEffect } from "react";
 import { FilePlus, FolderPlus, FolderClosed, FolderOpen, File } from 'lucide-react';
+import { useLocation } from "react-router-dom";
 
 export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
   const [folders, setFolders] = useState([]);
   const [expanded, setExpanded] = useState({});
   const [projectName, setProjectName] = useState("Loading...");
 
+  const location = useLocation();
+
   useEffect(() => {
-    const raw = localStorage.getItem("synProject");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setProjectName(parsed.name || "Untitled Project");
-      } catch (error) {
-        console.error("Failed to parse project data:", error);
+    if (location.pathname === "/editor") {
+      const raw = localStorage.getItem("synProject");
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          setProjectName(parsed.name || "Untitled Project");
+        } catch (error) {
+          console.error("Failed to parse project data:", error);
+          setProjectName("Untitled Project");
+        }
+      } else {
         setProjectName("Untitled Project");
       }
-    } else {
-      setProjectName("Untitled Project");
+    }
+    else {
+      const raw = localStorage.getItem("synSession");
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          setProjectName(parsed.name || "Untitled Session");
+        } catch (error) {
+          console.error("Failed to parse session data:", error);
+          setProjectName("Untitled Session");
+        }
+      } else {
+        setProjectName("Untitled Session");
+      }
     }
   }, []);
 

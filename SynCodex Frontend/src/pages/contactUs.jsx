@@ -5,9 +5,14 @@ import Scroll from "../components/scroll";
 import Footer from "../components/footer";
 import { toast } from "react-toastify";
 import API from "../services/api";
+import AppColors from "../utils/appColors";
 
 const ContactUs = () => {
-  const [formData, setFormData] = useState({ fullName: "", email: "", message: "" });
+  const [formData, setFormData] = useState({
+    fullName: "",
+    email: "",
+    message: "",
+  });
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false); // New state for loading
 
@@ -62,15 +67,20 @@ const ContactUs = () => {
     <>
       <Scroll />
       <Navbar />
-      <div className="flex justify-center items-center min-h-screen bg-[#21232f]">
-        <div className="bg-[#3d415a] p-8 rounded-2xl shadow-lg w-[600px] text-white border-3 border-blue-400 flex flex-col items-center">
-          <h2 className="text-2xl font-semibold text-center mb-4">Contact Us</h2>
+      <div className="flex justify-center items-center p-10 bg-[#21232f]">
+        <div className="bg-[#3d415a] p-10 rounded-2xl shadow-lg w-[600px] text-white border-3 border-blue-400 flex flex-col items-center">
+          <h2 className="text-2xl font-semibold text-center mb-6">
+            Contact Us
+          </h2>
           <div className="w-full flex flex-col items-center">
-            <img src={ContactImage} alt="Contact Us" className="w-32 mb-4" />
+            <img src={ContactImage} alt="Contact Us" className="w-32 mb-6" />
             <div className="w-full text-center">
-              <p className="text-lg font-semibold text-gray-300">Let's Connect & Code!</p>
-              <p className="text-gray-400 mb-4">
-                Got questions or need support? We're here to help! Reach out for inquiries, feedback, or assistance.
+              <p className="text-lg font-semibold text-gray-300">
+                Let's Connect & Code!
+              </p>
+              <p className="text-gray-400 mb-6">
+                Got questions or need support? We're here to help! Reach out for
+                inquiries, feedback, or assistance.
               </p>
             </div>
           </div>
@@ -81,30 +91,36 @@ const ContactUs = () => {
               placeholder="Full Name"
               value={formData.fullName}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#21232f]"
+              className={`w-full p-3 rounded-lg ${AppColors.inputFieldColor} focus:outline-none`}
             />
-            {errors.fullName && <p className="text-red-500 text-sm">{errors.fullName}</p>}
-            
+            {errors.fullName && (
+              <p className="text-red-500 text-sm">{errors.fullName}</p>
+            )}
+
             <input
               type="email"
               name="email"
               placeholder="Email"
               value={formData.email}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#21232f]"
+              className={`w-full p-3 rounded-lg ${AppColors.inputFieldColor} focus:outline-none`}
             />
-            {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
-            
+            {errors.email && (
+              <p className="text-red-500 text-sm">{errors.email}</p>
+            )}
+
             <textarea
               name="message"
               placeholder="Message"
               rows="4"
               value={formData.message}
               onChange={handleChange}
-              className="w-full p-3 rounded-lg bg-gray-700 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-[#21232f]"
+              className={`w-full p-3 rounded-lg ${AppColors.inputFieldColor} focus:outline-none`}
             ></textarea>
-            {errors.message && <p className="text-red-500 text-sm">{errors.message}</p>}
-            
+            {errors.message && (
+              <p className="text-red-500 text-sm">{errors.message}</p>
+            )}
+
             <button
               type="submit"
               disabled={loading}

@@ -62,21 +62,21 @@ const FAQSection = () => {
 
         <Navbar />
 
-        <section className="py-10 bg-[#21232f] sm:py-16 lg:py-24 text-white">
+        <section className="bg-[#21232f] sm:py-16 lg:py-24 text-white">
             <div className="px-4 mx-auto sm:px-6 lg:px-8 max-w-5xl">
                 {/* Heading Section */}
                 <div className="max-w-3xl mx-auto text-center">
-                    <h2 className="text-3xl font-bold font-Chakra leading-tight sm:text-4xl lg:text-5xl">
+                    <h2 className="text-2xl font-bold font-Chakra leading-tight sm:text-4xl lg:text-5xl">
                         Frequently Asked Questions (FAQ’s) – SynCodex
                     </h2>
                 </div>
                 {/* FAQ List */}
                 <div className="max-w-3xl mx-auto mt-8 space-y-4 md:mt-16">
                     {faqs.map((faq, index) => (
-                        <div className="bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-lg p-[2px]"> 
+                        <div className="bg-gradient-to-b from-[#94FFF2] to-[#506DFF] rounded-xl p-[2px]"> 
                             <div
                                 key={index}
-                                className="transition-all duration-200 bg-[#3D415A] border-2 border-transparent rounded-[calc(8px-2px)] shadow-lg"
+                                className="transition-all duration-200 bg-[#3D415A] border-2 border-transparent rounded-[calc(10px-1px)] shadow-lg"
                             >
                                 {/* FAQ Question Button */}
                                 <button
@@ -107,7 +107,7 @@ const FAQSection = () => {
                     ))}
                 </div>
                 {/* Contact Support Section */}
-                <p className="text-center text-gray-400 text-base mt-9">
+                <p className="text-center text-gray-400 text-base mt-10">
                     Still have questions?{' '}
                     <Link to={"/contact"} className="cursor-pointer font-medium text-blue-500 transition-all duration-200 hover:text-blue-400">
                         Contact our support

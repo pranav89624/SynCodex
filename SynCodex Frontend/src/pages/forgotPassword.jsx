@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import API from "../services/api";
+import AppColors from "../utils/appColors";
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState("");
@@ -25,21 +26,21 @@ const ForgotPassword = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-[#21232f]">  
-        <div className="bg-[#3D415A] pt-10 w-[50%] text-center rounded-2xl border-2 border-blue-500">
-            <h2 className="text-4xl font-Chakra text-white font-semibold my-10">Forgot Password</h2>
+    <div className="flex justify-center items-center p-10 h-screen bg-[#21232f]">  
+        <div className="bg-[#3D415A] p-10 w-[400px] text-center rounded-2xl border-2 border-blue-500">
+            <h2 className="text-3xl font-Chakra text-white font-semibold mb-5">Forgot Password</h2>
             <form onSubmit={handleForgotPassword} className="flex flex-col justify-center items-center">
-                <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
+                <label className="flex w-full text-gray-300 text-sm mb-2">
                     Email
                 </label>
                 <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="bg-gray-700 w-[70%] p-5 rounded-lg border-2 text-xl text-white font-bold border-transparent focus:outline-none focus:ring-2 focus:ring-[#21232f]"
+                className={`${AppColors.inputFieldColor} w-full py-2 px-3 rounded-lg text-white focus:outline-none`}
                 required
                 />
-                <button type="submit" className="w-[70%] text-white font-bold rounded-lg bg-gradient-to-r from-[#94FFF2] to-[#506DFF] py-4 hover:opacity-90 cursor-pointer mt-3 text-lg flex items-center justify-center gap-2 relative" disabled={loading}>
+                <button type="submit" className="w-full text-white font-bold rounded-lg bg-gradient-to-r from-[#94FFF2] to-[#506DFF] p-2 hover:opacity-90 cursor-pointer mt-4 gap-2 items-center justify-center relative" disabled={loading}>
                     {loading ? (
                         <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                     ) : (
@@ -47,7 +48,7 @@ const ForgotPassword = () => {
                     )}
                 </button>
             </form>
-            <p className="justify-self-start pt-10 pl-3 pb-3 text-blue-600 text-xs">
+            <p className="justify-self-start pt-4 text-blue-500 text-xs">
                 <Link to={"/login"}>Go Back to login page</Link>
             </p>
       </div>

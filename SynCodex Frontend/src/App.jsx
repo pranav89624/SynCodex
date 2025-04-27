@@ -7,12 +7,15 @@ import Contact from "./pages/contactUs";
 import FAQSection from "./pages/faq";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProtectedRoute from "./components/protectedRoute";
+// import ProtectedRoute from "./components/protectedRoute";
 import ForgotPassword from "./pages/forgotPassword";
 import ResetPassword from "./pages/resetPassword";
 import Dashboard from "./pages/dashboard";
 import { UserProvider } from "./context/UserContext";
 import EditorPage from "./pages/editor";
+import InterviewEditorPage from "./pages/interviewEditor";
+import CollabEditorPage from "./pages/collabEditor";
+import InterviewGuidelines from "./pages/interview-guidelines";
 
 function App() {
   return (
@@ -40,6 +43,9 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/editor" element={<EditorPage />} />
+          <Route path="/interview-editor" element={<InterviewEditorPage />} />
+          <Route path="/collab-editor" element={<CollabEditorPage />} />
+          <Route path="/interview-guidelines" element={<InterviewGuidelines />} />
         </Routes>
       </Router>
       

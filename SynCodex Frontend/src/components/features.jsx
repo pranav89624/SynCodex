@@ -37,7 +37,7 @@ function Features() {
           <div className="w-1/3 border-t border-[#E4E6F3]"></div>
         </div>
 
-        <div className="col-span-full row-start-2 row-end-5 flex flex-wrap">
+        <div className="col-span-full row-start-2 row-end-5 flex flex-wrap pb-10">
           {features.map((feature, index) => (
             <FeatureCard key={index} {...feature} />
           ))}

@@ -32,8 +32,9 @@
 //        });
 //       const newToken = res.data.token;
 
-//       // Store new token in local storage
-//       localStorage.setItem("token", newToken);   // ✅ Store token in localStorage
+      // Store new token in local storage
+//       localStorage.setItem("token", newToken); 
+//       localStorage.setItem("email", user.email);
 //       localStorage.setItem("name", user.displayName);
 //       return user;
 //     }
