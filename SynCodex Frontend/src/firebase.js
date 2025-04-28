@@ -32,7 +32,7 @@ const loginWithGoogle = async () => {
        });
       const newToken = res.data.token;
 
-      Store new token in local storage
+      // Store new token in local storage
       localStorage.setItem("token", newToken); 
       localStorage.setItem("email", user.email);
       localStorage.setItem("name", user.displayName);
