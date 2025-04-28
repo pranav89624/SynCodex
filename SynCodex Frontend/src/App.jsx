@@ -43,8 +43,8 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/editor" element={<EditorPage />} />
-          <Route path="/interview-editor" element={<InterviewEditorPage />} />
-          <Route path="/collab-editor" element={<CollabEditorPage />} />
+          <Route path="/interview-editor/:roomId" element={<InterviewEditorPage />} />
+          <Route path="/collab-editor/:roomId" element={<CollabEditorPage />} />
           <Route path="/interview-guidelines" element={<InterviewGuidelines />} />
         </Routes>
       </Router>

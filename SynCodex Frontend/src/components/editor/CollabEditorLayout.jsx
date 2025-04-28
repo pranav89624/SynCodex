@@ -6,7 +6,11 @@ import { EditorPane } from "./EditorPane";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
 
-export default function CollabEditorLayout({ children }) {
+export default function CollabEditorLayout({
+  children,
+  roomId,
+  isInterviewMode,
+}) {
   const [openFiles, setOpenFiles] = useState([]);
   const [activeFile, setActiveFile] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -73,7 +77,13 @@ export default function CollabEditorLayout({ children }) {
           </div>
 
           <div className="flex h-full overflow-hidden">
-            <div className="py-3 h-full w-full flex justify-center">
+            <div
+              className="py-3 flex justify-center"
+              style={{
+                width: isInterviewMode ? "100%" : "70%",
+                transition: isInterviewMode ? "none" : "width 0.3s ease",
+              }}
+            >
               <div
                 className={`h-full editor-wrapper flex-1 ${
                   isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
@@ -82,8 +92,30 @@ export default function CollabEditorLayout({ children }) {
                 <EditorPane activeFile={activeFile} />
               </div>
             </div>
-            <VideoCallSection />
+
+            <div
+              style={{
+                width: isInterviewMode ? "auto" : "30%",
+                flexShrink: 0,
+                transition: isInterviewMode ? "none" : "width 0.3s ease",
+              }}
+            >
+              <VideoCallSection isInterviewMode={isInterviewMode} />
+            </div>
           </div>
+
+          {/* <div className="flex h-full overflow-hidden">
+            <div className="py-3  w-full flex justify-center">
+              <div
+                className={`h-full editor-wrapper flex-1 ${
+                  isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
+                }`}
+              >
+                <EditorPane activeFile={activeFile} />
+              </div>
+            </div>
+            <VideoCallSection isInterviewMode={isInterviewMode} />
+          </div> */}
         </div>
       </div>
     </>

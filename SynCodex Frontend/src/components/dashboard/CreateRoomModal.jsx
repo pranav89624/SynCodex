@@ -1,12 +1,16 @@
-import { useState } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
-import { X, UserPlus } from "lucide-react";
+import { X, UserPlus, Copy } from "lucide-react";
 import ToggleButton from "../toggleButton";
 
 export default function CreateRoomModal({ onClose }) {
   const [sessionName, setSessionName] = useState("");
   const [sessionDescription, setSessionDescription] = useState("");
   const [interviewMode, setInterviewMode] = useState(false);
+
+  const [roomId, setRoomId] = useState("");
+  const [copied, setCopied] = useState(false);
+  const roomIdRef = useRef(null);
 
   const handleRoomCreation = () => {
     if (!sessionName.trim()) {
@@ -15,6 +19,7 @@ export default function CreateRoomModal({ onClose }) {
     }
 
     const sessionData = {
+      roomId : roomId,
       name: sessionName,
       description: sessionDescription,
       createdAt: new Date().toISOString(),
@@ -22,13 +27,38 @@ export default function CreateRoomModal({ onClose }) {
 
     localStorage.setItem("synSession", JSON.stringify(sessionData));
     onClose();
-    
+
     if (interviewMode) {
       window.open("/interview-guidelines", "_blank");
     } else {
-      window.open("/collab-editor", "_blank");
+      window.open(`/collab-editor/${roomId}`, "_blank");
     }
   };
+
+  const generateRoomId = useCallback(() => {
+    let room = "";
+    let str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for (let i = 1; i <= 8; i++) {
+      let char = Math.floor(Math.random() * str.length);
+      room += str.charAt(char);
+    }
+    setRoomId(room);
+  }, []);
+
+  const copyRoomToClipBoard = useCallback(() => {
+    if (roomIdRef.current) {
+      roomIdRef.current.select();
+      navigator.clipboard.writeText(roomId).then(() => {
+        setCopied(true);
+        setTimeout(() => setCopied(false), 1500);
+      });
+    }
+  }, [roomId]);
+
+  useEffect(() => {
+    generateRoomId();
+  }, [generateRoomId]);
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-[#00000093]">
@@ -59,22 +89,56 @@ export default function CreateRoomModal({ onClose }) {
           className="w-full p-2 mb-2 bg-[#21232f] text-white  outline-none rounded-lg"
           placeholder="Description (optional)"
         ></textarea>
+        <label className="block font-open-sans mb-2">Room ID</label>
+        <div className="flex items-center justify-between">
+          <input
+            className="w-[85%] p-2 mb-3 bg-[#21232f] text-white  outline-none rounded-lg"
+            type="text"
+            value={roomId}
+            ref={roomIdRef}
+            readOnly
+            placeholder="Random Room ID"
+          />
+          <div className="relative group flex items-center justify-center h-10 w-10 rounded-lg p-[1.6px] mb-3 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer">
+            <div
+              onClick={copyRoomToClipBoard}
+              className="flex items-center justify-center h-full w-full bg-[#21232f] rounded-[calc(8px-1.2px)]"
+            >
+              <Copy size={20} />
+            </div>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-sm px-2 py-1 rounded shadow z-10 whitespace-nowrap">
+              Copy
+            </div>
+            {/* Copied message */}
+            {copied && (
+              <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 group-focus-within:block bg-black text-white text-sm px-2 py-1 rounded shadow z-10 whitespace-nowrap">
+                Copied!
+              </div>
+            )}
+          </div>
+        </div>
         <label className="block font-open-sans mb-2">Invite People</label>
         <div className="flex items-center justify-between">
           <input
             className="w-[85%] p-2 mb-3 bg-[#21232f] text-white  outline-none rounded-lg"
             type="email"
-            placeholder="Person's email address"
+            placeholder="Person's Email Address"
           />
-          <div className="flex items-center justify-center h-10 w-10 rounded-lg p-[1.5px] mb-3 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer">
+          <div className="relative group flex items-center justify-center h-10 w-10 rounded-lg p-[1.6px] mb-3 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer">
             <div className="flex items-center justify-center h-full w-full bg-[#21232f] rounded-[calc(8px-1.2px)]">
               <UserPlus size={20} />
+            </div>
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-sm px-2 py-1 rounded shadow z-10 whitespace-nowrap">
+              Add
             </div>
           </div>
         </div>
         <div className="flex justify-between items-center mb-4">
           <span className="text-lg">Interview Mode</span>
-          <ToggleButton isToggled={interviewMode} setIsToggled={setInterviewMode} />
+          <ToggleButton
+            isToggled={interviewMode}
+            setIsToggled={setInterviewMode}
+          />
         </div>
         <button
           onClick={handleRoomCreation}

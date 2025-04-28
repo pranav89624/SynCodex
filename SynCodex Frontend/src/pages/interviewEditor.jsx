@@ -1,7 +1,9 @@
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 import CollabEditorLayout from "../components/editor/CollabEditorLayout";
 
 export default function InterviewEditorPage() {
+  const { roomId } = useParams();
     
     useEffect(() => {
         const handleExitFullScreen = () => {
@@ -28,6 +30,6 @@ export default function InterviewEditorPage() {
       }, []);
 
     return (
-        <CollabEditorLayout />    
+        <CollabEditorLayout roomId={roomId} isInterviewMode={true} />    
     );
 }

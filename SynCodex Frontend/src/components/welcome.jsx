@@ -3,8 +3,8 @@ import laptopImage from "../assets/home_laptop_image.png";
 
 const Welcome = () => {
   return (
-    <section className="bg-[#21232F] bg1 text-white min-h-screen flex items-center justify-center px-6">
-      <div className="container mx-auto flex flex-col md:flex-row items-center mt-8">
+    <section className="bg-[#21232F] bg1 text-white min-h-screen flex items-center justify-center pl-15 pr-6">
+      <div className="container mx-auto flex flex-col md:flex-row items-center  mt-8">
         {/* Left Content */}
         <div className="md:w-1/2 text-center md:text-left">
           <h1 className="text-3xl md:text-5xl font-bold font-Chakra">
