@@ -93,43 +93,6 @@ const VideoCallToolbar = ({ isInterviewMode }) => {
       </div>
     </div>
   );
-
-  // return (
-  //   <div className="flex flex-col justify-end items-center pt-3 h-full">
-  //     <div className={`flex gap-3 p-3 rounded-xl border-1 border-[#E4E6F3]`}>
-  //       <IconButton
-  //         icon={AppIcons.micOff}
-  //         buttonColor={micDisable ? AppColors.buttonColor : AppColors.container}
-  //         onClick={toggleMic}
-  //         label={micDisable ? "Mic OFF" : "Mic ON"}
-  //       />
-  //       <IconButton
-  //         icon={AppIcons.speakerOff}
-  //         buttonColor={speakerOff ? AppColors.container : AppColors.buttonColor}
-  //         onClick={toggleSpeaker}
-  //         label={speakerOff ? "Speaker ON" : "Speaker OFF"}
-  //       />
-  //       <IconButton
-  //         icon={AppIcons.videoOff}
-  //         buttonColor={camDisable ? AppColors.buttonColor : AppColors.container}
-  //         onClick={toggleCam}
-  //         label={camDisable ? "Camera OFF" : "Camera ON"}
-  //       />
-  //       <IconButton
-  //         icon={AppIcons.moreHorizontal}
-  //         buttonColor={AppColors.buttonColor}
-  //         onClick={toggleCam}
-  //         label="More"
-  //       />
-  //       <IconButton
-  //         icon={AppIcons.callEnd}
-  //         buttonColor={AppColors.redColor}
-  //         onClick={toggleEndCall}
-  //         label="End Call"
-  //       />
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default VideoCallToolbar;

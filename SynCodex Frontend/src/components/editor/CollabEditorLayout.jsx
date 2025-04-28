@@ -103,19 +103,6 @@ export default function CollabEditorLayout({
               <VideoCallSection isInterviewMode={isInterviewMode} />
             </div>
           </div>
-
-          {/* <div className="flex h-full overflow-hidden">
-            <div className="py-3  w-full flex justify-center">
-              <div
-                className={`h-full editor-wrapper flex-1 ${
-                  isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
-                }`}
-              >
-                <EditorPane activeFile={activeFile} />
-              </div>
-            </div>
-            <VideoCallSection isInterviewMode={isInterviewMode} />
-          </div> */}
         </div>
       </div>
     </>

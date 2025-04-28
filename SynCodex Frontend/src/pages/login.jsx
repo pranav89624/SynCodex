@@ -6,7 +6,7 @@ import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
 import Scroll from "../components/scroll";
-// import { loginWithGoogle } from "../firebase";
+import { loginWithGoogle } from "../firebase";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";

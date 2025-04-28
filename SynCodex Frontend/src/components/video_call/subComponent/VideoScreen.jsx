@@ -36,27 +36,6 @@ const VideoScreen = ({
       </div>
     </div>
   );
-
-  // return (
-  //   <div className={`relative overflow-hidden rounded-xl bg-[#000] ${
-  //     isInterviewMode ? "w-[420px] h-[250px]" : "w-full h-40"
-  //   }`}>
-  //     <video
-  //       ref={videoRef}
-  //       autoPlay
-  //       muted={isHost}
-  //       playsInline
-  //       className="w-full h-full object-cover"
-  //     />
-  //     <div className={`absolute bottom-2 left-2 ${AppColors.buttonColor} px-2 py-1 rounded-md text-sm flex items-center gap-2 text-white`}>
-  //       <img
-  //         src={micStaus ? AppIcons.enabledAudio : AppIcons.muteMic}
-  //         className="w-4 h-4"
-  //       />
-  //       <span>{displayName || "Host"}</span>
-  //     </div>
-  //   </div>
-  // );
 };
 
 export default VideoScreen;
