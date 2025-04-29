@@ -16,6 +16,7 @@ export default function CollabEditorLayout({
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [projectName, setProjectName] = useState("Loading...");
 
+  // USE EFFECT FOR GET PROJECT DETAILS
   useEffect(() => {
     const raw = localStorage.getItem("synSession");
     if (raw) {
@@ -100,7 +101,7 @@ export default function CollabEditorLayout({
                 transition: isInterviewMode ? "none" : "width 0.3s ease",
               }}
             >
-              <VideoCallSection isInterviewMode={isInterviewMode} />
+              <VideoCallSection roomIdVCS={roomId} isInterviewMode={isInterviewMode} />
             </div>
           </div>
         </div>

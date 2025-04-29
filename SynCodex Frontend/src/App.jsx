@@ -7,7 +7,7 @@ import Contact from "./pages/contactUs";
 import FAQSection from "./pages/faq";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ProtectedRoute from "./components/protectedRoute";
+// import ProtectedRoute from "./components/protectedRoute";
 import ForgotPassword from "./pages/forgotPassword"; 
 import ResetPassword from "./pages/resetPassword";
 import Dashboard from "./pages/dashboard";
@@ -41,14 +41,44 @@ function App() {
           <Route
             path="/dashboard"
             element={
+                <Dashboard />
+            }
+          />
+          {/* <Route
+            path="/dashboard"
+            element={
               <ProtectedRoute>
                 <Dashboard />
               </ProtectedRoute>
             }
-          />
+          /> */}
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route
+            path="/editor"
+            element={
+                <EditorPage />
+            }
+          />
+          <Route
+            path="/interview-editor/:roomId"
+            element={
+                <InterviewEditorPage />
+            }
+          />
+          <Route
+            path="/collab-editor/:roomId"
+            element={
+                <CollabEditorPage />
+            }
+          />
+          <Route
+            path="/interview-guidelines"
+            element={
+                <InterviewGuidelines />
+            }
+          />
+          {/* <Route
             path="/editor"
             element={
               <ProtectedRoute>
@@ -79,7 +109,7 @@ function App() {
                 <InterviewGuidelines />
               </ProtectedRoute>
             }
-          />
+          /> */}
         </Routes>
       </Router>
     </UserProvider>

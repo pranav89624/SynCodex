@@ -2,12 +2,13 @@ import AppColors from "../../../utils/appColors";
 import AppIcons from "../../../utils/appIcons";
 
 const VideoScreen = ({
-  micStaus = true,
-  displayName,
-  videoRef,
   isHost,
   isInterviewMode,
+  micStaus = true,
+  videoRef,
+  displayName,
 }) => {
+
   return (
     <div
       className={`relative overflow-hidden rounded-xl bg-[#000] ${
