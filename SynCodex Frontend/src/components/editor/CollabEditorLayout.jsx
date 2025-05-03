@@ -5,6 +5,7 @@ import { FileTabs } from "./FileTabs";
 import { EditorPane } from "./EditorPane";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
+import { CollabEditorPane } from "./CollabEditorPane";
 
 export default function CollabEditorLayout({
   children,
@@ -90,7 +91,7 @@ export default function CollabEditorLayout({
                   isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
                 }`}
               >
-                <EditorPane activeFile={activeFile} />
+                <CollabEditorPane activeFile={activeFile}/>
               </div>
             </div>
 
