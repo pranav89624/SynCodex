@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import EditorNav from "./EditorNav";
 import { FileExplorer } from "./FileExplorer";
 import { FileTabs } from "./FileTabs";
-import { EditorPane } from "./EditorPane";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
 import { CollabEditorPane } from "./CollabEditorPane";
