@@ -5,8 +5,7 @@ import { FileTabs } from "./FileTabs";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
 import { CollabEditorPane } from "./CollabEditorPane";
-import {WebrtcProvider} from "y-webrtc";
-import * as Y from "yjs";
+import { useYjsProvider } from "../../hooks/useYjsProvider";
 
 export default function CollabEditorLayout({
   roomId,
@@ -16,9 +15,7 @@ export default function CollabEditorLayout({
   const [activeFile, setActiveFile] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [projectName, setProjectName] = useState("Loading...");
-  const yDocRef = useRef(new Y.Doc());
-  const providerRef = useRef(null);
-
+  const { yDoc } = useYjsProvider(roomId);
   useEffect(() => {
     const raw = localStorage.getItem("synSession");
     if (raw) {
@@ -34,13 +31,6 @@ export default function CollabEditorLayout({
     }
   }, []);
 
-  useEffect(() => {
-    if (!providerRef.current) {
-      providerRef.current = new WebrtcProvider(roomId || "fallback-room", yDocRef.current);
-      console.log("Initialized WebRTC provider for room:", roomId);
-    }
-  }, [roomId]);
-
   return (
     <>
       <EditorNav />
@@ -53,7 +43,7 @@ export default function CollabEditorLayout({
         >
           {isSidebarOpen && (
             <FileExplorer
-              yDoc={yDocRef.current}
+              yDoc={yDoc}
               openFiles={openFiles}
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
@@ -101,7 +91,7 @@ export default function CollabEditorLayout({
                   isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
                 }`}
               >
-                <CollabEditorPane activeFile={activeFile} yDoc={yDocRef.current}/>
+                <CollabEditorPane activeFile={activeFile} yDoc={yDoc}/>
               </div>
             </div>
 

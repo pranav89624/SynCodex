@@ -7,7 +7,6 @@ import {
   File,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
-import * as Y from "yjs";
 
 export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId }) => { 
   const [expanded, setExpanded] = useState({});

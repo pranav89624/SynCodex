@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "yserver": "npx y-websocket --port 1234"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -27,7 +28,6 @@
     "socket.io-client": "^4.8.1",
     "tailwindcss": "^4.0.7",
     "y-monaco": "^0.1.6",
-    "y-webrtc": "^10.3.0",
     "yjs": "^13.6.26"
   },
   "devDependencies": {
@@ -40,6 +40,7 @@
     "eslint-plugin-react-hooks": "^5.0.0",
     "eslint-plugin-react-refresh": "^0.4.18",
     "globals": "^15.14.0",
-    "vite": "^6.1.0"
+    "vite": "^6.1.0",
+    "y-websocket": "^1.4.5"
   }
 }
