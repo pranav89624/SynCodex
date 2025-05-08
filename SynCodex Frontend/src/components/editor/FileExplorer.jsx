@@ -1,124 +1,150 @@
-import { useState, useEffect } from "react";
-import { FilePlus, FolderPlus, FolderClosed, FolderOpen, File } from 'lucide-react';
+import { useEffect, useState } from "react";
+import {
+  FilePlus,
+  FolderPlus,
+  FolderClosed,
+  FolderOpen,
+  File,
+} from "lucide-react";
 import { useLocation } from "react-router-dom";
+import * as Y from "yjs";
 
-export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
-  const [folders, setFolders] = useState([]);
+export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId }) => { 
   const [expanded, setExpanded] = useState({});
   const [projectName, setProjectName] = useState("Loading...");
-
   const location = useLocation();
+  
+  const isCollab = (location.pathname.includes("/collab") || location.pathname.includes("/interview")) && Boolean(roomId);
+
+  const [folders, setFolders] = useState(isCollab ? [] : JSON.parse(localStorage.getItem("synProjectFolders") || "[]"));
+  const yFoldersMap = yDoc?.getMap ? yDoc.getMap("folders") : null;
 
   useEffect(() => {
-    if (location.pathname === "/editor") {
-      const raw = localStorage.getItem("synProject");
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          setProjectName(parsed.name || "Untitled Project");
-        } catch (error) {
-          console.error("Failed to parse project data:", error);
-          setProjectName("Untitled Project");
-        }
-      } else {
-        setProjectName("Untitled Project");
-      }
+    if (!isCollab || !yFoldersMap) return;
+
+    const updateFolders = () => {
+      const entries = Array.from(yFoldersMap.entries()).map(([name, data]) => ({
+        name,
+        files: data.files || [],
+      }));
+      setFolders(entries);
+    };
+
+    yFoldersMap.observeDeep(updateFolders);
+    updateFolders();
+
+    return () => yFoldersMap.unobserveDeep(updateFolders);
+  }, [isCollab, yFoldersMap]);
+
+
+  useEffect(() => {
+    const raw =
+      location.pathname === "/editor"
+        ? localStorage.getItem("synProject")
+        : localStorage.getItem("synSession");
+
+    try {
+      const parsed = raw ? JSON.parse(raw) : {};
+      setProjectName(parsed.name || "Untitled");
+    } catch {
+      setProjectName("Untitled");
     }
-    else {
-      const raw = localStorage.getItem("synSession");
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          setProjectName(parsed.name || "Untitled Session");
-        } catch (error) {
-          console.error("Failed to parse session data:", error);
-          setProjectName("Untitled Session");
-        }
-      } else {
-        setProjectName("Untitled Session");
-      }
-    }
-  }, []);
+  }, [location.pathname]);
 
   const handleAddFolder = () => {
     const name = prompt("Enter folder name:");
-    if (!name || folders.find((f) => f.name === name)) return;
-    setFolders([...folders, { name, files: [] }]);
-    setExpanded({ ...expanded, [name]: true });
+    if (!name) return;
+
+    if (isCollab) {
+      if (yFoldersMap.has(name)) return;
+      yFoldersMap.set(name, { files: [] });
+    } else {
+      if (folders.some(f => f.name === name)) return;
+      const newFolders = [...folders, { name, files: [] }];
+      setFolders(newFolders);
+      localStorage.setItem("synProjectFolders", JSON.stringify(newFolders));
+    }
   };
 
   const handleAddFile = () => {
-    if (folders.length === 0) {
-      alert("Please create a folder first.");
-      return;
-    }
+    const folderName = prompt("Select folder:");
+    if (!folderName) return;
 
-    const folderName = prompt(
-      `Select folder to place file:\n${folders.map((f) => f.name).join(", ")}`
-    );
-    const folder = folders.find((f) => f.name === folderName);
-    if (!folder) return;
-
-    const fileName = prompt("Enter file name (e.g. index.html):");
+    const fileName = prompt("Enter file name:");
     if (!fileName) return;
 
-    const newFile = {
-      name: fileName,
-      content: "",
-      language: fileName.endsWith(".html")
-        ? "html"
-        : fileName.endsWith(".css")
-        ? "css"
-        : "javascript",
-    };
+    if (isCollab) {
+      if (!yFoldersMap.has(folderName)) return;
+      const folder = yFoldersMap.get(folderName);
+      folder.files.push({
+        name: fileName,
+        content: "",
+        language: fileName.split(".").pop(),
+      });
+      yFoldersMap.set(folderName, folder);
+    } else {
+      const updatedFolders = folders.map(folder =>
+        folder.name === folderName
+          ? {
+              ...folder,
+              files: [
+                ...folder.files,
+                {
+                  name: fileName,
+                  content: "",
+                  language: fileName.split(".").pop(),
+                },
+              ],
+            }
+          : folder
+      );
+      setFolders(updatedFolders);
+      localStorage.setItem("synProjectFolders", JSON.stringify(updatedFolders));
+    }
 
-    const updatedFolders = folders.map((f) =>
-      f.name === folderName ? { ...f, files: [...f.files, newFile] } : f
-    );
-
-    setFolders(updatedFolders);
-    setOpenFiles([...openFiles, fileName]);
+    setOpenFiles((prev) => [...prev, fileName]);
     setActiveFile(fileName);
-  };
-
-  const handleToggleFolder = (name) => {
-    setExpanded((prev) => ({ ...prev, [name]: !prev[name] }));
   };
 
   return (
     <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] h-full bg-[#21232f]">
-       <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
+      <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
         {projectName}
-       </div>
+      </div>
       <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
-
         <button
           className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
           onClick={handleAddFile}
         >
           <FilePlus color="white" height={24} />
         </button>
-
         <button
           className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
           onClick={handleAddFolder}
         >
           <FolderPlus color="white" height={24} />
         </button>
-        
       </div>
 
-      {/* Folder/File Tree */}
       <div className="space-y-2">
         {folders.map((folder) => (
           <div key={folder.name}>
             <div
-              className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2 "
-              onClick={() => handleToggleFolder(folder.name)}
+              className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2"
+              onClick={() =>
+                setExpanded((prev) => ({
+                  ...prev,
+                  [folder.name]: !prev[folder.name],
+                }))
+              }
             >
-              {expanded[folder.name] ? <FolderOpen color="white" height={"20"}/> : <FolderClosed color="white" height={"20"}/>} {folder.name}
+              {expanded[folder.name] ? (
+                <FolderOpen color="white" height={"20"} />
+              ) : (
+                <FolderClosed color="white" height={"20"} />
+              )}{" "}
+              {folder.name}
             </div>
-
             {expanded[folder.name] &&
               folder.files.map((file) => (
                 <div
@@ -131,7 +157,7 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile }) => {
                     setActiveFile(file.name);
                   }}
                 >
-                  <File color="white" height={"20"}/> {file.name}
+                  <File color="white" height={"20"} /> {file.name}
                 </div>
               ))}
           </div>

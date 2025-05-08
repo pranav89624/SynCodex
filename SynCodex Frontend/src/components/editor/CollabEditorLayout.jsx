@@ -1,22 +1,24 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import EditorNav from "./EditorNav";
 import { FileExplorer } from "./FileExplorer";
 import { FileTabs } from "./FileTabs";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
 import { CollabEditorPane } from "./CollabEditorPane";
+import {WebrtcProvider} from "y-webrtc";
+import * as Y from "yjs";
 
 export default function CollabEditorLayout({
-  children,
   roomId,
   isInterviewMode,
 }) {
   const [openFiles, setOpenFiles] = useState([]);
-  const [activeFile, setActiveFile] = useState();
+  const [activeFile, setActiveFile] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [projectName, setProjectName] = useState("Loading...");
+  const yDocRef = useRef(new Y.Doc());
+  const providerRef = useRef(null);
 
-  // USE EFFECT FOR GET PROJECT DETAILS
   useEffect(() => {
     const raw = localStorage.getItem("synSession");
     if (raw) {
@@ -32,6 +34,13 @@ export default function CollabEditorLayout({
     }
   }, []);
 
+  useEffect(() => {
+    if (!providerRef.current) {
+      providerRef.current = new WebrtcProvider(roomId || "fallback-room", yDocRef.current);
+      console.log("Initialized WebRTC provider for room:", roomId);
+    }
+  }, [roomId]);
+
   return (
     <>
       <EditorNav />
@@ -44,9 +53,11 @@ export default function CollabEditorLayout({
         >
           {isSidebarOpen && (
             <FileExplorer
+              yDoc={yDocRef.current}
               openFiles={openFiles}
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
+              roomId={roomId}
             />
           )}
         </div>
@@ -90,7 +101,7 @@ export default function CollabEditorLayout({
                   isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
                 }`}
               >
-                <CollabEditorPane activeFile={activeFile}/>
+                <CollabEditorPane activeFile={activeFile} yDoc={yDocRef.current}/>
               </div>
             </div>
 
