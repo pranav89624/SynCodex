@@ -4,11 +4,11 @@ import {
   FolderPlus,
   FolderClosed,
   FolderOpen,
-  File,
+  File, 
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 
-export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId }) => { 
+export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId, sessionName }) => { 
   const [expanded, setExpanded] = useState({});
   const [projectName, setProjectName] = useState("Loading...");
   const location = useLocation();
@@ -37,18 +37,18 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roo
 
 
   useEffect(() => {
-    const raw =
-      location.pathname === "/editor"
-        ? localStorage.getItem("synProject")
-        : localStorage.getItem("synSession");
-
-    try {
-      const parsed = raw ? JSON.parse(raw) : {};
-      setProjectName(parsed.name || "Untitled");
-    } catch {
-      setProjectName("Untitled");
+    if (location.pathname === "/editor") {
+      const raw = localStorage.getItem("synProject");
+      try {
+        const parsed = raw ? JSON.parse(raw) : {};
+        setProjectName(parsed.name || "Untitled");
+      } catch {
+        setProjectName("Untitled");
+      }
+    } else {
+      setProjectName(sessionName);
     }
-  }, [location.pathname]);
+  }, [location.pathname, sessionName]);  
 
   const handleAddFolder = () => {
     const name = prompt("Enter folder name:");

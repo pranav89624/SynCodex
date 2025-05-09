@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect} from "react";
 import EditorNav from "./EditorNav";
 import { FileExplorer } from "./FileExplorer";
 import { FileTabs } from "./FileTabs";
@@ -14,22 +14,26 @@ export default function CollabEditorLayout({
   const [openFiles, setOpenFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [projectName, setProjectName] = useState("Loading...");
-  const { yDoc } = useYjsProvider(roomId);
+  const [sessionName, setSessionName] = useState("Loading...");
+  const { yDoc, provider } = useYjsProvider(roomId);
+
   useEffect(() => {
-    const raw = localStorage.getItem("synSession");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setProjectName(parsed.name || "Untitled Project");
-      } catch (error) {
-        console.error("Failed to parse project data:", error);
-        setProjectName("Untitled Project");
-      }
-    } else {
-      setProjectName("Untitled Project");
-    }
-  }, []);
+    if (!provider) return;
+
+    const awareness = provider.awareness;
+
+    const updateName = () => {
+      const allStates = Array.from(awareness.getStates().values());
+      const name = allStates.find((s) => s.sessionInfo)?.sessionInfo?.name;
+      if (name) setSessionName(name);
+      else setSessionName("Unnamed Session");
+    };
+
+    awareness.on("change", updateName);
+    updateName();
+
+    return () => awareness.off("change", updateName);
+  }, [provider]);
 
   return (
     <>
@@ -48,6 +52,7 @@ export default function CollabEditorLayout({
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
               roomId={roomId}
+              sessionName={sessionName}
             />
           )}
         </div>
@@ -66,7 +71,7 @@ export default function CollabEditorLayout({
             </button>
             {!isSidebarOpen && (
               <span className="ml-10 text-white text-sm font-semibold border-r px-4 py-2 border-[#e4e6f3ab]">
-                {projectName}
+                {sessionName}
               </span>
             )}
 
