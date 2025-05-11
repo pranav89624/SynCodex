@@ -5,8 +5,11 @@ import {
   FolderClosed,
   FolderOpen,
   File, 
+  Download ,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 
 export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId, sessionName }) => { 
   const [expanded, setExpanded] = useState({});
@@ -105,62 +108,97 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roo
     setActiveFile(fileName);
   };
 
-  return (
-    <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] h-full bg-[#21232f]">
-      <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
-        {projectName}
-      </div>
-      <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
-        <button
-          className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
-          onClick={handleAddFile}
-        >
-          <FilePlus color="white" height={24} />
-        </button>
-        <button
-          className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
-          onClick={handleAddFolder}
-        >
-          <FolderPlus color="white" height={24} />
-        </button>
-      </div>
+  const handleDownloadSession = async () => {
+  const zip = new JSZip();
 
-      <div className="space-y-2">
-        {folders.map((folder) => (
-          <div key={folder.name}>
-            <div
-              className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2"
-              onClick={() =>
-                setExpanded((prev) => ({
-                  ...prev,
-                  [folder.name]: !prev[folder.name],
-                }))
-              }
-            >
-              {expanded[folder.name] ? (
-                <FolderOpen color="white" height={"20"} />
-              ) : (
-                <FolderClosed color="white" height={"20"} />
-              )}{" "}
-              {folder.name}
+  for (const folder of folders) {
+    for (const file of folder.files) {
+      const filePath = `${folder.name}/${file.name}`;
+      let content = "";
+
+      if (yDoc) {
+        const yText = yDoc.getText(file.name);
+        content = yText.toString();
+      } else {
+        content = localStorage.getItem(`file-${file.name}`) || "";
+      }
+
+      zip.file(filePath, content);
+    }
+  }
+
+  const blob = await zip.generateAsync({ type: "blob" });
+  const zipName = projectName || "synCodex-session";
+
+  saveAs(blob, `${zipName}.zip`);
+};
+
+  return (
+    <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] flex flex-col justify-between h-full bg-[#21232f]">
+      <div>
+        <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
+          {projectName}
+        </div>
+        <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
+          <button
+            className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
+            onClick={handleAddFile}
+          >
+            <FilePlus color="white" height={24} />
+          </button>
+          <button
+            className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
+            onClick={handleAddFolder}
+          >
+            <FolderPlus color="white" height={24} />
+          </button>
+        </div>
+
+        <div className="space-y-2 overflow-auto">
+          {folders.map((folder) => (
+            <div key={folder.name}>
+              <div
+                className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2"
+                onClick={() =>
+                  setExpanded((prev) => ({
+                    ...prev,
+                    [folder.name]: !prev[folder.name],
+                  }))
+                }
+              >
+                {expanded[folder.name] ? (
+                  <FolderOpen color="white" height={"20"} />
+                ) : (
+                  <FolderClosed color="white" height={"20"} />
+                )}{" "}
+                {folder.name}
+              </div>
+              {expanded[folder.name] &&
+                folder.files.map((file) => (
+                  <div
+                    key={file.name}
+                    className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3d415ab2] cursor-pointer flex items-center text-white gap-1 font-open-sans font-semibold"
+                    onClick={() => {
+                      if (!openFiles.includes(file.name)) {
+                        setOpenFiles([...openFiles, file.name]);
+                      }
+                      setActiveFile(file.name);
+                    }}
+                  >
+                    <File color="white" height={"20"} /> {file.name}
+                  </div>
+                ))}
             </div>
-            {expanded[folder.name] &&
-              folder.files.map((file) => (
-                <div
-                  key={file.name}
-                  className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3d415ab2] cursor-pointer flex items-center text-white gap-1 font-open-sans font-semibold"
-                  onClick={() => {
-                    if (!openFiles.includes(file.name)) {
-                      setOpenFiles([...openFiles, file.name]);
-                    }
-                    setActiveFile(file.name);
-                  }}
-                >
-                  <File color="white" height={"20"} /> {file.name}
-                </div>
-              ))}
-          </div>
-        ))}
+          ))}
+        </div>
+      </div>
+      <div className="px-4 py-2 border-t border-[#e4e6f3ab] flex flex-col gap-2 justify-center items-center">
+        <button
+          onClick={handleDownloadSession}
+          className="p-2 rounded-sm cursor-pointer text-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#3D415A] text-white w-[10rem]"
+        >
+          <Download /> Download
+        </button>
       </div>
     </div>
   );
