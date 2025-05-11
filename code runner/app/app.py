@@ -10,13 +10,15 @@ def run_code(language: str, code: str):
     # Create a unique folder to store the code and output
     temp_dir = f"/tmp/{uuid.uuid4()}"
     os.makedirs(temp_dir)
-
+    
     file_path = f"{temp_dir}/code"
+    
     if language == "python":
         file_path += ".py"
         with open(file_path, "w") as f:
             f.write(code)
         result = subprocess.run(["python3", file_path], capture_output=True, text=True)
+        
     elif language == "c":
         file_path += ".c"
         with open(file_path, "w") as f:
@@ -25,6 +27,7 @@ def run_code(language: str, code: str):
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
         result = subprocess.run([f"{temp_dir}/a.out"], capture_output=True, text=True)
+        
     elif language == "cpp":
         file_path += ".cpp"
         with open(file_path, "w") as f:
@@ -33,32 +36,32 @@ def run_code(language: str, code: str):
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
         result = subprocess.run([f"{temp_dir}/a.out"], capture_output=True, text=True)
+        
     elif language == "java":
-        file_path = f"{temp_dir}/Main.java"  # Ensure filename matches class name "Main"
+        file_path += ".java"
         with open(file_path, "w") as f:
             f.write(code)
-        # Compile Main.java
         compile_result = subprocess.run(["javac", file_path], capture_output=True, text=True)
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
-        # Run Main.class
-        result = subprocess.run(["java", "-cp", temp_dir, "Main"], capture_output=True, text=True)
+        result = subprocess.run(["java", "-cp", temp_dir, file_path.split("/")[-1].replace(".java", "")], capture_output=True, text=True)
+        
     elif language == "js":
         file_path += ".js"
         with open(file_path, "w") as f:
             f.write(code)
         result = subprocess.run(["node", file_path], capture_output=True, text=True)
+        
     elif language == "ts":
         file_path += ".ts"
-        ts_file = file_path
-        with open(ts_file, "w") as f:
+        with open(file_path, "w") as f:
             f.write(code)
-        # Compile TypeScript to JavaScript
-        compile_result = subprocess.run(["tsc", ts_file], capture_output=True, text=True)
+        # Compile the TypeScript code to JavaScript
+        compile_result = subprocess.run(["tsc", file_path], capture_output=True, text=True)
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
-        # Run the compiled JavaScript file
-        result = subprocess.run(["node", ts_file.replace(".ts", ".js")], capture_output=True, text=True)
+        result = subprocess.run(["node", file_path.replace(".ts", ".js")], capture_output=True, text=True)
+        
     else:
         return "Unsupported language."
 
@@ -66,10 +69,6 @@ def run_code(language: str, code: str):
     os.remove(file_path)
     if os.path.exists(f"{temp_dir}/a.out"):
         os.remove(f"{temp_dir}/a.out")
-    if os.path.exists(f"{temp_dir}/Main.class"):
-        os.remove(f"{temp_dir}/Main.class")
-    if os.path.exists(f"{temp_dir}/code.js"):
-        os.remove(f"{temp_dir}/code.js")
 
     return result.stdout + result.stderr
 
@@ -137,4 +136,4 @@ def run_ts():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False, host="0.0.0.0", port=6000)

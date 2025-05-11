@@ -24,8 +24,8 @@ COPY ./app /app
 # Set working directory
 WORKDIR /app
 
-# Expose the port the app will run on
-EXPOSE 5000
+# Expose port 6000
+EXPOSE 6000
 
 # Command to run the app using Gunicorn
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:6000"]
