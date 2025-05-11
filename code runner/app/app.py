@@ -10,7 +10,7 @@ def run_code(language: str, code: str):
     # Create a unique folder to store the code and output
     temp_dir = f"/tmp/{uuid.uuid4()}"
     os.makedirs(temp_dir)
-    
+
     file_path = f"{temp_dir}/code"
     if language == "python":
         file_path += ".py"
@@ -34,18 +34,31 @@ def run_code(language: str, code: str):
             return compile_result.stdout + compile_result.stderr
         result = subprocess.run([f"{temp_dir}/a.out"], capture_output=True, text=True)
     elif language == "java":
-        file_path += ".java"
+        file_path = f"{temp_dir}/Main.java"  # Ensure filename matches class name "Main"
         with open(file_path, "w") as f:
             f.write(code)
+        # Compile Main.java
         compile_result = subprocess.run(["javac", file_path], capture_output=True, text=True)
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
-        result = subprocess.run(["java", "-cp", temp_dir, file_path.split("/")[-1].replace(".java", "")], capture_output=True, text=True)
+        # Run Main.class
+        result = subprocess.run(["java", "-cp", temp_dir, "Main"], capture_output=True, text=True)
     elif language == "js":
         file_path += ".js"
         with open(file_path, "w") as f:
             f.write(code)
         result = subprocess.run(["node", file_path], capture_output=True, text=True)
+    elif language == "ts":
+        file_path += ".ts"
+        ts_file = file_path
+        with open(ts_file, "w") as f:
+            f.write(code)
+        # Compile TypeScript to JavaScript
+        compile_result = subprocess.run(["tsc", ts_file], capture_output=True, text=True)
+        if compile_result.returncode != 0:
+            return compile_result.stdout + compile_result.stderr
+        # Run the compiled JavaScript file
+        result = subprocess.run(["node", ts_file.replace(".ts", ".js")], capture_output=True, text=True)
     else:
         return "Unsupported language."
 
@@ -53,6 +66,10 @@ def run_code(language: str, code: str):
     os.remove(file_path)
     if os.path.exists(f"{temp_dir}/a.out"):
         os.remove(f"{temp_dir}/a.out")
+    if os.path.exists(f"{temp_dir}/Main.class"):
+        os.remove(f"{temp_dir}/Main.class")
+    if os.path.exists(f"{temp_dir}/code.js"):
+        os.remove(f"{temp_dir}/code.js")
 
     return result.stdout + result.stderr
 
@@ -104,6 +121,16 @@ def run_js():
     try:
         code = request.json.get("code")
         output = run_code("js", code)
+        return jsonify({"output": output})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/run-ts/", methods=["POST"])
+def run_ts():
+    try:
+        code = request.json.get("code")
+        output = run_code("ts", code)
         return jsonify({"output": output})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
