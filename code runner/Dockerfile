@@ -1,7 +1,7 @@
 # Use the official Python image as the base image
 FROM python:3.10-slim
 
-# Install system dependencies for C, C++, Java, and JavaScript execution
+# Install system dependencies for C, C++, Java, JavaScript, and TypeScript execution
 RUN apt-get update && apt-get install -y \
     gcc \
     g++ \
@@ -12,8 +12,11 @@ RUN apt-get update && apt-get install -y \
     npm \
     && apt-get clean
 
+# Install TypeScript globally
+RUN npm install -g typescript
+
 # Install Flask and Gunicorn
-RUN pip install Flask gunicorn
+RUN pip install Flask gunicorn flask_cors
 
 # Copy the Flask app code from the ./app directory to the /app directory in the container
 COPY ./app /app
@@ -21,8 +24,8 @@ COPY ./app /app
 # Set working directory
 WORKDIR /app
 
-# Expose the port the app will run on
-EXPOSE 5000
+# Expose port 6000
+EXPOSE 6000
 
 # Command to run the app using Gunicorn
-CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:5000"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:6000"]
