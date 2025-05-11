@@ -16,7 +16,7 @@ RUN apt-get update && apt-get install -y \
 RUN npm install -g typescript
 
 # Install Flask and Gunicorn
-RUN pip install Flask gunicorn
+RUN pip install Flask gunicorn flask_cors
 
 # Copy the Flask app code from the ./app directory to the /app directory in the container
 COPY ./app /app

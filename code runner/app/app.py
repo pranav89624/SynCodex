@@ -2,12 +2,13 @@ from flask import Flask, request, jsonify
 import subprocess
 import os
 import uuid
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
 # Define a helper function to run code in a specific language
 def run_code(language: str, code: str):
-    # Create a unique folder to store the code and output
     temp_dir = f"/tmp/{uuid.uuid4()}"
     os.makedirs(temp_dir)
     
@@ -56,7 +57,6 @@ def run_code(language: str, code: str):
         file_path += ".ts"
         with open(file_path, "w") as f:
             f.write(code)
-        # Compile the TypeScript code to JavaScript
         compile_result = subprocess.run(["tsc", file_path], capture_output=True, text=True)
         if compile_result.returncode != 0:
             return compile_result.stdout + compile_result.stderr
@@ -72,8 +72,6 @@ def run_code(language: str, code: str):
 
     return result.stdout + result.stderr
 
-
-# Define the routes to run the code for each language
 
 @app.route("/run-python/", methods=["POST"])
 def run_python():
