@@ -14,7 +14,7 @@ import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution';
 import 'monaco-editor/esm/vs/basic-languages/rust/rust.contribution';
 import 'monaco-editor/esm/vs/basic-languages/go/go.contribution';
 
-export const EditorPane = ({ activeFile }) => {
+export const EditorPane = ({ activeFile, onCodeChange }) => {
   const [value, setValue] = useState("");
 
   useEffect(() => {
@@ -22,6 +22,7 @@ export const EditorPane = ({ activeFile }) => {
       try {
         const storedContent = localStorage.getItem(`file-${activeFile}`);
         setValue(storedContent || "");
+        if (onCodeChange) onCodeChange(storedContent || "");
       } catch (error) {
         console.error("Error retrieving file from localStorage:", error);
         setValue("");
@@ -38,6 +39,7 @@ export const EditorPane = ({ activeFile }) => {
   const handleChange = (newValue) => {
     setValue(newValue);
     saveFileToLocalStorage(newValue);
+    if (onCodeChange) onCodeChange(newValue);
   };
 
   const getLanguage = () => {
@@ -46,18 +48,14 @@ export const EditorPane = ({ activeFile }) => {
       if (activeFile.endsWith(".css")) return "css";
       if (activeFile.endsWith(".js") || activeFile.endsWith(".jsx")) return "javascript";
       if (activeFile.endsWith(".ts") || activeFile.endsWith(".tsx")) return "typescript";
-      if (activeFile.endsWith(".c") || activeFile.endsWith(".cpp")) return "cpp";
-      if (activeFile.endsWith(".java")) return "java";
       if (activeFile.endsWith(".py")) return "python";
-      if (activeFile.endsWith(".sql")) return "sql";
-      if (activeFile.endsWith(".cs")) return "csharp";
-      if (activeFile.endsWith(".rs")) return "rust";
-      if (activeFile.endsWith(".go")) return "go";
+      if (activeFile.endsWith(".java")) return "java";
+      if (activeFile.endsWith(".c") || activeFile.endsWith(".cpp")) return "cpp";
       return "plaintext";
     } catch (error) {
-      "";
+      toast.error("Error detecting language");
+      return "plaintext";
     }
-    
   };
 
   const customTheme = {
