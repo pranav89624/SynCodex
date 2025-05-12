@@ -1,10 +1,10 @@
-import { useRef, useState, useEffect, useMemo } from "react";
+import { useRef, useState, useEffect, useMemo, forwardRef, useImperativeHandle } from "react";
 import { Editor } from "@monaco-editor/react";
 import { MonacoBinding } from "y-monaco";
 import { debounce } from "lodash";
 import { toast } from "react-toastify";
 
-export const CollabEditorPane = ({ activeFile, yDoc }) => {
+export const CollabEditorPane = forwardRef (({ activeFile, yDoc }, ref) => {
   const editorRef = useRef(null);
   const bindingRef = useRef(null);
   const [value, setValue] = useState("");
@@ -15,6 +15,10 @@ export const CollabEditorPane = ({ activeFile, yDoc }) => {
     }
     return null;
   }, [yDoc, activeFile]);
+
+  useImperativeHandle(ref, () => ({
+    getCode: () => yText?.toString() || "",
+  }));
 
   useEffect(() => {
     if (!activeFile) return;
@@ -131,4 +135,4 @@ export const CollabEditorPane = ({ activeFile, yDoc }) => {
       }}
     />
   );
-};
+});
