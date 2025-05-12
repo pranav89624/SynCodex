@@ -6,6 +6,7 @@ import EditorNav from "../components/editor/EditorNav";
 import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
+import HtmlPreview from "../components/editor/HtmlPreview";
 
 export default function EditorPage() {
   const [openFiles, setOpenFiles] = useState([]);
@@ -16,6 +17,16 @@ export default function EditorPage() {
   const [output, setOutput] = useState("");
   const [showOutput, setShowOutput] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+
+  useEffect(() => {
+    setShowPreview(false);
+  }, [activeFile]);
+
+  const handlePreviewClick = () => setShowPreview(prev => !prev);
+  const handleClosePreview = () => setShowPreview(false);
+
+  const isHtmlFile = activeFile?.endsWith(".html");
 
   useEffect(() => {
     const raw = localStorage.getItem("synProject");
@@ -66,7 +77,11 @@ export default function EditorPage() {
 
   return (
     <>
-      <EditorNav onRunClick={handleRunClick} />
+      <EditorNav
+        onRunClick={handleRunClick}
+        onPreviewClick={handlePreviewClick}
+        isHtmlFile={isHtmlFile}
+      />
 
       <div className="h-[calc(100vh-4rem)] flex overflow-x-clip bg-[#21232f]">
         <div
@@ -118,7 +133,17 @@ export default function EditorPage() {
                 isSidebarOpen ? "max-w-[calc(100%-2%)]" : "w-full"
               }`}
             >
-              <EditorPane activeFile={activeFile} onCodeChange={setCode} />
+              <div className="flex h-full w-full">
+                <div className={`${showPreview ? 'w-1/2' : 'w-full'} transition-all duration-300`}>
+                  <EditorPane activeFile={activeFile} onCodeChange={setCode} />
+                </div>
+                
+                {showPreview && (
+                  <div className="w-1/2 border-l border-gray-600">
+                    <HtmlPreview rawHtml={code} onClose={handleClosePreview} />
+                  </div>
+                )}
+              </div>
             </div>
             {showOutput && (
               <CodeExecutionResult
