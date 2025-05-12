@@ -4,47 +4,6 @@ import AppColors from "../../../utils/appColors";
 import AppIcons from "../../../utils/appIcons";
 
 const VideoCallToolbar = ({micDisable,camDisable,speakerOff, toggleMic,toggleCam,toggleSpeaker,toggleEndCall,toggleMore }) => {
-  // const [micDisable, setMicDisable] = useState(true);
-  // const [camDisable, setCamDisable] = useState(true);
-  // const [speakerOff, setSpeakerOff] = useState(false);
-  // const [remoteMicOff, setRemoteMicOff] = useState(false);
-
-  // const toggleMic = () => {
-  //   const enabled = !micDisable;
-  //   // localStream.current.getAudioTracks()[0].enabled = enabled;
-  //   setMicDisable(enabled);
-  //   // socket.emit("media-toggled", {
-  //   //   room: roomId,
-  //   //   mic: enabled,
-  //   //   cam: camDisable,
-  //   // });
-  // };
-
-  // const toggleCam = () => {
-  //   const enabled = !camDisable;
-  //   // localStream.current.getVideoTracks()[0].enabled = enabled;
-  //   setCamDisable(enabled);
-  //   // socket.emit("media-toggled", {
-  //   //   room: roomId,
-  //   //   mic: micDisable,
-  //   //   cam: enabled,
-  //   // });
-  // };
-
-  // const toggleSpeaker = () => {
-  //   // if (remoteVideoRef.current) {
-  //   //   const newMuted = !remoteVideoRef.current.muted;
-  //   //   remoteVideoRef.current.muted = newMuted;
-  //   setSpeakerOff(!speakerOff);
-  //   // }
-  // };
-
-  // const toggleEndCall = () => {
-  //   // peerConnection.current?.close();
-  //   // if (localVideoRef.current) localVideoRef.current.srcObject = null;
-  //   // if (remoteVideoRef.current) remoteVideoRef.current.srcObject = null;
-  //   window.location.href = "/dashboard";
-  // };
 
   return (
     <div className="flex flex-col justify-end items-center pt-1 sm:pt-1.5 md:pt-2 lg:pt-3 h-full">
