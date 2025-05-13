@@ -7,8 +7,10 @@ import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
 import HtmlPreview from "../components/editor/HtmlPreview";
+import useMeta from "../hooks/useMeta";
 
 export default function EditorPage() {
+  useMeta();
   const [openFiles, setOpenFiles] = useState([]);
   const [activeFile, setActiveFile] = useState();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -23,7 +25,7 @@ export default function EditorPage() {
     setShowPreview(false);
   }, [activeFile]);
 
-  const handlePreviewClick = () => setShowPreview(prev => !prev);
+  const handlePreviewClick = () => setShowPreview((prev) => !prev);
   const handleClosePreview = () => setShowPreview(false);
 
   const isHtmlFile = activeFile?.endsWith(".html");
@@ -101,6 +103,10 @@ export default function EditorPage() {
         <div className="flex flex-col flex-1 h-full">
           <div className="bg-[#21232f] flex items-center border-b border-[#e4e6f3ab]">
             <button
+              title="toggle sidebar"
+              aria-label="toggle sidebar"
+              type="button"
+              name="toggle sidebar"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="absolute top-16 left-0 flex z-20 bg-[#3D415A] hover:opacity-90 cursor-pointer text-white p-2 rounded-md transition-all duration-300"
             >
@@ -134,10 +140,14 @@ export default function EditorPage() {
               }`}
             >
               <div className="flex h-full w-full">
-                <div className={`${showPreview ? 'w-1/2' : 'w-full'} transition-all duration-300`}>
+                <div
+                  className={`${
+                    showPreview ? "w-1/2" : "w-full"
+                  } transition-all duration-300`}
+                >
                   <EditorPane activeFile={activeFile} onCodeChange={setCode} />
                 </div>
-                
+
                 {showPreview && (
                   <div className="w-1/2 border-l border-gray-600">
                     <HtmlPreview rawHtml={code} onClose={handleClosePreview} />

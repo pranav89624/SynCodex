@@ -3,8 +3,10 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../services/api";
+import useMeta from "../hooks/useMeta";
 
 const ResetPassword = () => {
+  useMeta();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [searchParams] = useSearchParams();
@@ -43,9 +45,13 @@ const ResetPassword = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-[#21232f]">
       <div className="bg-[#3D415A] py-10 w-[50%] text-center rounded-2xl border-2 border-blue-500">
-        <h2 className="text-4xl font-Chakra text-white font-semibold my-10">Reset Password</h2>
-        <form onSubmit={handleResetPassword} className="flex flex-col justify-center items-center">
-
+        <h2 className="text-4xl font-Chakra text-white font-semibold my-10">
+          Reset Password
+        </h2>
+        <form
+          onSubmit={handleResetPassword}
+          className="flex flex-col justify-center items-center"
+        >
           {/* New Password Field */}
           <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
             New Password

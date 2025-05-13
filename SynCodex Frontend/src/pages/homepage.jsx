@@ -4,7 +4,10 @@ import Welcome from "../components/welcome";
 import Features from "../components/features";
 import Footer from "../components/footer";
 import Scroll from "../components/scroll";
+import useMeta from "../hooks/useMeta";
+
 function Homepage() {
+  useMeta();
   return (
     <>
       <Scroll />

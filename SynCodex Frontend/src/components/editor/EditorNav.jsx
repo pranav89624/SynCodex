@@ -12,6 +12,10 @@ export default function EditorNav({ onRunClick, onPreviewClick, isHtmlFile }) {
           <button
             className="bg-[#3D415A] hover:opacity-90 text-white p-3 rounded-lg cursor-pointer flex justify-center items-center"
             onClick={onPreviewClick}
+            title="View Preview"
+            aria-label="View Preview"
+            type="button"
+            name="View Preview"
           >
             <VscOpenPreview height={20}/>
           </button>
@@ -19,6 +23,10 @@ export default function EditorNav({ onRunClick, onPreviewClick, isHtmlFile }) {
           <button
             className="bg-[#3D415A] hover:opacity-90 text-white p-3 rounded-lg cursor-pointer flex justify-center items-center"
             onClick={onRunClick}
+            title="Run Code"
+            aria-label="Run Code"
+            type="button"
+            name="Run Code"
           >
             <FaPlay height={20} />
           </button>

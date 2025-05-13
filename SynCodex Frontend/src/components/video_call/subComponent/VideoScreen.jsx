@@ -32,6 +32,7 @@ const VideoScreen = ({
         <img
           src={micStaus ? AppIcons.enabledAudio : AppIcons.muteMic}
           className="w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4"
+          alt="mic status"
         />
         <span>{displayName || "Host"}</span>
       </div>
