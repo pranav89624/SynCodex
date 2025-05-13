@@ -135,3 +135,11 @@ def run_ts():
 
 if __name__ == "__main__":
     app.run(debug=False, host="0.0.0.0", port=6000)
+
+
+#how to use 
+'''{
+    "code": "print('Hello from Python!')",
+    "input": "Some input text here"
+}
+'''
