@@ -18,7 +18,7 @@ RUN npm install -g typescript
 # Install Flask and Gunicorn
 RUN pip install Flask gunicorn flask_cors
 
-# Copy the Flask app code from the ./app directory to the /app directory in the container
+# Copy the Flask app code
 COPY ./app /app
 
 # Set working directory
@@ -27,5 +27,5 @@ WORKDIR /app
 # Expose port 6000
 EXPOSE 6000
 
-# Command to run the app using Gunicorn
+# Run app with Gunicorn
 CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:6000"]
