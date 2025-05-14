@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FileTabs } from "../components/editor/FileTabs";
 import { FileExplorer } from "../components/editor/FileExplorer";
 import { EditorPane } from "../components/editor/EditorPane";
@@ -7,6 +7,8 @@ import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
 import HtmlPreview from "../components/editor/HtmlPreview";
+import { useParams } from "react-router-dom";
+import axios from "axios";
 
 export default function EditorPage() {
   const [openFiles, setOpenFiles] = useState([]);
@@ -19,6 +21,30 @@ export default function EditorPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  const {projectId} = useParams(); 
+
+  const fetchProjectDetails = useCallback(async()=>{
+    console.log("Project ID ✅✅",projectId);
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/projects/project-details",
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+            email: localStorage.getItem("email"),
+            projectid: projectId,
+          },
+        }
+      );
+      console.log("Project Details :::", response.data);
+      console.log("Project Details name :::", response.data.name);
+      
+      setProjectName(response.data.name || "Untitled Project");
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+    }
+  },[projectId]);
+
   useEffect(() => {
     setShowPreview(false);
   }, [activeFile]);
@@ -29,19 +55,20 @@ export default function EditorPage() {
   const isHtmlFile = activeFile?.endsWith(".html");
 
   useEffect(() => {
-    const raw = localStorage.getItem("synProject");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setProjectName(parsed.name || "Untitled Project");
-      } catch (error) {
-        console.error("Failed to parse project data:", error);
-        setProjectName("Untitled Project");
-      }
-    } else {
-      setProjectName("Untitled Project");
-    }
-  }, []);
+    fetchProjectDetails();
+    // const raw = localStorage.getItem("synProject");
+    // if (raw) {
+    //   try {
+    //     const parsed = JSON.parse(raw);
+    //     setProjectName(parsed.name || "Untitled Project");
+    //   } catch (error) {
+    //     console.error("Failed to parse project data:", error);
+    //     setProjectName("Untitled Project");
+    //   }
+    // } else {
+    //   setProjectName("Untitled Project");
+    // }
+  }, [fetchProjectDetails]);
 
   const detectLang = (file) => {
     if (!file) return "plaintext";
@@ -94,6 +121,8 @@ export default function EditorPage() {
               openFiles={openFiles}
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
+              sessionName={projectName}
+              roomOrProjectId={projectId}
             />
           )}
         </div>

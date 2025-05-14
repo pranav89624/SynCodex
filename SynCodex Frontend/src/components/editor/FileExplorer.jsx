@@ -1,25 +1,46 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import {
   FilePlus,
   FolderPlus,
   FolderClosed,
   FolderOpen,
-  File, 
-  Download ,
+  File,
+  Download,
 } from "lucide-react";
 import { useLocation } from "react-router-dom";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
+import axios from "axios";
 
-export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roomId, sessionName }) => { 
+export const FileExplorer = ({
+  openFiles,
+  setOpenFiles,
+  setActiveFile,
+  yDoc,
+  roomId,
+  sessionName,
+  roomOrProjectId,
+}) => {
   const [expanded, setExpanded] = useState({});
-  const [projectName, setProjectName] = useState("Loading...");
+  // const [projectName, setProjectName] = useState("Loading...");
   const location = useLocation();
-  
-  const isCollab = (location.pathname.includes("/collab") || location.pathname.includes("/interview")) && Boolean(roomId);
 
-  const [folders, setFolders] = useState(isCollab ? [] : JSON.parse(localStorage.getItem("synProjectFolders") || "[]"));
+  const isCollab =
+    (location.pathname.includes("/collab") ||
+      location.pathname.includes("/interview")) &&
+    Boolean(roomId);
+
+  const [folders, setFolders] = useState([]);
+  // const [folders, setFolders] = useState(isCollab ? [] : JSON.parse(localStorage.getItem("synProjectFolders") || "[]"));
   const yFoldersMap = yDoc?.getMap ? yDoc.getMap("folders") : null;
+
+  // const fetchFolderStructure = useCallback(async () => {
+  //   if (isCollab) {
+  //     //
+  //   } else {
+  //     //
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (!isCollab || !yFoldersMap) return;
@@ -38,34 +59,66 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roo
     return () => yFoldersMap.unobserveDeep(updateFolders);
   }, [isCollab, yFoldersMap]);
 
+  // useEffect(() => {
+  //   if (location.pathname === "/editor") {
+  //     const raw = localStorage.getItem("synProject");
+  //     try {
+  //       const parsed = raw ? JSON.parse(raw) : {};
+  //       setProjectName(parsed.name || "Untitled");
+  //     } catch {
+  //       setProjectName("Untitled");
+  //     }
+  //   } else {
+  //     setProjectName(sessionName);
+  //   }
+  // }, [location.pathname, sessionName]);
 
-  useEffect(() => {
-    if (location.pathname === "/editor") {
-      const raw = localStorage.getItem("synProject");
-      try {
-        const parsed = raw ? JSON.parse(raw) : {};
-        setProjectName(parsed.name || "Untitled");
-      } catch {
-        setProjectName("Untitled");
-      }
-    } else {
-      setProjectName(sessionName);
-    }
-  }, [location.pathname, sessionName]);  
-
-  const handleAddFolder = () => {
+  const handleAddFolder = async () => {
     const name = prompt("Enter folder name:");
     if (!name) return;
 
     if (isCollab) {
-      if (yFoldersMap.has(name)) return;
-      yFoldersMap.set(name, { files: [] });
+      // collab room create api
+      console.log("Collab chalue hai");
     } else {
-      if (folders.some(f => f.name === name)) return;
-      const newFolders = [...folders, { name, files: [] }];
-      setFolders(newFolders);
-      localStorage.setItem("synProjectFolders", JSON.stringify(newFolders));
+      try {
+        const res = await axios.post(
+  "http://localhost:5000/api/projects/create-project-folder-structure",
+  {
+    folderName: name,
+    files: [
+      {
+        name: "App.js",
+        content: "console.log('Hello');",
+        language: "js",
+      },
+    ],
+  },
+  {
+    headers: {
+      token: localStorage.getItem("token"),
+      email: localStorage.getItem("email"),
+      projectid: roomOrProjectId,
+    },
+  }
+);
+
+
+        console.log("Project Folder Structure :: ", res.data);
+      } catch (error) {
+        console.error("Project Folder Creation Failed :", error);
+      }
     }
+
+    // if (isCollab) {
+    //   if (yFoldersMap.has(name)) return;
+    //   yFoldersMap.set(name, { files: [] });
+    // } else {
+    //   if (folders.some(f => f.name === name)) return;
+    //   const newFolders = [...folders, { name, files: [] }];
+    //   setFolders(newFolders);
+    //   localStorage.setItem("synProjectFolders", JSON.stringify(newFolders));
+    // }
   };
 
   const handleAddFile = () => {
@@ -85,7 +138,7 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roo
       });
       yFoldersMap.set(folderName, folder);
     } else {
-      const updatedFolders = folders.map(folder =>
+      const updatedFolders = folders.map((folder) =>
         folder.name === folderName
           ? {
               ...folder,
@@ -109,35 +162,35 @@ export const FileExplorer = ({ openFiles, setOpenFiles, setActiveFile, yDoc, roo
   };
 
   const handleDownloadSession = async () => {
-  const zip = new JSZip();
+    const zip = new JSZip();
 
-  for (const folder of folders) {
-    for (const file of folder.files) {
-      const filePath = `${folder.name}/${file.name}`;
-      let content = "";
+    for (const folder of folders) {
+      for (const file of folder.files) {
+        const filePath = `${folder.name}/${file.name}`;
+        let content = "";
 
-      if (yDoc) {
-        const yText = yDoc.getText(file.name);
-        content = yText.toString();
-      } else {
-        content = localStorage.getItem(`file-${file.name}`) || "";
+        if (yDoc) {
+          const yText = yDoc.getText(file.name);
+          content = yText.toString();
+        } else {
+          content = localStorage.getItem(`file-${file.name}`) || "";
+        }
+
+        zip.file(filePath, content);
       }
-
-      zip.file(filePath, content);
     }
-  }
 
-  const blob = await zip.generateAsync({ type: "blob" });
-  const zipName = projectName || "synCodex-session";
+    const blob = await zip.generateAsync({ type: "blob" });
+    const zipName = sessionName || "synCodex-session";
 
-  saveAs(blob, `${zipName}.zip`);
-};
+    saveAs(blob, `${zipName}.zip`);
+  };
 
   return (
     <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] flex flex-col justify-between h-full bg-[#21232f]">
       <div>
         <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
-          {projectName}
+          {sessionName}
         </div>
         <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
           <button

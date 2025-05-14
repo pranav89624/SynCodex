@@ -41,7 +41,7 @@ function App() {
           <Route path="/dashboard" element={<ProtectedRoute> <Dashboard /> </ProtectedRoute>}/>
           <Route path="/forgot-password" element={<ForgotPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/editor" element={<ProtectedRoute> <EditorPage /> </ProtectedRoute>} />
+          <Route path="/editor/:projectId" element={<ProtectedRoute> <EditorPage /> </ProtectedRoute>} />
           <Route path="/interview-editor/:roomId" element={<ProtectedRoute> <InterviewEditorPage /> </ProtectedRoute>} />
           <Route path="/collab-editor/:roomId" element={<ProtectedRoute> <CollabEditorPage /> </ProtectedRoute>} />
           <Route path="/interview-guidelines" element={<ProtectedRoute> <InterviewGuidelines /> </ProtectedRoute>} />
