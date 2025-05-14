@@ -12,8 +12,8 @@ const useMeta = (override = {}) => {
     if (path.includes('contact')) return 'contact';
     if (path.includes('faq')) return 'faq';
     if (path.includes('licences')) return 'licences';
-    if (path.includes('forgot-password')) return 'forgot-password';
-    if (path.includes('reset-password')) return 'reset-password';
+    if (path.includes('forgot-password')) return 'forgotPassword';
+    if (path.includes('reset')) return 'resetPassword';
     if (path.includes('login')) return 'login';
     if (path.includes('signup')) return 'signup';
     if (path.includes('dashboard')) return 'dashboard';

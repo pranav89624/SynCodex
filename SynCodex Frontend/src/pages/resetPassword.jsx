@@ -53,11 +53,12 @@ const ResetPassword = () => {
           className="flex flex-col justify-center items-center"
         >
           {/* New Password Field */}
-          <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
+          <label htmlFor="password" className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
             New Password
           </label>
           <div className="relative w-[70%]">
             <input
+              id="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -65,8 +66,11 @@ const ResetPassword = () => {
               required
             />
             <button
+              title="Toggle Password Visibility"
+              name="Toggle Password Visibility"
+              aria-label="Toggle Password Visibility"
               type="button"
-              className="absolute right-4 top-6 text-gray-400 cursor-pointer text-lg"
+              className="absolute right-4 top-5 p-1 text-gray-400 cursor-pointer text-lg"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -74,11 +78,12 @@ const ResetPassword = () => {
           </div>
 
           {/* Confirm Password Field */}
-          <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
+          <label htmlFor="confirmPassword" className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
             Confirm Password
           </label>
           <div className="relative w-[70%]">
             <input
+              id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -86,8 +91,11 @@ const ResetPassword = () => {
               required
             />
             <button
+              title="Toggle Password Visibility"
+              name="Toggle Password Visibility"
+              aria-label="Toggle Password Visibility"
               type="button"
-              className="absolute right-4 top-6 text-gray-400 cursor-pointer text-lg"
+              className="absolute right-4 top-5 p-1 text-gray-400 cursor-pointer text-lg"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

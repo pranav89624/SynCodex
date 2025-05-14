@@ -1,5 +1,5 @@
 import React from "react";
-import laptopImage from "../assets/home_laptop_image.png";
+import laptopImage from "../assets/home_laptop_image.webp";
 
 const Welcome = () => {
   return (

@@ -37,10 +37,11 @@ const ForgotPassword = () => {
           onSubmit={handleForgotPassword}
           className="flex flex-col justify-center items-center"
         >
-          <label className="flex w-full text-gray-300 text-sm mb-2">
+          <label htmlFor="email" className="flex w-full text-gray-300 text-sm mb-2">
             Email
           </label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +60,7 @@ const ForgotPassword = () => {
             )}
           </button>
         </form>
-        <p className="justify-self-start pt-4 text-blue-500 text-xs">
+        <p className="justify-self-start pt-4 text-[#BEDFF9] text-xs">
           <Link to={"/login"}>Go Back to login page</Link>
         </p>
       </div>
