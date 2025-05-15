@@ -250,7 +250,6 @@ export const FileExplorer = ({
           {folders.map((folder) => (
             <div 
               key={folder.name}
-              className="truncate"
               title={folder.name}
             >
               <div
@@ -262,12 +261,14 @@ export const FileExplorer = ({
                   }))
                 }
               >
-                {expanded[folder.name] ? (
-                  <FolderOpen color="white" height={"20"} />
-                ) : (
-                  <FolderClosed color="white" height={"20"} />
-                )}{" "}
-                {folder.name}
+                <div>
+                  {expanded[folder.name] ? (
+                    <FolderOpen color="white" height={"20"} />
+                  ) : (
+                    <FolderClosed color="white" height={"20"} />
+                  )}{" "}
+                </div>
+                <p className="truncate">{folder.name}</p>
               </div>
               {expanded[folder.name] &&
                 folder.files.map((file) => (
@@ -282,7 +283,8 @@ export const FileExplorer = ({
                       setActiveFile(file.name);
                     }}
                   >
-                    <File color="white" height={"20"} /> {file.name}
+                    <div><File color="white" height={"20"} /></div> 
+                    <p className="truncate">{file.name}</p>
                   </div>
                 ))}
             </div>
