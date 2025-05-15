@@ -21,21 +21,24 @@
 // export default router;
 
 import express from 'express';
-import { createProjectFolderStructure, createProject, getMyProjects, getProjectDetails} from '../controllers/createProjectController.js';
+import { createProjectFolder, createProject,createProjectFile, getMyProjects, getProjectDetails,getProjectFolderStructure} from '../controllers/createProjectController.js';
 
 const router = express.Router();
 
 // Get all projects
 router.get('/my-projects', getMyProjects);
-
 // ✅ This matches '/api/projects/create-project'
 router.post('/create-project', createProject);
 
+
 // Get Specific Project Details
 router.get('/project-details', getProjectDetails);
-
-// create folder Structure 
-router.post('/create-project-folder-structure',createProjectFolderStructure);
+// create project folder
+router.post('/create-project-folder',createProjectFolder);
+// create project file
+router.post('/create-project-file',createProjectFile);
+// Get project folder structure
+router.get('/project-folder-structure',getProjectFolderStructure);
 
 
 export default router;

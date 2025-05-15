@@ -2,7 +2,7 @@ import { db } from "../config/firebase.js";
 import { v4 as uuidv4 } from "uuid";
 import { nanoid } from "nanoid";
 
-// Create project (uers - email - projects - projectId)
+// Create project (uers -> email -> projects -> projectId)
 export const createProject = async (req, res) => {
   try {
     const { token, email, name, description } = req.body;
@@ -36,6 +36,7 @@ export const createProject = async (req, res) => {
   }
 };
 
+// Get All Projects
 export const getMyProjects = async (req, res) => {
   const email = req.headers.email; // ✅ Read from headers
 
@@ -62,6 +63,7 @@ export const getMyProjects = async (req, res) => {
   }
 };
 
+// Get specific project detail by project id
 export const getProjectDetails = async (req, res) => {
   // const email = req.headers.email; // ✅ Read from headers
   // const projectId = req.headers.projectid;
@@ -94,12 +96,12 @@ export const getProjectDetails = async (req, res) => {
   }
 };
 
-export const createProjectFolderStructure = async (req, res) => {
+// Create folder in db (project -> folderstructure collection)
+export const createProjectFolder = async (req, res) => {
   try {
-    // const { email, projectId } = req.headers;
     const email = req.headers["email"];
     const projectId = req.headers["projectid"];
-    const { folderName, files = [] } = req.body;
+    const { folderName } = req.body;
 
     if (!email || !projectId || !folderName) {
       return res
@@ -117,46 +119,112 @@ export const createProjectFolderStructure = async (req, res) => {
 
     const folderSnap = await folderRef.get();
 
-    // If folder exists, update files
-    // if (folderSnap.exists) {
-    //   const existingData = folderSnap.data();
-    //   const updatedFiles = [...(existingData.files || []), ...files];
-
-    //   await folderRef.update({ files: updatedFiles });
-    //   console.log("Folder create data ✅✅ : ",folderSnap.data());
-    // } else {
-    //   // Folder doesn't exist, create new
-    //   await folderRef.set({
-    //     name: folderName,
-    //     files: files || [],
-    //   });
-    //   console.log("Folder create data ✅✅ : ",folderSnap.data());
-    // }
-
     if (folderSnap.exists) {
-  const existingData = folderSnap.data();
-  const updatedFiles = [...(existingData.files || []), ...files];
-  await folderRef.update({ files: updatedFiles });
+      return res.status(409).json({ error: "Folder already exists" });
+    }
 
-  // Re-fetch updated snapshot
-  const updatedSnap = await folderRef.get();
-  return res.status(200).json(updatedSnap.data());
-} else {
-  await folderRef.set({
-    name: folderName,
-    files: files || [],
-  });
+    // ✅ Create empty folder with name and empty files array
+    await folderRef.set({
+      name: folderName,
+      files: [],
+    });
 
-  // Fetch after creation
-  const newSnap = await folderRef.get();
-  return res.status(200).json(newSnap.data());
-}
+    return res.status(200).json({ message: "Folder created" });
 
-
-    // return res.status(200).json(folderSnap.data());
-    // return res.status(200).json({ message: "Folder structure created successfully" });
+    // 🔄 Fetch newly created folder data
+    // const newSnap = await folderRef.get();
+    // return res.status(200).json(newSnap.data());
   } catch (error) {
-    console.error("Error updating folder structure:", error);
+    console.error("Error creating folder:", error);
     return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// Create file in folder -> files[]
+export const createProjectFile = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const projectId = req.headers["projectid"];
+    const folderName = req.headers["foldername"];
+    const { fileName } = req.body;
+
+    if (!email || !projectId || !folderName || !fileName) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const folderRef = db
+    .collection("users")
+    .doc(email)
+    .collection("projects")
+    .doc(projectId)
+    .collection("folderStructure")
+    .doc(folderName);
+    
+    const folderSnap = await folderRef.get();
+    console.log("folder snap check :", folderSnap.data());
+    
+    if (!folderSnap.exists) {
+      return res.status(404).json({ error: "Folder does not exist" });
+    }
+    
+    const existingFiles = folderSnap.data().files || [];
+
+    const extension = fileName.includes(".")
+      ? fileName.split(".").pop().toLowerCase()
+      : "plaintext";
+
+    const language = extension || "plaintext";
+
+    const fileId = nanoid(12);
+
+    const newFile = {
+      id: fileId,
+      name: fileName,
+      language,
+      content: "", // initially empty
+    };
+
+    const updatedFiles = [...existingFiles, newFile];
+
+    await folderRef.update({ files: updatedFiles });
+    console.log("Updated Files ✅✅ ",updatedFiles);
+
+    return res.status(200).json({ message: "File created", file: newFile });
+  } catch (error) {
+    console.error("Error creating file:", error);
+    return res.status(500).json({ error: "Failed to create file" });
+  }
+};
+
+// Get project folder structure by project id
+export const getProjectFolderStructure = async (req, res) => {
+  // const email = req.headers.email; // ✅ Read from headers
+  // const projectId = req.headers.projectid;
+
+  const email = req.headers["email"];
+  const projectId = req.headers["projectid"];
+
+  if (!email || !projectId) {
+    return res.status(400).json({ error: "Email and projectId are required" });
+  }
+
+  try {
+    const foldersRef = db
+      .collection("users")
+      .doc(email)
+      .collection("projects")
+      .doc(projectId)
+      .collection("folderStructure");
+    const folderSnapshot = await foldersRef.get();
+
+    const folders = folderSnapshot.docs.map((doc) => ({
+      folderName: doc.name,
+      ...doc.data(),
+    }));
+    console.log("Folder ➡️➡️ ",folders);
+    return res.status(200).json(folders);
+  } catch (error) {
+    console.error("Error fetching project folders:", error);
+    return res.status(500).json({ error: "Failed to fetch project folders" });
   }
 };
