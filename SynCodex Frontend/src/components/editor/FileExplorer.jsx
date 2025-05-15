@@ -246,7 +246,7 @@ export const FileExplorer = ({
           </button>
         </div>
 
-        <div className="space-y-2 flex flex-col overflow-auto">
+        <div className="overflow-y-auto max-h-[calc(100vh-270px)] space-y-2">
           {folders.map((folder) => (
             <div key={folder.name}>
               <div
