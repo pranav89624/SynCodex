@@ -228,7 +228,7 @@ export const FileExplorer = ({
   return (
     <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] flex flex-col justify-between h-full bg-[#21232f]">
       <div>
-        <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
+        <div className="sidebar-header px-4 py-2 h-20 overflow-clip text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
           {sessionName}
         </div>
         <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
@@ -246,9 +246,12 @@ export const FileExplorer = ({
           </button>
         </div>
 
-        <div className="overflow-y-auto max-h-[calc(100vh-270px)] space-y-2">
+        <div className="space-y-2 flex-1 overflow-y-auto max-h-[calc(100vh-270px)] ">
           {folders.map((folder) => (
-            <div key={folder.name}>
+            <div 
+              key={folder.name}
+              title={folder.name}
+            >
               <div
                 className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2"
                 onClick={() =>
@@ -258,18 +261,21 @@ export const FileExplorer = ({
                   }))
                 }
               >
-                {expanded[folder.name] ? (
-                  <FolderOpen color="white" height={"20"} />
-                ) : (
-                  <FolderClosed color="white" height={"20"} />
-                )}{" "}
-                {folder.name}
+                <div>
+                  {expanded[folder.name] ? (
+                    <FolderOpen color="white" height={"20"} />
+                  ) : (
+                    <FolderClosed color="white" height={"20"} />
+                  )}{" "}
+                </div>
+                <p className="truncate">{folder.name}</p>
               </div>
               {expanded[folder.name] &&
                 folder.files.map((file) => (
                   <div
                     key={file.name}
-                    className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3d415ab2] cursor-pointer flex items-center text-white gap-1 font-open-sans font-semibold"
+                    className="ml-4 mt-1 px-2 py-1 rounded hover:bg-[#3d415ab2] cursor-pointer flex items-center text-white gap-1 font-open-sans font-semibold truncate"
+                    title={file.name}
                     onClick={() => {
                       if (!openFiles.includes(file.name)) {
                         setOpenFiles([...openFiles, file.name]);
@@ -277,7 +283,8 @@ export const FileExplorer = ({
                       setActiveFile(file.name);
                     }}
                   >
-                    <File color="white" height={"20"} /> {file.name}
+                    <div><File color="white" height={"20"} /></div> 
+                    <p className="truncate">{file.name}</p>
                   </div>
                 ))}
             </div>
