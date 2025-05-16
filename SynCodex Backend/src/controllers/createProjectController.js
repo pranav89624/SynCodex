@@ -1,12 +1,10 @@
 import { db } from "../config/firebase.js";
-import { v4 as uuidv4 } from "uuid";
 import { nanoid } from "nanoid";
 
 // Create project (uers -> email -> projects -> projectId)
 export const createProject = async (req, res) => {
   try {
-    const { token, email, name, description } = req.body;
-    // const email = req.user.email;
+    const { email, name, description } = req.body;
 
     if (!name) {
       return res.status(400).json({ error: "Project name are required" });
@@ -38,7 +36,7 @@ export const createProject = async (req, res) => {
 
 // Get All Projects
 export const getMyProjects = async (req, res) => {
-  const email = req.headers.email; // ✅ Read from headers
+  const email = req.headers.email;
 
   if (!email) {
     return res.status(400).json({ error: "Email is required" });
@@ -65,8 +63,6 @@ export const getMyProjects = async (req, res) => {
 
 // Get specific project detail by project id
 export const getProjectDetails = async (req, res) => {
-  // const email = req.headers.email; // ✅ Read from headers
-  // const projectId = req.headers.projectid;
 
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
@@ -123,7 +119,7 @@ export const createProjectFolder = async (req, res) => {
       return res.status(409).json({ error: "Folder already exists" });
     }
 
-    // ✅ Create empty folder with name and empty files array
+    // Create empty folder with name and empty files array
     await folderRef.set({
       name: folderName,
       files: [],
@@ -131,9 +127,6 @@ export const createProjectFolder = async (req, res) => {
 
     return res.status(200).json({ message: "Folder created" });
 
-    // 🔄 Fetch newly created folder data
-    // const newSnap = await folderRef.get();
-    // return res.status(200).json(newSnap.data());
   } catch (error) {
     console.error("Error creating folder:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -153,20 +146,20 @@ export const createProjectFile = async (req, res) => {
     }
 
     const folderRef = db
-    .collection("users")
-    .doc(email)
-    .collection("projects")
-    .doc(projectId)
-    .collection("folderStructure")
-    .doc(folderName);
-    
+      .collection("users")
+      .doc(email)
+      .collection("projects")
+      .doc(projectId)
+      .collection("folderStructure")
+      .doc(folderName);
+
     const folderSnap = await folderRef.get();
     console.log("folder snap check :", folderSnap.data());
-    
+
     if (!folderSnap.exists) {
       return res.status(404).json({ error: "Folder does not exist" });
     }
-    
+
     const existingFiles = folderSnap.data().files || [];
 
     const extension = fileName.includes(".")
@@ -181,13 +174,13 @@ export const createProjectFile = async (req, res) => {
       id: fileId,
       name: fileName,
       language,
-      content: "", // initially empty
+      content: "",
     };
 
     const updatedFiles = [...existingFiles, newFile];
 
     await folderRef.update({ files: updatedFiles });
-    console.log("Updated Files ✅✅ ",updatedFiles);
+    console.log("Updated Files ✅✅ ", updatedFiles);
 
     return res.status(200).json({ message: "File created", file: newFile });
   } catch (error) {
@@ -198,8 +191,6 @@ export const createProjectFile = async (req, res) => {
 
 // Get project folder structure by project id
 export const getProjectFolderStructure = async (req, res) => {
-  // const email = req.headers.email; // ✅ Read from headers
-  // const projectId = req.headers.projectid;
 
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
@@ -218,13 +209,92 @@ export const getProjectFolderStructure = async (req, res) => {
     const folderSnapshot = await foldersRef.get();
 
     const folders = folderSnapshot.docs.map((doc) => ({
-      folderName: doc.name,
+      name: doc.id,
       ...doc.data(),
     }));
-    console.log("Folder ➡️➡️ ",folders);
+    console.log("Folder ➡️➡️ ", folders);
     return res.status(200).json(folders);
   } catch (error) {
     console.error("Error fetching project folders:", error);
     return res.status(500).json({ error: "Failed to fetch project folders" });
+  }
+};
+
+// Get file content
+export const getFileContent = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const projectId = req.headers["projectid"];
+    const { folderName, fileName } = req.body;
+
+    if (!email || !projectId || !folderName || !fileName) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const folderRef = db
+      .collection("users")
+      .doc(email)
+      .collection("projects")
+      .doc(projectId)
+      .collection("folderStructure")
+      .doc(folderName);
+
+    const folderSnap = await folderRef.get();
+    if (!folderSnap.exists) {
+      return res.status(404).json({ error: "Folder not found" });
+    }
+
+    const file = folderSnap.data().files.find(f => f.name === fileName);
+    if (!file) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    return res.status(200).json({ content: file.content });
+  } catch (error) {
+    console.error("Error fetching file content:", error);
+    return res.status(500).json({ error: "Failed to fetch file content" });
+  }
+};
+
+// Update file content
+export const updateFileContent = async (req, res) => {
+  try {
+    const { folderName, fileName, content } = req.body;
+    const email = req.headers["email"];
+    const projectId = req.headers["projectid"];
+
+    if (!email || !projectId || !folderName || !fileName) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    const folderRef = db
+      .collection("users")
+      .doc(email)
+      .collection("projects")
+      .doc(projectId)
+      .collection("folderStructure")
+      .doc(folderName);
+
+    const folderSnap = await folderRef.get();
+    if (!folderSnap.exists) {
+      return res.status(404).json({ error: "Folder not found" });
+    }
+
+    const files = folderSnap.data().files || [];
+    const fileIndex = files.findIndex(f => f.name === fileName);
+
+    if (fileIndex === -1) {
+      return res.status(404).json({ error: "File not found" });
+    }
+
+    // Update the file content
+    files[fileIndex].content = content;
+
+    await folderRef.update({ files });
+
+    return res.status(200).json({ message: "Content updated successfully" });
+  } catch (error) {
+    console.error("Full error:", error);
+    return res.status(500).json({ error: "Failed to update content" });
   }
 };
