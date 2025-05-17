@@ -98,7 +98,6 @@ export const EditorPane = ({ activeFile, onCodeChange, projectId }) => {
       if (fileName.endsWith(".c") || activeFile.endsWith(".cpp")) return "cpp";
       return "plaintext";
     } catch (error) {
-      toast.error("Error detecting language");
       return "plaintext";
     }
   };
