@@ -7,12 +7,9 @@ import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
 import HtmlPreview from "../components/editor/HtmlPreview";
-<<<<<<< HEAD
 import { useParams } from "react-router-dom";
 import API from "../services/api";
-=======
 import useMeta from "../hooks/useMeta";
->>>>>>> main
 
 export default function EditorPage() {
   useMeta();
@@ -162,13 +159,9 @@ export default function EditorPage() {
                     showPreview ? "w-1/2" : "w-full"
                   } transition-all duration-300`}
                 >
-<<<<<<< HEAD
                   {activeFile && (
                     <EditorPane activeFile={activeFile} onCodeChange={setCode} projectId={projectId}/>
                   )}
-=======
-                  <EditorPane activeFile={activeFile} onCodeChange={setCode} />
->>>>>>> main
                 </div>
 
                 {showPreview && (
