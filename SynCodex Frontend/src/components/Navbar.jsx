@@ -18,7 +18,7 @@ const Navbar = ({ hideStartCoding }) => {
         <div className="relative flex items-center justify-end">
           <div className="w-auto max-w-full flex">
             <div className="flex items-center space-x-4">
-              <Link to={"/"}>
+              <Link to={"/"} aria-label="Go to homepage">
                 <img
                   src="/SynCodex icon.png"
                   alt="icon"
@@ -36,6 +36,10 @@ const Navbar = ({ hideStartCoding }) => {
           <div className="flex w-full items-center justify-around">
             <div>
               <button
+                type="button"
+                aria-controls="navbarToggler"
+                name="navbarToggler"
+                title="navbarToggler"
                 onClick={() => setOpen(!open)}
                 id="navbarToggler"
                 className={` ${

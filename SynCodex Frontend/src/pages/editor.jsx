@@ -7,10 +7,15 @@ import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
 import HtmlPreview from "../components/editor/HtmlPreview";
+<<<<<<< HEAD
 import { useParams } from "react-router-dom";
 import API from "../services/api";
+=======
+import useMeta from "../hooks/useMeta";
+>>>>>>> main
 
 export default function EditorPage() {
+  useMeta();
   const [openFiles, setOpenFiles] = useState([]);
   const [activeFile, setActiveFile] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -115,6 +120,10 @@ export default function EditorPage() {
         <div className="flex flex-col flex-1 h-full">
           <div className="bg-[#21232f] flex items-center border-b border-[#e4e6f3ab]">
             <button
+              title="toggle sidebar"
+              aria-label="toggle sidebar"
+              type="button"
+              name="toggle sidebar"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="absolute top-16 left-0 flex z-20 bg-[#3D415A] hover:opacity-90 cursor-pointer text-white p-2 rounded-md transition-all duration-300"
             >
@@ -153,9 +162,13 @@ export default function EditorPage() {
                     showPreview ? "w-1/2" : "w-full"
                   } transition-all duration-300`}
                 >
+<<<<<<< HEAD
                   {activeFile && (
                     <EditorPane activeFile={activeFile} onCodeChange={setCode} projectId={projectId}/>
                   )}
+=======
+                  <EditorPane activeFile={activeFile} onCodeChange={setCode} />
+>>>>>>> main
                 </div>
 
                 {showPreview && (

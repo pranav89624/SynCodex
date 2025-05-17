@@ -303,12 +303,20 @@ export const FileExplorer = ({
           <button
             className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
             onClick={handleAddFile}
+            title="Add File"
+            aria-label="Add File"
+            type="button"
+            name="Add File"
           >
             <FilePlus color="white" height={24} />
           </button>
           <button
             className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
             onClick={handleAddFolder}
+            title="Add Folder"
+            aria-label="Add Folder"
+            type="button"
+            name="Add Folder"
           >
             <FolderPlus color="white" height={24} />
           </button>
