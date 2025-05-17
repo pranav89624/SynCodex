@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { FileTabs } from "../components/editor/FileTabs";
 import { FileExplorer } from "../components/editor/FileExplorer";
 import { EditorPane } from "../components/editor/EditorPane";
@@ -7,12 +7,17 @@ import { PanelLeft, PanelRight } from "lucide-react";
 import { runCode } from "../services/codeExec";
 import CodeExecutionResult from "../components/editor/CodeExecutionResult";
 import HtmlPreview from "../components/editor/HtmlPreview";
+<<<<<<< HEAD
+import { useParams } from "react-router-dom";
+import API from "../services/api";
+=======
 import useMeta from "../hooks/useMeta";
+>>>>>>> main
 
 export default function EditorPage() {
   useMeta();
   const [openFiles, setOpenFiles] = useState([]);
-  const [activeFile, setActiveFile] = useState();
+  const [activeFile, setActiveFile] = useState(null);
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [projectName, setProjectName] = useState("Loading...");
   const [code, setCode] = useState("");
@@ -21,38 +26,48 @@ export default function EditorPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  const { projectId } = useParams();
+
+  const fetchProjectDetails = useCallback(async () => {
+    try {
+      const response = await API.get(
+        "/api/projects/project-details",
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+            email: localStorage.getItem("email"),
+            projectid: projectId,
+          },
+        }
+      );
+
+      setProjectName(response.data.name || "Untitled Project");
+    } catch (error) {
+      console.error("Error fetching project details:", error);
+    }
+  }, [projectId]);
+
   useEffect(() => {
     setShowPreview(false);
-  }, [activeFile]);
+  }, [activeFile?.name]);
 
   const handlePreviewClick = () => setShowPreview((prev) => !prev);
   const handleClosePreview = () => setShowPreview(false);
 
-  const isHtmlFile = activeFile?.endsWith(".html");
+  const isHtmlFile = activeFile?.name?.endsWith?.(".html");
 
   useEffect(() => {
-    const raw = localStorage.getItem("synProject");
-    if (raw) {
-      try {
-        const parsed = JSON.parse(raw);
-        setProjectName(parsed.name || "Untitled Project");
-      } catch (error) {
-        console.error("Failed to parse project data:", error);
-        setProjectName("Untitled Project");
-      }
-    } else {
-      setProjectName("Untitled Project");
-    }
-  }, []);
+    fetchProjectDetails();
+  }, [fetchProjectDetails]);
 
   const detectLang = (file) => {
-    if (!file) return "plaintext";
-    if (file.endsWith(".py")) return "python";
-    if (file.endsWith(".js")) return "js";
-    if (file.endsWith(".ts")) return "ts";
-    if (file.endsWith(".java")) return "java";
-    if (file.endsWith(".cpp")) return "cpp";
-    if (file.endsWith(".c")) return "c";
+    if (!file?.name) return "plaintext";
+    if (file?.name.endsWith(".py")) return "python";
+    if (file?.name.endsWith(".js")) return "js";
+    if (file?.name.endsWith(".ts")) return "ts";
+    if (file?.name.endsWith(".java")) return "java";
+    if (file?.name.endsWith(".cpp")) return "cpp";
+    if (file?.name.endsWith(".c")) return "c";
     return "plaintext";
   };
 
@@ -82,7 +97,7 @@ export default function EditorPage() {
       <EditorNav
         onRunClick={handleRunClick}
         onPreviewClick={handlePreviewClick}
-        isHtmlFile={isHtmlFile}
+        isHtmlFile={!!isHtmlFile}
       />
 
       <div className="h-[calc(100vh-4rem)] flex overflow-x-clip bg-[#21232f]">
@@ -96,6 +111,8 @@ export default function EditorPage() {
               openFiles={openFiles}
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
+              sessionName={projectName}
+              roomOrProjectId={projectId}
             />
           )}
         </div>
@@ -145,7 +162,13 @@ export default function EditorPage() {
                     showPreview ? "w-1/2" : "w-full"
                   } transition-all duration-300`}
                 >
+<<<<<<< HEAD
+                  {activeFile && (
+                    <EditorPane activeFile={activeFile} onCodeChange={setCode} projectId={projectId}/>
+                  )}
+=======
                   <EditorPane activeFile={activeFile} onCodeChange={setCode} />
+>>>>>>> main
                 </div>
 
                 {showPreview && (

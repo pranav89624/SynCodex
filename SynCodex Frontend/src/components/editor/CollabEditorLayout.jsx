@@ -4,6 +4,7 @@ import { FileExplorer } from "./FileExplorer";
 import { FileTabs } from "./FileTabs";
 import { PanelLeft, PanelRight } from "lucide-react";
 import VideoCallSection from "../video_call/VideoCallSection";
+import { SocketProvider } from "../../context/SocketProvider";
 import { CollabEditorPane } from "./CollabEditorPane";
 import { useYjsProvider } from "../../hooks/useYjsProvider";
 import CodeExecutionResult from "./CodeExecutionResult";
@@ -164,10 +165,12 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
                 transition: isInterviewMode ? "none" : "width 0.3s ease",
               }}
             >
-              <VideoCallSection
-                roomIdVCS={roomId}
-                isInterviewMode={isInterviewMode}
-              />
+              <SocketProvider>
+                <VideoCallSection
+                  roomIdVCS={roomId}
+                  isInterviewMode={isInterviewMode}
+                />
+              </SocketProvider>
             </div>
           </div>
         </div>

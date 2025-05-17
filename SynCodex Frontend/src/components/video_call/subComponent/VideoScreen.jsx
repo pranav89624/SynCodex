@@ -2,13 +2,17 @@ import AppColors from "../../../utils/appColors";
 import AppIcons from "../../../utils/appIcons";
 
 const VideoScreen = ({
-  isHost,
   isInterviewMode,
-  micStaus = true,
-  videoRef,
-  displayName,
+  localVideoRef,
+  remoteVideoRef,
+  localMicStatus,
+  remoteMicStatus,
+  hostDisplayName,
+  guestDisplayName,
+  localCamDisable,
+  remoteCamDisable,
+  isRemoteConnected,
 }) => {
-
   return (
     <div
       className={`relative overflow-hidden rounded-xl bg-[#000] ${
