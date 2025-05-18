@@ -1,12 +1,10 @@
-// import { useState } from "react";
 import IconButton from "../../IconButton";
 import AppColors from "../../../utils/appColors";
 import AppIcons from "../../../utils/appIcons";
 
 const VideoCallToolbar = ({micDisable,camDisable,speakerOff, toggleMic,toggleCam,toggleSpeaker,toggleEndCall,toggleMore }) => {
-
   return (
-    <div className="flex flex-col justify-end items-center pt-1 sm:pt-1.5 md:pt-2 lg:pt-3 h-full">
+     <div className="flex flex-col justify-end items-center pt-1 sm:pt-1.5 md:pt-2 lg:pt-3 h-full">
       <div
         className={`flex gap-3 p-1.5 sm:p-2 md:p-3 rounded-xl border-1 border-[#E4E6F3]`}
       >

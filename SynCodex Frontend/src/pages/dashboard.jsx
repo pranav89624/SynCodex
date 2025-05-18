@@ -7,8 +7,10 @@ import UserAvatar from "../components/userAvatar";
 import DashboardView from "../components/dashboard/DashboardView";
 import AccountView from "../components/dashboard/AccountView";
 import { useUser } from "../context/UserContext";
+import useMeta from "../hooks/useMeta";
 
 export default function Dashboard() {
+  useMeta();
   const [activeTab, setActiveTab] = useState("sessions");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [Box, setBox] = useState(false);
@@ -33,6 +35,10 @@ export default function Dashboard() {
 
   const CustomButton = ({ children, onClick, className }) => (
     <button
+      type="button"
+      name="button"
+      title="button"
+      aria-label="button"
       onClick={onClick}
       className={`px-4 py-2 rounded-md transition-all duration-300 ${className}`}
     >
@@ -46,28 +52,38 @@ export default function Dashboard() {
   return (
     <div className="flex h-screen bg-[#21232f] text-white">
       {/* Sidebar */}
-      <aside className={`${
-        isSidebarOpen ? "w-64 " : "hidden"
-      } p-4 bg-[#21232f] flex flex-col justify-between border-r border-[#e4e6f3ab]`}>
+      <aside
+        className={`${
+          isSidebarOpen ? "w-64 " : "hidden"
+        } p-4 bg-[#21232f] flex flex-col justify-between border-r border-[#e4e6f3ab]`}
+      >
         <div>
-          <h1 className="text-[48px] font-semibold font-Chakra font-gradient">SynCodex</h1>
+          <h1 className="text-[48px] font-semibold font-Chakra font-gradient">
+            SynCodex
+          </h1>
           <UserAvatar />
           <nav className="mt-6 space-y-2">
             <CustomButton
               className={`w-full flex items-center justify-center cursor-pointer text-xl ${
-                activeTab === "sessions" ? "bg-[#3D415A]" : "bg-[#21232f] hover:bg-[#3D415A]"
+                activeTab === "sessions"
+                  ? "bg-[#3D415A]"
+                  : "bg-[#21232f] hover:bg-[#3D415A]"
               }`}
               onClick={() => setActiveTab("sessions")}
             >
-              <ClipboardList size={25} className="mr-2" />Activities
+              <ClipboardList size={25} className="mr-2" />
+              Activities
             </CustomButton>
             <CustomButton
               className={`w-full flex items-center justify-center cursor-pointer text-xl ${
-                activeTab === "account" ? "bg-[#3D415A]" : "bg-[#21232f] hover:bg-[#3D415A]"
+                activeTab === "account"
+                  ? "bg-[#3D415A]"
+                  : "bg-[#21232f] hover:bg-[#3D415A]"
               }`}
               onClick={() => setActiveTab("account")}
             >
-              <UserRound size={25} className="mr-2" />Account
+              <UserRound size={25} className="mr-2" />
+              Account
             </CustomButton>
             <CustomButton
               className="w-full flex items-center justify-center text-xl  text-red-400 hover:bg-[#3D415A] cursor-pointer"
@@ -89,9 +105,14 @@ export default function Dashboard() {
           >
             ☰
           </CustomButton>
-          <h1 className="text-[48px] font-semibold font-Chakra font-gradient ml-2 md:hidden w-[60%]">SynCodex</h1>
+          <h1 className="text-[48px] font-semibold font-Chakra font-gradient ml-2 md:hidden w-[60%]">
+            SynCodex
+          </h1>
           <div className="w-full flex justify-center items-center max-md:hidden">
-            <Search className="relative cursor-pointer left-7 text-white" size={18} />
+            <Search
+              className="relative cursor-pointer left-7 text-white"
+              size={18}
+            />
             <input
               type="text"
               placeholder="Search project or session..."
@@ -107,25 +128,33 @@ export default function Dashboard() {
             className="w-10 h-10 rounded-full md:hidden mr-3"
             onClick={toggleBox}
           />
-          <div className={`${
-            Box ? "" : "hidden"
-          } p-4 bg-[#21232f] flex flex-col shadow-xl rounded-xl justify-between absolute top-25 right-15`}>
+          <div
+            className={`${
+              Box ? "" : "hidden"
+            } p-4 bg-[#21232f] flex flex-col shadow-xl rounded-xl justify-between absolute top-25 right-15`}
+          >
             <nav className="mt-6 space-y-2">
               <CustomButton
                 className={`w-full flex items-center justify-center cursor-pointer text-xl ${
-                  activeTab === "sessions" ? "bg-[#3D415A]" : "bg-[#21232f] hover:bg-[#3D415A]"
+                  activeTab === "sessions"
+                    ? "bg-[#3D415A]"
+                    : "bg-[#21232f] hover:bg-[#3D415A]"
                 }`}
                 onClick={() => setActiveTab("sessions")}
               >
-                <ClipboardList size={25} className="mr-2" />Activities
+                <ClipboardList size={25} className="mr-2" />
+                Activities
               </CustomButton>
               <CustomButton
                 className={`w-full flex items-center justify-center cursor-pointer text-xl ${
-                  activeTab === "account" ? "bg-[#3D415A]" : "bg-[#21232f] hover:bg-[#3D415A]"
+                  activeTab === "account"
+                    ? "bg-[#3D415A]"
+                    : "bg-[#21232f] hover:bg-[#3D415A]"
                 }`}
                 onClick={() => setActiveTab("account")}
               >
-                <UserRound size={25} className="mr-2" />Account
+                <UserRound size={25} className="mr-2" />
+                Account
               </CustomButton>
               <CustomButton
                 className="w-full flex items-center justify-center text-xl  text-red-400 hover:bg-[#3D415A] cursor-pointer"
