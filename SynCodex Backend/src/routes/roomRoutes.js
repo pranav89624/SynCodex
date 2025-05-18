@@ -6,8 +6,9 @@ import {
   createRoomFolder,
   createRoomFile,
   getRoomFolderStructure,
-//   updateRoomFolderStructure,
+  deleteRoom,
 } from "../controllers/createRoomController.js";
+import { checkRoom, joinRoom } from "../controllers/joinRoomController.js";
 
 const router = express.Router();
 
@@ -28,12 +29,13 @@ router.post("/create-room-file", createRoomFile);
 // Get room folder structure
 router.get("/room-folder-structure", getRoomFolderStructure);
 
-// save changes to db
-// router.post("/update-room-folder-structure",updateRoomFolderStructure);
+// Join Room (joiner email -> roomId & owner email = data copy (room copy in joiner "rooms"))
+router.post("/join-room", joinRoom);
 
-// // Get project file content
-// router.get('/project-file-content',getProjectFileContent);
-// // Save project file content
-// router.post('/save-project-file-content',saveProjectFileContent);
+// Check room 
+router.post("/check-room", checkRoom);
+
+// Delete room 
+router.delete("/delete-room", deleteRoom);
 
 export default router;

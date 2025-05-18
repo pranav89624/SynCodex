@@ -3,12 +3,19 @@ import CreateRoomModal from "./CreateRoomModal";
 import CreateProjectModal from "./CreateProjectModal";
 import JoinRoomModal from "./JoinRoomModal";
 import axios from "axios";
+import { Trash } from "lucide-react";
+import DeleteRoomProjectModal from "./card_pop_menu/DeleteRoomProjectModal";
 
 export default function DashboardView() {
   const [roomModalOpen, setRoomModalOpen] = useState(false);
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
-
+  const [showDeleteModalOpen, setShowDeleteModalOpen] = useState(false);
+  const [deleteItemData, setDeleteItemData] = useState({
+    name: "",
+    type: "",
+    id: "",
+  });
 
   const [sessions, setSessions] = useState([]);
   const [projects, setProjects] = useState([]);
@@ -96,33 +103,55 @@ export default function DashboardView() {
       </div>
       {sessions.length === 0 ? (
         <p className="text-gray-400">
-          No sessions found. Click <b>"Create Room"</b> to create a new
-          session <b>OR</b> Click <b>"Join Room"</b> to collaborate in session.
+          No sessions found. Click <b>"Create Room"</b> to create a new session{" "}
+          <b>OR</b> Click <b>"Join Room"</b> to collaborate in session.
         </p>
       ) : (
         <div className="grid grid-cols-4 gap-4">
           {sessions.map((session, index) => (
             <div
               key={index}
-              className="bg-[#3D415A] p-4 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
-              onClick={() =>{
+              className="bg-[#3D415A] p-2 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
+              onClick={() => {
                 if (session.isInterviewMode) {
                   sessionStorage.setItem("roomId", session.roomId);
-          window.open("/interview-guidelines", "_blank");
-        } else {
-          window.open(`/collab-editor/${session.roomId}`, "_blank");
-        }
+                  window.open("/interview-guidelines", "_blank");
+                } else {
+                  window.open(`/collab-editor/${session.roomId}`, "_blank");
+                }
               }}
             >
-              <h3 className={`text-lg font-bold mb-1 ${session.isInterviewMode ? 'font-gradient':'text-white'}`}>{session.name}</h3>
-              <p className="text-sm text-gray-400 line-clamp-3 overflow-hidden">
+              <h3
+                className={`text-lg font-bold px-2 mt-2 mb-1 ${
+                  session.isInterviewMode ? "font-gradient" : "text-white"
+                }`}
+              >
+                {session.name}
+              </h3>
+              <p className="text-sm text-gray-400 px-2 line-clamp-3 overflow-hidden">
                 {session.description?.trim()
                   ? session.description
                   : "No Description Available"}
               </p>
-              <p className="text-sm mt-auto text-gray-300">
-                Date Created :- {formatDate(session.createdAt)}
-              </p>
+              <div className="flex mt-auto justify-between items-center">
+                <p className="text-sm text-gray-300 px-2">
+                  Date Created :- {formatDate(session.createdAt)}
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleteItemData({
+                      name: session.name,
+                      type: "room",
+                      id: session.roomId,
+                    });
+                    setShowDeleteModalOpen(true);
+                  }}
+                  className="bg-[#21232f] p-2 rounded-md cursor-pointer"
+                >
+                  <Trash size={16} className="text-red-400" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -145,20 +174,38 @@ export default function DashboardView() {
           {projects.map((project, index) => (
             <div
               key={index}
-              className="bg-[#3D415A] p-4 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
+              className="bg-[#3D415A] p-2 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
               onClick={() =>
                 window.open(`/editor/${project.projectId}`, "_blank")
               }
             >
-              <h3 className="text-lg font-bold mb-1">{project.name}</h3>
-              <p className="text-sm text-gray-400 line-clamp-3 overflow-hidden">
+              <h3 className="text-lg font-bold px-2 mt-2 mb-1">
+                {project.name}
+              </h3>
+              <p className="text-sm text-gray-400 px-2 line-clamp-3 overflow-hidden">
                 {project.description?.trim()
                   ? project.description
                   : "No Description Available"}
               </p>
-              <p className="text-sm mt-auto text-gray-300">
-                Date Created :- {formatDate(project.createdAt)}
-              </p>
+              <div className="flex mt-auto justify-between items-center">
+                <p className="text-sm text-gray-300 px-2">
+                  Date Created :- {formatDate(project.createdAt)}
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setDeleteItemData({
+                      name: project.name,
+                      type: "project",
+                      id: project.projectId,
+                    });
+                    setShowDeleteModalOpen(true);
+                  }}
+                  className="bg-[#21232f] p-2 rounded-md cursor-pointer"
+                >
+                  <Trash size={16} className="text-red-400" />
+                </button>
+              </div>
             </div>
           ))}
         </div>
@@ -172,6 +219,17 @@ export default function DashboardView() {
       )}
       {joinRoomModalOpen && (
         <JoinRoomModal onClose={() => setJoinRoomModalOpen(false)} />
+      )}
+      {/* For deleting project or room pop up */}
+      {showDeleteModalOpen && (
+        <DeleteRoomProjectModal
+          onClose={() => setShowDeleteModalOpen(false)}
+          name={deleteItemData.name}
+          type={deleteItemData.type}
+          roomOrProjectId={deleteItemData.id}
+          fetchProjects={fetchUserProjects}
+          fetchSessions={fetchUserSessions}
+        />
       )}
     </div>
   );

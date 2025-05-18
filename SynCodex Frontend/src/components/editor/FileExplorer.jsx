@@ -332,9 +332,15 @@ export const FileExplorer = ({
   return (
     <div className="text-sm border-r border-[#e4e6f3ab] min-w-[255px] max-w-[255px] flex flex-col justify-between h-full bg-[#21232f]">
       <div>
-        <div className="sidebar-header px-4 py-2 h-20 overflow-clip text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
-          {sessionName}
+        <div className="sidebar-header px-4 py-2 h-20 text-white text-lg font-semibold flex items-end border-b border-[#e4e6f3ab]">
+          <span
+            className="block max-w-full overflow-hidden text-ellipsis whitespace-nowrap"
+            title={sessionName}
+          >
+            {sessionName}
+          </span>
         </div>
+
         <div className="flex justify-end gap-4 px-10 mb-4 border-b border-[#e4e6f3ab]">
           <button
             className="p-2 rounded-sm cursor-pointer hover:bg-[#3D415A]"
@@ -367,7 +373,7 @@ export const FileExplorer = ({
                     <FolderOpen color="white" height={"20"} />
                   ) : (
                     <FolderClosed color="white" height={"20"} />
-                  )}{" "}
+                  )}
                 </div>
                 <p className="truncate">{folder.name}</p>
               </div>
@@ -394,8 +400,8 @@ export const FileExplorer = ({
           ))}
         </div>
       </div>
+
       <div className="px-4 py-2 border-t border-[#e4e6f3ab] flex flex-col gap-2 justify-center items-center">
-        //Download Button
         <button
           onClick={handleDownloadSession}
           className="p-2 rounded-sm cursor-pointer text-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#3D415A] text-white w-[10rem]"

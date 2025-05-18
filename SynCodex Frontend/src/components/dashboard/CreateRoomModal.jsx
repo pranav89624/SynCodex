@@ -37,11 +37,12 @@ export default function CreateRoomModal({ onClose }) {
         "http://localhost:5000/api/rooms/create-room",
         sessionData
       );
-
+ 
       console.log("Session Data :: ", res.data);
       if (res.status === 201) {
         toast.success("Room created successfully!");
         if (interviewMode) {
+          sessionStorage.setItem("roomId", roomId);
           window.open("/interview-guidelines", "_blank");
         } else {
           window.open(`/collab-editor/${roomId}`, "_blank");
