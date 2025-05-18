@@ -17,10 +17,10 @@ export const createRoom = async (req, res) => {
 
     if (!name || !roomId) {
       return res
-      .status(400)
-      .json({ error: "Project name, roomId are required" });
+        .status(400)
+        .json({ error: "Project name, roomId are required" });
     }
-    
+
     const userRef = db.collection("users").doc(email);
     const userSnap = await userRef.get();
 
@@ -36,12 +36,12 @@ export const createRoom = async (req, res) => {
       invitedPeople: invitedPeople || [],
       createdAt: new Date().toISOString(),
     };
-    
+
     await userRef.collection("rooms").doc(roomId).set(roomData);
 
     return res
       .status(201)
-      .json({ message: "Room created", roomId,roomData});
+      .json({ message: "Room created", roomId, roomData });
   } catch (error) {
     console.error("Error creating room:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -132,7 +132,7 @@ export const createRoomFolder = async (req, res) => {
       return res.status(409).json({ error: "Folder already exists" });
     }
 
-    // ✅ Create empty folder with name and empty files array
+    // Create empty folder with name and empty files array
     await folderRef.set({
       name: folderName,
       files: [],
@@ -158,20 +158,20 @@ export const createRoomFile = async (req, res) => {
     }
 
     const folderRef = db
-    .collection("users")
-    .doc(email)
-    .collection("rooms")
-    .doc(roomId)
-    .collection("folderStructure")
-    .doc(folderName);
-    
+      .collection("users")
+      .doc(email)
+      .collection("rooms")
+      .doc(roomId)
+      .collection("folderStructure")
+      .doc(folderName);
+
     const folderSnap = await folderRef.get();
     console.log("folder snap check :", folderSnap.data());
-    
+
     if (!folderSnap.exists) {
       return res.status(404).json({ error: "Folder does not exist" });
     }
-    
+
     const existingFiles = folderSnap.data().files || [];
 
     const extension = fileName.includes(".")
@@ -186,13 +186,13 @@ export const createRoomFile = async (req, res) => {
       id: fileId,
       name: fileName,
       language,
-      content: "", // initially empty
+      content: "",
     };
 
     const updatedFiles = [...existingFiles, newFile];
 
     await folderRef.update({ files: updatedFiles });
-    console.log("Updated Files ✅✅ ",updatedFiles);
+    console.log("Updated Files ✅✅ ", updatedFiles);
 
     return res.status(201).json({ message: "File created", file: newFile });
   } catch (error) {
@@ -221,10 +221,10 @@ export const getRoomFolderStructure = async (req, res) => {
     const folderSnapshot = await foldersRef.get();
 
     const folders = folderSnapshot.docs.map((doc) => ({
-      folderName: doc.name,
+      folderName: doc.id,
       ...doc.data(),
     }));
-    console.log("Folder ➡️➡️ ",folders);
+    console.log("Folder ", folders);
     return res.status(200).json(folders);
   } catch (error) {
     console.error("Error fetching room folders:", error);
@@ -232,46 +232,47 @@ export const getRoomFolderStructure = async (req, res) => {
   }
 };
 
-// Update entire room folder structure (save changes to db (folder file)) ❤️❤️❤️ working me nahi hai
-// export const updateRoomFolderStructure = async (req, res) => {
-//   try {
-//     const email = req.headers["email"];
-//     const roomId = req.headers["roomid"];
-//     const { folders } = req.body;
+// Add updateRoomFileContent
+export const updateRoomFileContent = async (req, res) => {
+  try {
+    const { folderName, fileName, content, isInterviewMode } = req.body;
+    if (isInterviewMode) {
+      return res.status(200).json({ message: "Interview mode - content not persisted" });
+    }
 
-//     if (!email || !roomId || !folders) {
-//       return res.status(400).json({ error: "Email, roomId, and folders are required" });
-//     }
+    const email = req.headers["email"];
+    const roomId = req.headers["roomid"];
 
-//     const foldersRef = db
-//       .collection("users")
-//       .doc(email)
-//       .collection("rooms")
-//       .doc(roomId)
-//       .collection("folderStructure");
+    if (!email || !roomId || !folderName || !fileName) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
 
-//     // 🔥 Delete all existing folders first
-//     const existingFoldersSnap = await foldersRef.get();
-//     const batch = db.batch();
+    const folderRef = db
+      .collection("users")
+      .doc(email)
+      .collection("rooms")
+      .doc(roomId)
+      .collection("folderStructure")
+      .doc(folderName);
 
-//     existingFoldersSnap.forEach((doc) => {
-//       batch.delete(doc.ref);
-//     });
+    const folderSnap = await folderRef.get();
+    if (!folderSnap.exists) {
+      return res.status(404).json({ error: "Folder not found" });
+    }
 
-//     // 🔥 Add updated folders
-//     folders.forEach((folder) => {
-//       const folderRef = foldersRef.doc(folder.name);
-//       batch.set(folderRef, {
-//         name: folder.name,
-//         files: folder.files || [],
-//       });
-//     });
+    const files = folderSnap.data().files || [];
+    const fileIndex = files.findIndex(f => f.name === fileName);
 
-//     await batch.commit();
+    if (fileIndex === -1) {
+      return res.status(404).json({ error: "File not found" });
+    }
 
-//     return res.status(200).json({ message: "Room structure updated successfully" });
-//   } catch (error) {
-//     console.error("Error updating room structure:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
+    files[fileIndex].content = content;
+    await folderRef.update({ files });
+
+    return res.status(200).json({ message: "Content updated successfully" });
+  } catch (error) {
+    console.error("Error updating file content:", error);
+    return res.status(500).json({ error: "Failed to update content" });
+  }
+};

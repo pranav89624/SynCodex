@@ -121,6 +121,7 @@ export default function DashboardView() {
                   : "No Description Available"}
               </p>
               <p className="text-sm mt-auto text-gray-300">
+                Room ID :-<span className="cursor-text"> {(session.roomId)}</span><br/>
                 Date Created :- {formatDate(session.createdAt)}
               </p>
             </div>

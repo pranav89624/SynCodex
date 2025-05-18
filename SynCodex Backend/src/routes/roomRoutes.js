@@ -6,7 +6,7 @@ import {
   createRoomFolder,
   createRoomFile,
   getRoomFolderStructure,
-//   updateRoomFolderStructure,
+  updateRoomFileContent,
 } from "../controllers/createRoomController.js";
 
 const router = express.Router();
@@ -28,12 +28,7 @@ router.post("/create-room-file", createRoomFile);
 // Get room folder structure
 router.get("/room-folder-structure", getRoomFolderStructure);
 
-// save changes to db
-// router.post("/update-room-folder-structure",updateRoomFolderStructure);
-
-// // Get project file content
-// router.get('/project-file-content',getProjectFileContent);
-// // Save project file content
-// router.post('/save-project-file-content',saveProjectFileContent);
+//update room file content
+router.put("/update-file-content", updateRoomFileContent);
 
 export default router;

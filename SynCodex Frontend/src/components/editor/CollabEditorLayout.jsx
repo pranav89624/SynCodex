@@ -137,6 +137,7 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
               setActiveFile={setActiveFile}
               roomOrProjectId={roomId}
               sessionName={sessionName}
+              isInterviewMode={isInterviewMode}
             />
           )}
         </div>
@@ -190,6 +191,8 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
                   ref={collabEditorRef}
                   activeFile={activeFile}
                   yDoc={yDoc}
+                  roomId={roomId}
+                  isInterviewMode={isInterviewMode}
                 />
               </div>
               {showOutput && (

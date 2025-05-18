@@ -19,6 +19,7 @@ export const FileExplorer = ({
   yDoc,
   sessionName,
   roomOrProjectId,
+  isInterviewMode,
 }) => {
   const [expanded, setExpanded] = useState({});
   const [folders, setFolders] = useState([]);
@@ -37,7 +38,19 @@ export const FileExplorer = ({
 
   const fetchFolderStructure = useCallback(async () => {
     if (isCollab) {
-      //
+      try {
+        const response = await API.get("/api/rooms/room-folder-structure", {
+          headers: {
+            token: localStorage.getItem("token"),
+            email: localStorage.getItem("email"),
+            roomid: roomOrProjectId,
+          },
+        });
+        console.log("Room Folders :", response.data);
+        setFolders(response.data);
+      } catch (error) {
+        console.error("Error fetching room folder structure:", error);
+      }
     } else {
       try {
         const response = await API.get(
@@ -142,6 +155,20 @@ export const FileExplorer = ({
         if (creationMode === "folder") {
           if (yFoldersMap.has(newName)) return;
           yFoldersMap.set(newName, { files: [] });
+
+          if (!isInterviewMode){
+            await API.post(
+              "/api/rooms/create-room-folder",
+              { folderName: newName },
+              {
+                headers: {
+                  token: localStorage.getItem("token"),
+                  email: localStorage.getItem("email"),
+                  roomid: roomOrProjectId,
+                },
+              }
+            );
+          }          
         } else {
           const folder = yFoldersMap.get(selectedFolderForFile);
           if (folder) {
@@ -154,6 +181,21 @@ export const FileExplorer = ({
               ...folder,
               files: [...folder.files, newFile],
             });
+
+            if (!isInterviewMode){
+              await API.post(
+                "/api/rooms/create-room-file",
+                { fileName: newName },
+                {
+                  headers: {
+                    token: localStorage.getItem("token"),
+                    email: localStorage.getItem("email"),
+                    roomid: roomOrProjectId,
+                    foldername: selectedFolderForFile,
+                  },
+                }
+              );
+            }            
           }
         }
       } else {
@@ -370,14 +412,18 @@ export const FileExplorer = ({
           ))}
         </div>
       </div>
-      <div className="px-4 py-2 border-t border-[#e4e6f3ab] flex flex-col gap-2 justify-center items-center">
-        //Download Button
-        <button
-          onClick={handleDownloadSession}
-          className="p-2 rounded-sm cursor-pointer text-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#3D415A] text-white w-[10rem]"
-        >
-          <Download /> Download
-        </button>
+      <div 
+        className={`px-4 py-2 border-t border-[#e4e6f3ab] flex flex-col gap-2 justify-center items-center`}
+        style={{ visibility: isInterviewMode ? "hidden" : "visible" }}  
+      >
+        {!isInterviewMode &&(
+            <button
+              onClick={handleDownloadSession}
+              className="p-2 rounded-sm cursor-pointer text-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#3D415A] text-white w-[10rem]"
+            >
+              <Download /> Download
+            </button>          
+        )}
       </div>
     </div>
   );
