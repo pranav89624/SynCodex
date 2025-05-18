@@ -11,32 +11,50 @@ import { useLocation } from "react-router-dom";
 import JSZip from "jszip";
 import { saveAs } from "file-saver";
 import axios from "axios";
+import { debounce } from "lodash";
 
 export const FileExplorer = ({
   openFiles,
   setOpenFiles,
   setActiveFile,
   yDoc,
-  roomId,
   sessionName,
   roomOrProjectId,
 }) => {
   const [expanded, setExpanded] = useState({});
-  // const [projectName, setProjectName] = useState("Loading...");
   const location = useLocation();
 
   const isCollab =
     (location.pathname.includes("/collab") ||
       location.pathname.includes("/interview")) &&
-    Boolean(roomId);
+    Boolean(roomOrProjectId);
 
   const [folders, setFolders] = useState([]);
-  // const [folders, setFolders] = useState(isCollab ? [] : JSON.parse(localStorage.getItem("synProjectFolders") || "[]"));
   const yFoldersMap = yDoc?.getMap ? yDoc.getMap("folders") : null;
 
   const fetchFolderStructure = useCallback(async () => {
     if (isCollab) {
-      //
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/rooms/room-folder-structure",
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+              email: localStorage.getItem("email"),
+              roomid: roomOrProjectId,
+            },
+          }
+        );
+        console.log("Room Folders :", response.data);
+        setFolders(response.data); // ✅ Set folder for room
+        // if (isCollab && yFoldersMap && yFoldersMap.size === 0) {
+        //   response.data.forEach((folder) => {
+        //     yFoldersMap.set(folder.name, { files: folder.files });
+        //   });
+        // }
+      } catch (error) {
+        console.error("Error fetching room folder structure:", error);
+      }
     } else {
       try {
         const response = await axios.get(
@@ -50,16 +68,76 @@ export const FileExplorer = ({
           }
         );
         console.log("Project Folders :", response.data);
-        setFolders(response.data); // ✅ Store in state
+        setFolders(response.data); // ✅ Set folder for project
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching project folder structure:", error);
       }
     }
-  }, [isCollab, roomOrProjectId]);
+  }, [isCollab, roomOrProjectId, yFoldersMap]);
 
   useEffect(() => {
     fetchFolderStructure();
   }, [fetchFolderStructure]);
+
+  // useEffect(() => {
+  //   if (!isCollab || !yFoldersMap) return;
+
+  //   const updateFolders = () => {
+  //     const entries = Array.from(yFoldersMap.entries()).map(
+  //       ([folderName, folderData]) => ({
+  //         name: folderName,
+  //         files: (folderData.files || []).map((file) => ({
+  //           id: file.id,
+  //           name: file.name,
+  //           language: file.language,
+  //           content: file.content,
+  //         })),
+  //       })
+  //     );
+
+  //     setFolders(entries);
+  //   };
+
+  //   const saveChangesToDB = debounce(async () => {
+  //     const folderData = Array.from(yFoldersMap.entries()).map(
+  //       ([folderName, folderData]) => ({
+  //         name: folderName,
+  //         files: (folderData.files || []).map((file) => ({
+  //           id: file.id,
+  //           name: file.name,
+  //           language: file.language,
+  //           content: file.content,
+  //         })),
+  //       })
+  //     );
+
+  //     try {
+  //       await axios.post(
+  //         "http://localhost:5000/api/rooms/update-room-folder-structure",
+  //         { folders: folderData },
+  //         {
+  //           headers: {
+  //             token: localStorage.getItem("token"),
+  //             email: localStorage.getItem("email"),
+  //             roomid: roomOrProjectId,
+  //           },
+  //         }
+  //       );
+  //       console.log("Room folder structure synced to DB");
+  //     } catch (err) {
+  //       console.error("Failed to sync room structure to DB", err);
+  //     }
+  //   }, 1000); // debounce to avoid flooding server
+
+  //   yFoldersMap.observeDeep(() => {
+  //     updateFolders();
+  //     saveChangesToDB();
+  //   });
+
+  //   updateFolders();
+
+  //   return () => yFoldersMap.unobserveDeep(updateFolders);
+  // }, [isCollab, yFoldersMap, roomOrProjectId]);
 
   useEffect(() => {
     if (!isCollab || !yFoldersMap) return;
@@ -78,27 +156,30 @@ export const FileExplorer = ({
     return () => yFoldersMap.unobserveDeep(updateFolders);
   }, [isCollab, yFoldersMap]);
 
-  // useEffect(() => {
-  //   if (location.pathname === "/editor") {
-  //     const raw = localStorage.getItem("synProject");
-  //     try {
-  //       const parsed = raw ? JSON.parse(raw) : {};
-  //       setProjectName(parsed.name || "Untitled");
-  //     } catch {
-  //       setProjectName("Untitled");
-  //     }
-  //   } else {
-  //     setProjectName(sessionName);
-  //   }
-  // }, [location.pathname, sessionName]);
-
   const handleAddFolder = async () => {
     const folderName = prompt("Enter folder name:");
     if (!folderName) return;
 
     if (isCollab) {
-      // collab room create api
-      console.log("Collab chalue hai");
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/api/rooms/create-room-folder",
+          {
+            folderName: folderName,
+          },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+              email: localStorage.getItem("email"),
+              roomid: roomOrProjectId,
+            },
+          }
+        );
+        fetchFolderStructure();
+        console.log("Room Folder Structure :: ", res.data);
+      } catch (error) {
+        console.error("Room Folder Creation Failed :", error);
+      }
     } else {
       try {
         const res = await axios.post(
@@ -132,7 +213,7 @@ export const FileExplorer = ({
     // }
   };
 
-  const handleAddFile = async() => {
+  const handleAddFile = async () => {
     const folderName = prompt("Select folder:");
     if (!folderName) return;
 
@@ -140,8 +221,31 @@ export const FileExplorer = ({
     if (!fileName) return;
 
     if (isCollab) {
-      // collab room create api
-      console.log("Collab chalue hai");
+      try {
+        const res = await axios.post(
+          "http://localhost:5000/api/rooms/create-room-file",
+          {
+            fileName: fileName,
+          },
+          {
+            headers: {
+              token: localStorage.getItem("token"),
+              email: localStorage.getItem("email"),
+              roomid: roomOrProjectId,
+              folderName: folderName,
+            },
+          }
+        );
+        fetchFolderStructure();
+        console.log("Room File created :: ", res.data);
+
+        if (res.status === 201) {
+          setOpenFiles((prev) => [...prev, fileName]);
+          setActiveFile(fileName);
+        }
+      } catch (error) {
+        console.error("Room File Creation Failed :", error);
+      }
     } else {
       try {
         const res = await axios.post(
@@ -160,7 +264,8 @@ export const FileExplorer = ({
         );
         fetchFolderStructure();
         console.log("Project File created :: ", res.data);
-        if (res.status === 200) {
+
+        if (res.status === 201) {
           setOpenFiles((prev) => [...prev, fileName]);
           setActiveFile(fileName);
         }
@@ -197,7 +302,6 @@ export const FileExplorer = ({
     //   setFolders(updatedFolders);
     //   localStorage.setItem("synProjectFolders", JSON.stringify(updatedFolders));
     // }
-
   };
 
   const handleDownloadSession = async () => {
@@ -248,10 +352,7 @@ export const FileExplorer = ({
 
         <div className="space-y-2 flex-1 overflow-y-auto max-h-[calc(100vh-270px)] ">
           {folders.map((folder) => (
-            <div 
-              key={folder.name}
-              title={folder.name}
-            >
+            <div key={folder.name} title={folder.name}>
               <div
                 className="font-bold cursor-pointer text-white font-open-sans text-[16px] flex items-center gap-3 px-2"
                 onClick={() =>
@@ -283,7 +384,9 @@ export const FileExplorer = ({
                       setActiveFile(file.name);
                     }}
                   >
-                    <div><File color="white" height={"20"} /></div> 
+                    <div>
+                      <File color="white" height={"20"} />
+                    </div>
                     <p className="truncate">{file.name}</p>
                   </div>
                 ))}

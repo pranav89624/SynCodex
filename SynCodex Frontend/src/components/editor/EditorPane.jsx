@@ -1,21 +1,23 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState, useCallback } from "react";
 import Editor from "@monaco-editor/react";
 import { debounce } from "lodash";
 
-import 'monaco-editor/esm/vs/basic-languages/html/html.contribution';
-import 'monaco-editor/esm/vs/basic-languages/css/css.contribution';
-import 'monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution';
-import 'monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution';
-import 'monaco-editor/esm/vs/basic-languages/cpp/cpp.contribution';
-import 'monaco-editor/esm/vs/basic-languages/java/java.contribution';
-import 'monaco-editor/esm/vs/basic-languages/python/python.contribution';
-import 'monaco-editor/esm/vs/basic-languages/sql/sql.contribution';
-import 'monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution';
-import 'monaco-editor/esm/vs/basic-languages/rust/rust.contribution';
-import 'monaco-editor/esm/vs/basic-languages/go/go.contribution';
+import "monaco-editor/esm/vs/basic-languages/html/html.contribution";
+import "monaco-editor/esm/vs/basic-languages/css/css.contribution";
+import "monaco-editor/esm/vs/basic-languages/javascript/javascript.contribution";
+import "monaco-editor/esm/vs/basic-languages/typescript/typescript.contribution";
+import "monaco-editor/esm/vs/basic-languages/cpp/cpp.contribution";
+import "monaco-editor/esm/vs/basic-languages/java/java.contribution";
+import "monaco-editor/esm/vs/basic-languages/python/python.contribution";
+import "monaco-editor/esm/vs/basic-languages/sql/sql.contribution";
+import "monaco-editor/esm/vs/basic-languages/csharp/csharp.contribution";
+import "monaco-editor/esm/vs/basic-languages/rust/rust.contribution";
+import "monaco-editor/esm/vs/basic-languages/go/go.contribution";
 
-export const EditorPane = ({ activeFile, onCodeChange }) => {
+export const EditorPane = ({ activeFile, onCodeChange,}) => {
   const [value, setValue] = useState("");
+
+ 
 
   useEffect(() => {
     if (activeFile) {
@@ -29,6 +31,8 @@ export const EditorPane = ({ activeFile, onCodeChange }) => {
       }
     }
   }, [activeFile]);
+
+  
 
   const saveFileToLocalStorage = debounce((newValue) => {
     if (activeFile) {
@@ -46,11 +50,14 @@ export const EditorPane = ({ activeFile, onCodeChange }) => {
     try {
       if (activeFile.endsWith(".html")) return "html";
       if (activeFile.endsWith(".css")) return "css";
-      if (activeFile.endsWith(".js") || activeFile.endsWith(".jsx")) return "javascript";
-      if (activeFile.endsWith(".ts") || activeFile.endsWith(".tsx")) return "typescript";
+      if (activeFile.endsWith(".js") || activeFile.endsWith(".jsx"))
+        return "javascript";
+      if (activeFile.endsWith(".ts") || activeFile.endsWith(".tsx"))
+        return "typescript";
       if (activeFile.endsWith(".py")) return "python";
       if (activeFile.endsWith(".java")) return "java";
-      if (activeFile.endsWith(".c") || activeFile.endsWith(".cpp")) return "cpp";
+      if (activeFile.endsWith(".c") || activeFile.endsWith(".cpp"))
+        return "cpp";
       return "plaintext";
     } catch (error) {
       toast.error("Error detecting language");
@@ -59,18 +66,18 @@ export const EditorPane = ({ activeFile, onCodeChange }) => {
   };
 
   const customTheme = {
-    base: 'vs-dark',
+    base: "vs-dark",
     inherit: true,
     rules: [],
     colors: {
-      'editor.background': '#3D415A',
-      'editor.foreground': '#ffffff',
-      'editorLineNumber.foreground': '#E4E6F3',
+      "editor.background": "#3D415A",
+      "editor.foreground": "#ffffff",
+      "editorLineNumber.foreground": "#E4E6F3",
       "editorLineNumber.activeForeground": "#FFFFFF",
-      "editorGutter.background": "#21232f", 
-      'editorCursor.foreground': '#ffffff',
-      'editor.selectionBackground': '#556177',
-      'editor.lineHighlightBackground': '#4C5068',
+      "editorGutter.background": "#21232f",
+      "editorCursor.foreground": "#ffffff",
+      "editor.selectionBackground": "#556177",
+      "editor.lineHighlightBackground": "#4C5068",
     },
   };
 
@@ -88,12 +95,10 @@ export const EditorPane = ({ activeFile, onCodeChange }) => {
       language={getLanguage()}
       value={value}
       onChange={handleChange}
-
       beforeMount={(monaco) => {
-        monaco.editor.defineTheme('custom-dark', customTheme);
+        monaco.editor.defineTheme("custom-dark", customTheme);
       }}
       theme="custom-dark"
-      
       options={{
         fontSize: 14,
         minimap: { enabled: false },
