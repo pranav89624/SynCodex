@@ -159,9 +159,7 @@ export default function EditorPage() {
                     showPreview ? "w-1/2" : "w-full"
                   } transition-all duration-300`}
                 >
-                  {activeFile && (
-                    <EditorPane activeFile={activeFile} onCodeChange={setCode} projectId={projectId}/>
-                  )}
+                  <EditorPane activeFile={activeFile} onCodeChange={setCode} projectId={projectId}/>
                 </div>
 
                 {showPreview && (
