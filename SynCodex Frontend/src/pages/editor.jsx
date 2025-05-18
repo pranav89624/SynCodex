@@ -21,10 +21,10 @@ export default function EditorPage() {
   const [isRunning, setIsRunning] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  const {projectId} = useParams(); 
+  const { projectId } = useParams();
 
-  const fetchProjectDetails = useCallback(async()=>{
-    console.log("Project ID ✅✅",projectId);
+  const fetchProjectDetails = useCallback(async () => {
+    console.log("Project ID ✅✅", projectId);
     try {
       const response = await axios.get(
         "http://localhost:5000/api/projects/project-details",
@@ -38,18 +38,18 @@ export default function EditorPage() {
       );
       console.log("Project Details :::", response.data);
       console.log("Project Details name :::", response.data.name);
-      
+
       setProjectName(response.data.name || "Untitled Project");
     } catch (error) {
       console.error("Error fetching project details:", error);
     }
-  },[projectId]);
+  }, [projectId]);
 
   useEffect(() => {
     setShowPreview(false);
   }, [activeFile]);
 
-  const handlePreviewClick = () => setShowPreview(prev => !prev);
+  const handlePreviewClick = () => setShowPreview((prev) => !prev);
   const handleClosePreview = () => setShowPreview(false);
 
   const isHtmlFile = activeFile?.endsWith(".html");
@@ -151,10 +151,18 @@ export default function EditorPage() {
               }`}
             >
               <div className="flex h-full w-full">
-                <div className={`${showPreview ? 'w-1/2' : 'w-full'} transition-all duration-300`}>
-                  <EditorPane activeFile={activeFile} onCodeChange={setCode} roomOrProjectId={projectId}/>
+                <div
+                  className={`${
+                    showPreview ? "w-1/2" : "w-full"
+                  } transition-all duration-300`}
+                >
+                  <EditorPane
+                    activeFile={activeFile}
+                    onCodeChange={setCode}
+                    roomOrProjectId={projectId}
+                  />
                 </div>
-                
+
                 {showPreview && (
                   <div className="w-1/2 border-l border-gray-600">
                     <HtmlPreview rawHtml={code} onClose={handleClosePreview} />
