@@ -3,10 +3,8 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import API from "../services/api";
-import useMeta from "../hooks/useMeta";
 
 const ResetPassword = () => {
-  useMeta();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [searchParams] = useSearchParams();
@@ -45,20 +43,15 @@ const ResetPassword = () => {
   return (
     <div className="flex justify-center items-center h-screen bg-[#21232f]">
       <div className="bg-[#3D415A] py-10 w-[50%] text-center rounded-2xl border-2 border-blue-500">
-        <h2 className="text-4xl font-Chakra text-white font-semibold my-10">
-          Reset Password
-        </h2>
-        <form
-          onSubmit={handleResetPassword}
-          className="flex flex-col justify-center items-center"
-        >
+        <h2 className="text-4xl font-Chakra text-white font-semibold my-10">Reset Password</h2>
+        <form onSubmit={handleResetPassword} className="flex flex-col justify-center items-center">
+
           {/* New Password Field */}
-          <label htmlFor="password" className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
+          <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
             New Password
           </label>
           <div className="relative w-[70%]">
             <input
-              id="password"
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -66,11 +59,8 @@ const ResetPassword = () => {
               required
             />
             <button
-              title="Toggle Password Visibility"
-              name="Toggle Password Visibility"
-              aria-label="Toggle Password Visibility"
               type="button"
-              className="absolute right-4 top-5 p-1 text-gray-400 cursor-pointer text-lg"
+              className="absolute right-4 top-6 text-gray-400 cursor-pointer text-lg"
               onClick={() => setShowPassword(!showPassword)}
             >
               {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -78,12 +68,11 @@ const ResetPassword = () => {
           </div>
 
           {/* Confirm Password Field */}
-          <label htmlFor="confirmPassword" className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
+          <label className="flex justify-start w-[70%] m-auto text-gray-300 text-sm mb-1">
             Confirm Password
           </label>
           <div className="relative w-[70%]">
             <input
-              id="confirmPassword"
               type={showConfirmPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -91,11 +80,8 @@ const ResetPassword = () => {
               required
             />
             <button
-              title="Toggle Password Visibility"
-              name="Toggle Password Visibility"
-              aria-label="Toggle Password Visibility"
               type="button"
-              className="absolute right-4 top-5 p-1 text-gray-400 cursor-pointer text-lg"
+              className="absolute right-4 top-6 text-gray-400 cursor-pointer text-lg"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}

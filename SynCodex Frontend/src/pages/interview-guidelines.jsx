@@ -1,8 +1,6 @@
 import { useNavigate } from "react-router-dom";
-import useMeta from "../hooks/useMeta";
 
 export default function InterviewGuidelines() {
-  useMeta();
   const navigate = useNavigate();
   // Get sessionData from localStorage
   const sessionId = sessionStorage.getItem("roomId");

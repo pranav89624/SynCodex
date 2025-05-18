@@ -6,10 +6,8 @@ import Footer from "../components/footer";
 import { toast } from "react-toastify";
 import API from "../services/api";
 import AppColors from "../utils/appColors";
-import useMeta from "../hooks/useMeta";
 
 const ContactUs = () => {
-  useMeta();
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -80,7 +78,7 @@ const ContactUs = () => {
               <p className="text-lg font-semibold text-gray-300">
                 Let's Connect & Code!
               </p>
-              <p className="text-gray-300 mb-6">
+              <p className="text-gray-400 mb-6">
                 Got questions or need support? We're here to help! Reach out for
                 inquiries, feedback, or assistance.
               </p>

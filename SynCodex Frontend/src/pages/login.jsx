@@ -11,10 +11,8 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import AppColors from "../utils/appColors";
-import useMeta from "../hooks/useMeta";
 
 const Login = () => {
-  useMeta();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [Gloading, GsetLoading] = useState(false);
@@ -46,10 +44,11 @@ const Login = () => {
         toast.success("Login successful!");
         navigate("/dashboard");
       }
+      
     } catch (error) {
       console.error("Login failed:", error.response?.data || error);
       toast.error(error.response?.data?.message || "Login failed");
-    } finally {
+    }finally {
       setLoading(false);
     }
   };
@@ -84,9 +83,13 @@ const Login = () => {
             <div className="flex flex-col items-center text-center md:w-1/2 p-6">
               <img src={lockIcon} alt="Secure Login" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
-                Welcome back to <span className="font-gradient">SynCodex</span>.
+                Welcome back to{" "}
+                <span className="font-gradient">
+                  SynCodex
+                </span>
+                .
               </h2>
-              <p className="text-gray-300 w-78">
+              <p className="text-gray-400 w-78">
                 Code, collaborate, and conquer in real-time.
               </p>
             </div>
@@ -96,11 +99,10 @@ const Login = () => {
               <h2 className="text-2xl font-bold mb-4">Login</h2>
 
               <form onSubmit={handleLogin}>
-                <label htmlFor="email" className="block text-gray-300 text-sm mb-1">
+                <label className="block text-gray-300 text-sm mb-1">
                   Email
                 </label>
                 <input
-                  id="email"
                   type="email"
                   name="email"
                   onChange={handleChange}
@@ -108,12 +110,11 @@ const Login = () => {
                   required
                 />
 
-                <label htmlFor="password" className="block text-gray-300 text-sm mt-3 mb-1">
+                <label className="block text-gray-300 text-sm mt-3 mb-1">
                   Password
                 </label>
                 <div className="relative w-full">
                   <input
-                    id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     onChange={handleChange}
@@ -123,9 +124,7 @@ const Login = () => {
 
                   <button
                     type="button"
-                    name="Toggle password visibility"
-                    title="Toggle password visibility"
-                    className="absolute right-3 top-2 text-gray-400 p-1 hover:text-white transition cursor-pointer"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -145,9 +144,7 @@ const Login = () => {
                 </button>
 
                 <p>
-                  <Link to="/forgot-password" className="text-xs text-[#BEDFF9]">
-                    Forgot Password?
-                  </Link>
+                  <Link to="/forgot-password" className="text-xs text-blue-500">Forgot Password?</Link>
                 </p>
                 <hr className="mt-3 border-gray-500" />
               </form>
@@ -162,21 +159,25 @@ const Login = () => {
                     <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                   ) : (
                     <span className="font-bold flex items-center gap-2.5">
-                      <FcGoogle size={28} />
-                      Login with Google
-                    </span>
+                   <FcGoogle size={28} />
+                    Login with Google
+                  </span>
                   )}
+                  
                 </button>
               </div>
-              <p className="text-sm text-gray-300 mt-4">
+              <p className="text-sm text-gray-400 mt-4">
                 Don't have an account?{" "}
-                <Link to="/signup" className="font-gradient">
+                <Link
+                  to="/signup"
+                  className="font-gradient"
+                >
                   Sign Up
                 </Link>
               </p>
             </div>
           </div>
-        </motion.div>
+        </motion.div> 
       </div>
       <Footer />
     </>

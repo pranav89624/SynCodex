@@ -2,11 +2,8 @@ import React from "react";
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import Scroll from "../components/scroll";
-import useMeta from "../hooks/useMeta";
 
 const AboutPage = () => {
-  useMeta();
-
   return (
     <>
       <Scroll />

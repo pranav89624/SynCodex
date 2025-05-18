@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
 import SignupNow from "../assets/followers_6081941 1.svg";
 import { useState } from "react";
-import API from "../services/api";
+import API from "../services/api";;
 import Navbar from "../components/navbar";
 import Footer from "../components/footer";
 import { easeInOut, motion } from "motion/react";
@@ -11,10 +11,8 @@ import { toast } from "react-toastify";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import AppColors from "../utils/appColors";
-import useMeta from "../hooks/useMeta";
 
 const SignUP = () => {
-  useMeta();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -62,7 +60,7 @@ const SignUP = () => {
     } catch (error) {
       console.error("Registration failed:", error.response?.data || error);
       toast.error(error.response?.data.message || error);
-    } finally {
+    }finally {
       setLoading(false);
     }
   };
@@ -95,9 +93,13 @@ const SignUP = () => {
             <div className="flex flex-col items-center text-center md:w-1/2 p-6">
               <img src={SignupNow} alt="Secure Sign UP" className="w-50 mb-4" />
               <h2 className="text-xl font-semibold">
-                Join <span className="font-gradient">SynCodex</span> now.
+                Join{" "}
+                <span className="font-gradient">
+                  SynCodex
+                </span>{" "}
+                now.
               </h2>
-              <p className="text-gray-300 w-78">
+              <p className="text-gray-400 w-78">
                 code smarter, collaborate faster, and innovate together
                 seamlessly
               </p>
@@ -106,11 +108,10 @@ const SignUP = () => {
             <div className="md:w-1/2 w-full p-6">
               <h2 className="text-2xl font-bold mb-4">Sign UP</h2>
               <form onSubmit={handleSubmit}>
-                <label htmlFor="fullName" className="block text-gray-300 text-sm mb-1">
+                <label className="block text-gray-300 text-sm mb-1">
                   Full Name
                 </label>
                 <input
-                  id="fullName"
                   type="text"
                   name="fullName"
                   onChange={handleChange}
@@ -118,11 +119,10 @@ const SignUP = () => {
                   required
                 />
 
-                <label htmlFor="email" className="block text-gray-300 text-sm mt-3 mb-1">
+                <label className="block text-gray-300 text-sm mt-3 mb-1">
                   Email
                 </label>
                 <input
-                  id="email"
                   type="email"
                   name="email"
                   onChange={handleChange}
@@ -130,12 +130,11 @@ const SignUP = () => {
                   required
                 />
 
-                <label htmlFor="password" className="block text-gray-300 text-sm mt-3 mb-1">
+                <label className="block text-gray-300 text-sm mt-3 mb-1">
                   Password
                 </label>
                 <div className="relative w-full">
                   <input
-                    id="password"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     onChange={handleChange}
@@ -145,9 +144,7 @@ const SignUP = () => {
 
                   <button
                     type="button"
-                    name="Toggle password visibility"
-                    title="Toggle password visibility"
-                    className="absolute right-3 top-2 p-1 text-gray-400 hover:text-white transition cursor-pointer"
+                    className="absolute right-3 top-3 text-gray-400 hover:text-white transition cursor-pointer"
                     onClick={() => setShowPassword(!showPassword)}
                   >
                     {showPassword ? <FaEyeSlash /> : <FaEye />}
@@ -180,9 +177,12 @@ const SignUP = () => {
                   </span>
                 </button>
               </div>
-              <p className="text-sm text-gray-300 mt-4">
+              <p className="text-sm text-gray-400 mt-4">
                 Already have an account?{" "}
-                <Link to="/login" className="font-gradient ">
+                <Link
+                  to="/login"
+                  className="font-gradient "
+                >
                   Login
                 </Link>
               </p>

@@ -39,31 +39,3 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: #21232f;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #3D415A;
-  border-radius: 4px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #4a4f6d;
-}
-
-.custom-scrollbar {
-  scrollbar-color: #3D415A #21232f;
-  scrollbar-width: thin;
-}
-
-html {
-  scrollbar-color: #3D415A #21232f;
-  scrollbar-width: thin;
-}

@@ -144,10 +144,6 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
         <div className="flex flex-col flex-1 h-full">
           <div className="bg-[#21232f] flex items-center border-b border-[#e4e6f3ab]">
             <button
-              title="toggle sidebar"
-              aria-label="toggle sidebar"
-              type="button"
-              name="toggle sidebar"
               onClick={() => setIsSidebarOpen(!isSidebarOpen)}
               className="absolute top-16 left-2 flex z-20 bg-[#3D415A] hover:opacity-90 cursor-pointer text-white p-2 rounded-md transition-all duration-300"
             >

@@ -24,7 +24,7 @@ const Footer = () => {
         copyright © 2025 -{" "}
         <span className="font-bold text-white">SynCodex</span>
       </p>
-      <p className="text-gray-400">All rights reserved.</p>
+      <p className="text-gray-500">All rights reserved.</p>
     </footer>
   );
 };
