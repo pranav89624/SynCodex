@@ -17,7 +17,6 @@ export const FileExplorer = ({
   setOpenFiles,
   setActiveFile,
   yDoc,
-  roomId,
   sessionName,
   roomOrProjectId,
 }) => {
@@ -32,7 +31,7 @@ export const FileExplorer = ({
   const isCollab =
     (location.pathname.includes("/collab") ||
       location.pathname.includes("/interview")) &&
-    Boolean(roomId);
+    Boolean(roomOrProjectId);
 
   const yFoldersMap = yDoc?.getMap ? yDoc.getMap("folders") : null;
 
@@ -53,10 +52,10 @@ export const FileExplorer = ({
         );
         setFolders(response.data);
       } catch (error) {
-        console.error("Error fetching projects:", error);
+        console.error("Error fetching project folder structure:", error);
       }
     }
-  }, [isCollab, roomOrProjectId]);
+  }, [isCollab, roomOrProjectId, yFoldersMap]);
 
   useEffect(() => {
     fetchFolderStructure();

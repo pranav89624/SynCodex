@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import EditorNav from "./EditorNav";
 import { FileExplorer } from "./FileExplorer";
 import { FileTabs } from "./FileTabs";
@@ -9,6 +9,7 @@ import { CollabEditorPane } from "./CollabEditorPane";
 import { useYjsProvider } from "../../hooks/useYjsProvider";
 import CodeExecutionResult from "./CodeExecutionResult";
 import { runCode } from "../../services/codeExec";
+import axios from "axios";
 
 export default function CollabEditorLayout({ roomId, isInterviewMode }) {
   const [openFiles, setOpenFiles] = useState([]);
@@ -20,6 +21,29 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
   const [output, setOutput] = useState("");
   const [showOutput, setShowOutput] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+
+  const fetchRoomDetails = useCallback(async () => {
+    if (!provider) return;
+
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/rooms/room-details",
+        {
+          headers: {
+            token: localStorage.getItem("token"),
+            email: localStorage.getItem("email"),
+            roomid: roomId,
+          },
+        }
+      );
+
+      const name = response?.data?.name || "Untitled Project";
+
+      provider.awareness.setLocalStateField("sessionInfo", { name });
+    } catch (error) {
+      console.error("Error fetching room details:", error);
+    }
+  }, [provider, roomId]);
 
   useEffect(() => {
     if (!provider) return;
@@ -34,10 +58,29 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
     };
 
     awareness.on("change", updateName);
-    updateName();
+    updateName(); // Initial run
+    fetchRoomDetails(); // Fetch + Broadcast name
 
     return () => awareness.off("change", updateName);
-  }, [provider]);
+  }, [provider, fetchRoomDetails, setSessionName]);
+
+  // useEffect(() => {
+  //   if (!provider) return;
+
+  //   const awareness = provider.awareness;
+
+  //   const updateName = () => {
+  //     const allStates = Array.from(awareness.getStates().values());
+  //     const name = allStates.find((s) => s.sessionInfo)?.sessionInfo?.name;
+  //     if (name) setSessionName(name);
+  //     else setSessionName("Unnamed Session");
+  //   };
+
+  //   awareness.on("change", updateName);
+  //   updateName();
+
+  //   return () => awareness.off("change", updateName);
+  // }, [provider]);
 
   const detectLang = (file) => {
     if (!file) return "plaintext";
@@ -92,7 +135,7 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
               openFiles={openFiles}
               setOpenFiles={setOpenFiles}
               setActiveFile={setActiveFile}
-              roomId={roomId}
+              roomOrProjectId={roomId}
               sessionName={sessionName}
             />
           )}

@@ -133,7 +133,7 @@ export const createProjectFolder = async (req, res) => {
   }
 };
 
-// Create file in folder -> files[]
+// Create project file in folder -> files[]
 export const createProjectFile = async (req, res) => {
   try {
     const email = req.headers["email"];
@@ -182,7 +182,7 @@ export const createProjectFile = async (req, res) => {
     await folderRef.update({ files: updatedFiles });
     console.log("Updated Files ✅✅ ", updatedFiles);
 
-    return res.status(200).json({ message: "File created", file: newFile });
+    return res.status(201).json({ message: "File created", file: newFile });
   } catch (error) {
     console.error("Error creating file:", error);
     return res.status(500).json({ error: "Failed to create file" });

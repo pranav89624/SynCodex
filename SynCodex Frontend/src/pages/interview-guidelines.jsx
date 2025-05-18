@@ -5,12 +5,12 @@ export default function InterviewGuidelines() {
   useMeta();
   const navigate = useNavigate();
   // Get sessionData from localStorage
-  const sessionData = JSON.parse(localStorage.getItem("synSession"));
+  const sessionId = sessionStorage.getItem("roomId");
   let roomId = null;
   // Check if sessionData exists
-  if (sessionData) {
-    roomId = sessionData.roomId;
-  } else {
+  if (sessionId) {
+    roomId = sessionId;
+  } else { 
     console.log("No session data found.");
   }
 
