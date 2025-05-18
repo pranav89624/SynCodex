@@ -371,6 +371,7 @@ export const FileExplorer = ({
         </div>
       </div>
       <div className="px-4 py-2 border-t border-[#e4e6f3ab] flex flex-col gap-2 justify-center items-center">
+        //Download Button
         <button
           onClick={handleDownloadSession}
           className="p-2 rounded-sm cursor-pointer text-lg font-semibold flex items-center justify-center gap-2 hover:bg-[#3D415A] text-white w-[10rem]"
