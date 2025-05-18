@@ -9,9 +9,20 @@ export default function DashboardView() {
   const [projectModalOpen, setProjectModalOpen] = useState(false);
   const [joinRoomModalOpen, setJoinRoomModalOpen] = useState(false);
 
+  const sessions = [
+    { title: "XYZ Java Interview", updated: "5 minutes ago", members: 3 },
+    { title: "New Collaboration", updated: "10 days ago", members: 1 },
+    { title: "First Collaboration", updated: "3 months ago", members: 2 },
+    { title: "First Collaboration", updated: "3 months ago", members: 2 },
+  ];
 
-  const [sessions, setSessions] = useState([]);
   const [projects, setProjects] = useState([]);
+  // const files = [
+  //   { title: "college project", files: ["index.html", "style.css", "script.js", "server.js", "main.java", "+2 more"], updated: "1 month ago" },
+  //   { title: "demo project", files: ["index.html", "style.css", "script.js", "server.js", "main.java", "+2 more"], updated: "1 month ago" },
+  //   { title: "demo project", files: ["index.html", "style.css", "script.js", "server.js", "main.java", "+2 more"], updated: "1 month ago" },
+  //   { title: "demo project", files: ["index.html", "style.css", "script.js", "server.js", "main.java", "+2 more"], updated: "1 month ago" }
+  // ];
 
   const formatDate = (isoDateString) => {
     const date = new Date(isoDateString);
@@ -24,24 +35,6 @@ export default function DashboardView() {
 
     return `${day} ${month} ${year} ${hours}:${minutes}`;
   };
-
-  const fetchUserSessions = useCallback(async () => {
-    try {
-      const response = await axios.get(
-        "http://localhost:5000/api/rooms/my-rooms",
-        {
-          headers: {
-            token: localStorage.getItem("token"),
-            email: localStorage.getItem("email"),
-          },
-        }
-      );
-      console.log("User Sessions :", response.data);
-      setSessions(response.data); // ✅ Store in state
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
-    }
-  }, []);
 
   const fetchUserProjects = useCallback(async () => {
     try {
@@ -63,8 +56,7 @@ export default function DashboardView() {
 
   useEffect(() => {
     fetchUserProjects();
-    fetchUserSessions();
-  }, [fetchUserProjects, fetchUserSessions]);
+  }, [fetchUserProjects]);
 
   return (
     <div className="bg-[#21232f] text-white p-6">
@@ -94,75 +86,46 @@ export default function DashboardView() {
           View All Sessions
         </button>
       </div>
-      {sessions.length === 0 ? (
-        <p className="text-gray-400">
-          No sessions found. Click <b>"Create Room"</b> to create a new
-          session <b>OR</b> Click <b>"Join Room"</b> to collaborate in session.
-        </p>
-      ) : (
-        <div className="grid grid-cols-4 gap-4">
-          {sessions.map((session, index) => (
-            <div
-              key={index}
-              className="bg-[#3D415A] p-4 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
-              onClick={() =>{
-                if (session.isInterviewMode) {
-                  sessionStorage.setItem("roomId", session.roomId);
-          window.open("/interview-guidelines", "_blank");
-        } else {
-          window.open(`/collab-editor/${session.roomId}`, "_blank");
-        }
-              }}
-            >
-              <h3 className={`text-lg font-bold mb-1 ${session.isInterviewMode ? 'font-gradient':'text-white'}`}>{session.name}</h3>
-              <p className="text-sm text-gray-400 line-clamp-3 overflow-hidden">
-                {session.description?.trim()
-                  ? session.description
-                  : "No Description Available"}
-              </p>
-              <p className="text-sm mt-auto text-gray-300">
-                Date Created :- {formatDate(session.createdAt)}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+      <div className="grid grid-cols-4 gap-4 mb-6">
+        {sessions.map((session, index) => (
+          <div key={index} className="bg-[#3D415A] p-4 rounded-lg relative">
+            <h3 className="text-lg font-bold">{session.title}</h3>
+            <p className="text-sm">Last Updated {session.updated}</p>
+          </div>
+        ))}
+      </div>
 
       {/* My Files (Fetched Projects) */}
-      <div className="flex items-center mb-4 mt-6">
+      <div className="flex items-center mb-4">
         <h2 className="text-xl font-bold inline-block pr-5">My Files</h2>
         <button className="bg-[#3D415A] px-3 py-1 rounded text-sm cursor-pointer">
           View All Files
         </button>
       </div>
       {projects.length === 0 ? (
-        <p className="text-gray-400">
-          No projects found. Click <b>"Start Coding"</b> to create a new
-          project.
+  <p className="text-gray-400">
+    No projects found. Click <b>"Start Coding"</b> to create a new project.
+  </p>
+) : (
+  <div className="grid grid-cols-4 gap-4">
+    {projects.map((project, index) => (
+      <div
+        key={index}
+        className="bg-[#3D415A] p-4 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
+        onClick={() => window.open(`/editor/${project.projectId}`, "_blank")}
+      >
+        <h3 className="text-lg font-bold mb-1">{project.name}</h3>
+        <p className="text-sm text-gray-400 line-clamp-3 overflow-hidden">
+          {project.description?.trim() ? project.description : "No Description Available"}
         </p>
-      ) : (
-        <div className="grid grid-cols-4 gap-4">
-          {projects.map((project, index) => (
-            <div
-              key={index}
-              className="bg-[#3D415A] p-4 rounded-lg h-39 flex flex-col justify-start cursor-pointer"
-              onClick={() =>
-                window.open(`/editor/${project.projectId}`, "_blank")
-              }
-            >
-              <h3 className="text-lg font-bold mb-1">{project.name}</h3>
-              <p className="text-sm text-gray-400 line-clamp-3 overflow-hidden">
-                {project.description?.trim()
-                  ? project.description
-                  : "No Description Available"}
-              </p>
-              <p className="text-sm mt-auto text-gray-300">
-                Date Created :- {formatDate(project.createdAt)}
-              </p>
-            </div>
-          ))}
-        </div>
-      )}
+        <p className="text-sm mt-auto text-gray-300">
+          Date Created :- {formatDate(project.createdAt)}
+        </p>
+      </div>
+    ))}
+  </div>
+)}
+
 
       {roomModalOpen && (
         <CreateRoomModal onClose={() => setRoomModalOpen(false)} />

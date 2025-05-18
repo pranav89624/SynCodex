@@ -3,12 +3,12 @@ import { useNavigate } from "react-router-dom";
 export default function InterviewGuidelines() {
   const navigate = useNavigate();
   // Get sessionData from localStorage
-  const sessionId = sessionStorage.getItem("roomId");
+  const sessionData = JSON.parse(localStorage.getItem("synSession"));
   let roomId = null;
   // Check if sessionData exists
-  if (sessionId) {
-    roomId = sessionId;
-  } else { 
+  if (sessionData) {
+    roomId = sessionData.roomId;
+  } else {
     console.log("No session data found.");
   }
 

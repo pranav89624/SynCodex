@@ -1,10 +1,12 @@
 import { db } from "../config/firebase.js";
+import { v4 as uuidv4 } from "uuid";
 import { nanoid } from "nanoid";
 
 // Create project (uers -> email -> projects -> projectId)
 export const createProject = async (req, res) => {
   try {
     const { token, email, name, description } = req.body;
+    // const email = req.user.email;
 
     if (!name) {
       return res.status(400).json({ error: "Project name are required" });
@@ -63,6 +65,9 @@ export const getMyProjects = async (req, res) => {
 
 // Get specific project detail by project id
 export const getProjectDetails = async (req, res) => {
+  // const email = req.headers.email; // ✅ Read from headers
+  // const projectId = req.headers.projectid;
+
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
 
@@ -124,14 +129,18 @@ export const createProjectFolder = async (req, res) => {
       files: [],
     });
 
-    return res.status(201).json({ message: "Folder created" });
+    return res.status(200).json({ message: "Folder created" });
+
+    // 🔄 Fetch newly created folder data
+    // const newSnap = await folderRef.get();
+    // return res.status(200).json(newSnap.data());
   } catch (error) {
     console.error("Error creating folder:", error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
 
-// Create project file in folder -> files[]
+// Create file in folder -> files[]
 export const createProjectFile = async (req, res) => {
   try {
     const email = req.headers["email"];
@@ -180,7 +189,7 @@ export const createProjectFile = async (req, res) => {
     await folderRef.update({ files: updatedFiles });
     console.log("Updated Files ✅✅ ",updatedFiles);
 
-    return res.status(201).json({ message: "File created", file: newFile });
+    return res.status(200).json({ message: "File created", file: newFile });
   } catch (error) {
     console.error("Error creating file:", error);
     return res.status(500).json({ error: "Failed to create file" });
@@ -189,6 +198,9 @@ export const createProjectFile = async (req, res) => {
 
 // Get project folder structure by project id
 export const getProjectFolderStructure = async (req, res) => {
+  // const email = req.headers.email; // ✅ Read from headers
+  // const projectId = req.headers.projectid;
+
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
 
@@ -216,137 +228,3 @@ export const getProjectFolderStructure = async (req, res) => {
     return res.status(500).json({ error: "Failed to fetch project folders" });
   }
 };
-
-
-// Save project file content
-export const saveProjectFileContent = async (req, res) => {
-  try {
-    const email = req.headers["email"];
-    const projectId = req.headers["projectid"];
-    const folderName = req.headers["foldername"];
-    const fileName = req.headers["filename"];
-    const { content } = req.body;
-
-    console.log("✅✅✅✅ ",email,projectId,folderName,fileName,content);
-
-    if (!email || !projectId || !folderName || !fileId) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const folderRef = db
-      .collection("users")
-      .doc(email)
-      .collection("projects")
-      .doc(projectId)
-      .collection("folderStructure")
-      .doc(folderName);
-
-    const folderSnap = await folderRef.get();
-
-    if (!folderSnap.exists) {
-      return res.status(404).json({ error: "Folder not found" });
-    }
-
-    const files = folderSnap.data().files || [];
-
-    const updatedFiles = files.map(file => {
-      if (file.name === fileName) {
-        return {
-          ...file,
-          content: content, // 📝 Update content here
-        };
-      }
-      return file;
-    });
-
-    await folderRef.update({ files: updatedFiles });
-
-    return res.status(200).json({ message: "File content saved successfully" });
-  } catch (error) {
-    console.error("Error saving file content:", error);
-    return res.status(500).json({ error: "Failed to save file content" });
-  }
-};
-
-
-// Get project active file content
-export const getProjectFileContent = async (req, res) => {
-  try {
-    const email = req.headers["email"];
-    const projectId = req.headers["projectid"];
-    const folderName = req.headers["foldername"];
-    const fileId = req.query.fileId;
-
-    if (!email || !projectId || !folderName || !fileId) {
-      return res.status(400).json({ error: "Missing required fields" });
-    }
-
-    const folderRef = db
-      .collection("users")
-      .doc(email)
-      .collection("projects")
-      .doc(projectId)
-      .collection("folderStructure")
-      .doc(folderName);
-
-    const folderSnap = await folderRef.get();
-
-    if (!folderSnap.exists) {
-      return res.status(404).json({ error: "Folder not found" });
-    }
-
-    const files = folderSnap.data().files || [];
-    const targetFile = files.find((file) => file.id === fileId);
-
-    if (!targetFile) {
-      return res.status(404).json({ error: "File not found" });
-    }
-
-    return res.status(200).json({ content: targetFile.content || "" });
-
-  } catch (error) {
-    console.error("❌ Error fetching file content:", error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-// export const getProjectFileContent = async (req, res) => {
-//   try {
-//     const email = req.headers["email"];
-//     const projectId = req.headers["projectid"];
-//     const { folderName, fileName } = req.query;
-
-//     console.log("✅✅✅✅ ",email,projectId,folderName,fileName);
-
-//     if (!email || !projectId || !folderName || !fileName) {
-//       return res.status(400).json({ error: "Missing parameters" });
-//     }
-
-//     const fileRef = db
-//       .collection("users")
-//       .doc(email)
-//       .collection("projects")
-//       .doc(projectId)
-//       .collection("folderStructure")
-//       .doc(folderName);
-
-//     const folderSnap = await fileRef.get();
-
-//     if (!folderSnap.exists) {
-//       return res.status(404).json({ error: "Folder not found" });
-//     }
-
-//     const folderData = folderSnap.data();
-//     const file = (folderData.files || []).find(f => f.name === fileName);
-
-//     if (!file) {
-//       return res.status(404).json({ error: "File not found" });
-//     }
-
-//     return res.status(200).json({ content: file.content || "" });
-//   } catch (error) {
-//     console.error("Error fetching file content:", error);
-//     return res.status(500).json({ error: "Failed to fetch file content" });
-//   }
-// };
-

@@ -56,6 +56,18 @@ export default function EditorPage() {
 
   useEffect(() => {
     fetchProjectDetails();
+    // const raw = localStorage.getItem("synProject");
+    // if (raw) {
+    //   try {
+    //     const parsed = JSON.parse(raw);
+    //     setProjectName(parsed.name || "Untitled Project");
+    //   } catch (error) {
+    //     console.error("Failed to parse project data:", error);
+    //     setProjectName("Untitled Project");
+    //   }
+    // } else {
+    //   setProjectName("Untitled Project");
+    // }
   }, [fetchProjectDetails]);
 
   const detectLang = (file) => {
@@ -152,7 +164,7 @@ export default function EditorPage() {
             >
               <div className="flex h-full w-full">
                 <div className={`${showPreview ? 'w-1/2' : 'w-full'} transition-all duration-300`}>
-                  <EditorPane activeFile={activeFile} onCodeChange={setCode} roomOrProjectId={projectId}/>
+                  <EditorPane activeFile={activeFile} onCodeChange={setCode} />
                 </div>
                 
                 {showPreview && (

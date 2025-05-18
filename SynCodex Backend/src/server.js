@@ -6,7 +6,6 @@ import bodyParser from "body-parser";
 import contactRoutes from "./routes/contactRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
-import roomRoutes from "./routes/roomRoutes.js";
 
 dotenv.config();
 
@@ -24,7 +23,6 @@ app.use("/api/auth", authRoutes);
 app.use("/api", contactRoutes);
 app.use("/api/user", userRoutes); 
 app.use("/api/projects", projectRoutes);
-app.use("/api/rooms", roomRoutes);
 
 // Root Endpoint (for testing)
 app.get("/", (req, res) => {
