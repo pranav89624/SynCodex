@@ -2,6 +2,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { toast } from "react-toastify";
 import { X, UserPlus, Copy } from "lucide-react";
 import ToggleButton from "../toggleButton";
+import axios from "axios";
 
 export default function CreateRoomModal({ onClose }) {
   const [sessionName, setSessionName] = useState("");
@@ -12,26 +13,45 @@ export default function CreateRoomModal({ onClose }) {
   const [copied, setCopied] = useState(false);
   const roomIdRef = useRef(null);
 
-  const handleRoomCreation = () => {
+  const [loading, setLoading] = useState(false);
+
+  const handleRoomCreation = async () => {
     if (!sessionName.trim()) {
       toast.error("Session name is required.");
       return;
     }
 
     const sessionData = {
-      roomId : roomId,
+      token: localStorage.getItem("token"),
+      email: localStorage.getItem("email"),
+      roomId: roomId,
       name: sessionName,
       description: sessionDescription,
-      createdAt: new Date().toISOString(),
+      isInterviewMode: interviewMode,
     };
 
-    localStorage.setItem("synSession", JSON.stringify(sessionData));
-    onClose();
+    setLoading(true);
 
-    if (interviewMode) {
-      window.open("/interview-guidelines", "_blank");
-    } else {
-      window.open(`/collab-editor/${roomId}`, "_blank");
+    try {
+      const res = await axios.post(
+        "http://localhost:5000/api/rooms/create-room",
+        sessionData
+      );
+
+      console.log("Session Data :: ", res.data);
+      if (res.status === 201) {
+        toast.success("Room created successfully!");
+        if (interviewMode) {
+          window.open("/interview-guidelines", "_blank");
+        } else {
+          window.open(`/collab-editor/${roomId}`, "_blank");
+        }
+      }
+    } catch (error) {
+      console.error("Room Creation Failed :", error);
+      toast.error("Failed to create room");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -142,9 +162,13 @@ export default function CreateRoomModal({ onClose }) {
         </div>
         <button
           onClick={handleRoomCreation}
-          className="p-2 bg-gradient-to-b  from-[#94FFF2] to-[#506DFF] cursor-pointer hover:opacity-90 w-full rounded-lg"
+          className="p-2 bg-gradient-to-b from-[#94FFF2] to-[#506DFF] cursor-pointer hover:opacity-90 w-full flex rounded-lg items-center justify-center"
         >
-          Create Room
+          {loading ? (
+            <div className="w-5 h-5 border-2 my-0.5 border-white border-t-transparent rounded-full animate-spin items-center justify-center"></div>
+          ) : (
+            "Create Room"
+          )}
         </button>
       </div>
     </div>

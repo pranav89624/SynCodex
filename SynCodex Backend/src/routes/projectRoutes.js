@@ -1,27 +1,5 @@
-// import express from "express";
-// import { createProject } from "../controllers/createProjectController.js";
-
-// const router = express.Router();
-
-// // For Create project - self coding
-// router.post("/create-project", createProject);
-
-// // router.patch("/update-project/:projectId", changeName);
-
-// // router.delete("/delete-project", deleteAccount);
-
-// // // For Create room - collab
-// // router.post("/create-room", changePassword);
-// // router.patch("/update-room/:roomId", changeName);
-// // router.delete("/delete-room", deleteAccount);
-
-// // // For Join room - pura room copy hoga host ka aur joiner ke db me save hoga
-// // router.post("/join-room", changePassword);
-
-// export default router;
-
 import express from 'express';
-import { createProjectFolder, createProject,createProjectFile, getMyProjects, getProjectDetails,getProjectFolderStructure} from '../controllers/createProjectController.js';
+import { createProjectFolder, createProject,createProjectFile, getMyProjects, getProjectDetails,getProjectFolderStructure, getProjectFileContent, saveProjectFileContent} from '../controllers/createProjectController.js';
 
 const router = express.Router();
 
@@ -39,6 +17,10 @@ router.post('/create-project-folder',createProjectFolder);
 router.post('/create-project-file',createProjectFile);
 // Get project folder structure
 router.get('/project-folder-structure',getProjectFolderStructure);
+// Get project file content
+router.get('/project-file-content',getProjectFileContent);
+// Save project file content
+router.post('/save-project-file-content',saveProjectFileContent);
 
 
 export default router;
