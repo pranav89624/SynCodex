@@ -7,7 +7,8 @@ import {
   getProjectDetails,
   getProjectFolderStructure,
   getFileContent,
-  updateFileContent
+  updateFileContent,
+  deleteProject
 } from '../controllers/createProjectController.js';
 const router = express.Router();
 
@@ -29,5 +30,8 @@ router.get('/project-folder-structure', getProjectFolderStructure);
 // New file content endpoints
 router.post('/get-file-content', getFileContent);
 router.put('/update-file-content', updateFileContent);
+
+// Delete project
+router.delete("/delete-project", deleteProject);
 
 export default router;

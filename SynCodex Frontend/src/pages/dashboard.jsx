@@ -7,10 +7,8 @@ import UserAvatar from "../components/userAvatar";
 import DashboardView from "../components/dashboard/DashboardView";
 import AccountView from "../components/dashboard/AccountView";
 import { useUser } from "../context/UserContext";
-import useMeta from "../hooks/useMeta";
 
-export default function Dashboard() {
-  useMeta();
+export default function Dashboard() { 
   const [activeTab, setActiveTab] = useState("sessions");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [Box, setBox] = useState(false);

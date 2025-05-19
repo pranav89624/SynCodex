@@ -63,7 +63,6 @@ export const getMyProjects = async (req, res) => {
 
 // Get specific project detail by project id
 export const getProjectDetails = async (req, res) => {
-
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
 
@@ -126,7 +125,6 @@ export const createProjectFolder = async (req, res) => {
     });
 
     return res.status(200).json({ message: "Folder created" });
-
   } catch (error) {
     console.error("Error creating folder:", error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -191,7 +189,6 @@ export const createProjectFile = async (req, res) => {
 
 // Get project folder structure by project id
 export const getProjectFolderStructure = async (req, res) => {
-
   const email = req.headers["email"];
   const projectId = req.headers["projectid"];
 
@@ -244,7 +241,7 @@ export const getFileContent = async (req, res) => {
       return res.status(404).json({ error: "Folder not found" });
     }
 
-    const file = folderSnap.data().files.find(f => f.name === fileName);
+    const file = folderSnap.data().files.find((f) => f.name === fileName);
     if (!file) {
       return res.status(404).json({ error: "File not found" });
     }
@@ -281,7 +278,7 @@ export const updateFileContent = async (req, res) => {
     }
 
     const files = folderSnap.data().files || [];
-    const fileIndex = files.findIndex(f => f.name === fileName);
+    const fileIndex = files.findIndex((f) => f.name === fileName);
 
     if (fileIndex === -1) {
       return res.status(404).json({ error: "File not found" });
@@ -296,5 +293,40 @@ export const updateFileContent = async (req, res) => {
   } catch (error) {
     console.error("Full error:", error);
     return res.status(500).json({ error: "Failed to update content" });
+  }
+};
+
+// Delete project from user's email
+export const deleteProject = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const projectId = req.headers["itemid"];
+
+    console.log("✅✅✅ ", email, projectId);
+    if (!email || !projectId) {
+      return res
+        .status(400)
+        .json({ error: "Email and projectId are required" });
+    }
+
+    const projectRef = db
+      .collection("users")
+      .doc(email)
+      .collection("projects")
+      .doc(projectId);
+
+    // Check if project exists
+    const projectSnap = await projectRef.get();
+    if (!projectSnap.exists) {
+      return res.status(404).json({ error: "Project not found for this user" });
+    }
+
+    // Delete the project
+    await projectRef.delete();
+
+    return res.status(200).json({ message: "Project deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting project:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };

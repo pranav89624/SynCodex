@@ -42,6 +42,7 @@ export default function CreateRoomModal({ onClose }) {
       if (res.status === 201) {
         toast.success("Room created successfully!");
         if (interviewMode) {
+          sessionStorage.setItem("roomId", roomId);
           window.open("/interview-guidelines", "_blank");
         } else {
           window.open(`/collab-editor/${roomId}`, "_blank");

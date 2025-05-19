@@ -14,11 +14,10 @@ export const createRoom = async (req, res) => {
       invitedPeople,
     } = req.body;
 
-
     if (!name || !roomId) {
       return res
         .status(400)
-        .json({ error: "Project name, roomId are required" });
+        .json({ error: "Project name and roomId are required" });
     }
 
     const userRef = db.collection("users").doc(email);
@@ -28,16 +27,27 @@ export const createRoom = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
+    const createdAt = new Date().toISOString();
+
     const roomData = {
       roomId,
       name,
       description: description || "",
-      isInterviewMode: isInterviewMode,
+      isInterviewMode: isInterviewMode || false,
       invitedPeople: invitedPeople || [],
-      createdAt: new Date().toISOString(),
+      createdAt,
     };
 
+    // Save room under user's collection
     await userRef.collection("rooms").doc(roomId).set(roomData);
+
+    // ✅ Save to top-level "allRooms" collection
+    const allRoomData = {
+      email,
+      isInterviewMode: isInterviewMode || false,
+      createdAt,
+    };
+    await db.collection("allRooms").doc(roomId).set(allRoomData);
 
     return res
       .status(201)
@@ -274,5 +284,41 @@ export const updateRoomFileContent = async (req, res) => {
   } catch (error) {
     console.error("Error updating file content:", error);
     return res.status(500).json({ error: "Failed to update content" });
+  }
+};
+
+// Delete room from user's email and also allRooms collection
+export const deleteRoom = async (req, res) => {
+  try {
+    const email = req.headers["email"];
+    const roomId = req.headers["itemid"];
+
+    console.log("✅✅✅ ", email, roomId);
+    if (!email || !roomId) {
+      return res.status(400).json({ error: "Email and roomId are required" });
+    }
+
+    const roomRef = db.collection("users").doc(email).collection("rooms").doc(roomId);
+    const allRoomRef = db.collection("allRooms").doc(roomId);
+
+    // Check if room exists under user
+    const roomSnap = await roomRef.get();
+    if (!roomSnap.exists) {
+      return res.status(404).json({ error: "Room not found for this user" });
+    }
+
+    // Delete from user's rooms
+    await roomRef.delete();
+
+    // Optionally delete from allRooms collection
+    const allRoomSnap = await allRoomRef.get();
+    if (allRoomSnap.exists) {
+      await allRoomRef.delete();
+    }
+
+    return res.status(200).json({ message: "Room deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting room:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
   }
 };
