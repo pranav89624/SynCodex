@@ -64,24 +64,6 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
     return () => awareness.off("change", updateName);
   }, [provider, fetchRoomDetails, setSessionName]);
 
-  // useEffect(() => {
-  //   if (!provider) return;
-
-  //   const awareness = provider.awareness;
-
-  //   const updateName = () => {
-  //     const allStates = Array.from(awareness.getStates().values());
-  //     const name = allStates.find((s) => s.sessionInfo)?.sessionInfo?.name;
-  //     if (name) setSessionName(name);
-  //     else setSessionName("Unnamed Session");
-  //   };
-
-  //   awareness.on("change", updateName);
-  //   updateName();
-
-  //   return () => awareness.off("change", updateName);
-  // }, [provider]);
-
   const detectLang = (file) => {
     if (!file) return "plaintext";
     if (file.endsWith(".py")) return "python";

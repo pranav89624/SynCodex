@@ -282,17 +282,21 @@ export const FileExplorer = ({
             </h3>
 
             {creationMode === "file" && (
-              <select
-                className="w-full mb-4 bg-[#21232f] text-white p-2 rounded-md outline-none"
-                value={selectedFolderForFile}
-                onChange={(e) => setSelectedFolderForFile(e.target.value)}
-              >
-                {folders.map((folder) => (
-                  <option key={folder.name} value={folder.name}>
-                    {folder.name}
-                  </option>
-                ))}
-              </select>
+              <>
+                <label htmlFor="folderSelect" className="text-white font-semibold uppercase"> Select Folder</label>
+                <select
+                  className="w-full mb-4 bg-[#21232f] text-white p-2 rounded-md outline-none"
+                  value={selectedFolderForFile}
+                  onChange={(e) => setSelectedFolderForFile(e.target.value)}
+                  id="folderSelect"
+                >
+                  {folders.map((folder) => (
+                    <option key={folder.name} value={folder.name}>
+                      {folder.name}
+                    </option>
+                  ))}
+                </select>
+              </>
             )}
 
             <label

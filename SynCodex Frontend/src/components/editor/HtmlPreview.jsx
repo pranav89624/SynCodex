@@ -26,7 +26,7 @@ const HtmlPreview = ({ rawHtml, onClose }) => {
   };
 
   return (
-    <div className="relative w-full h-full border-t border-gray-600 bg-[#1f1f2b]">
+    <div className="relative w-full h-full border-t border-gray-600 bg-white">
       <div className="absolute top-2 right-2 flex gap-2 z-10">
         <button
           onClick={handleRefresh}
