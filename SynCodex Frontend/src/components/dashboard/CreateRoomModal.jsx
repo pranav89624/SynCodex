@@ -37,14 +37,34 @@ export default function CreateRoomModal({ onClose }) {
         "http://localhost:5000/api/rooms/create-room",
         sessionData
       );
- 
+
       console.log("Session Data :: ", res.data);
       if (res.status === 201) {
         toast.success("Room created successfully!");
         if (interviewMode) {
           sessionStorage.setItem("roomId", roomId);
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [roomId]: {
+                action: "created",
+                hostEmail: localStorage.getItem("email"),
+              },
+            })
+          );
           window.open("/interview-guidelines", "_blank");
         } else {
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [roomId]: {
+                action: "created",
+                hostEmail: localStorage.getItem("email"),
+              },
+            })
+          );
           window.open(`/collab-editor/${roomId}`, "_blank");
         }
       }

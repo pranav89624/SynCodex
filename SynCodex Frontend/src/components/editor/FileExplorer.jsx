@@ -34,24 +34,25 @@ export const FileExplorer = ({
 
   const fetchFolderStructure = useCallback(async () => {
     if (isCollab) {
+      const collabActions = JSON.parse(
+        localStorage.getItem("collabActions") || "{}"
+      );
+      const { action, hostEmail } = collabActions[roomOrProjectId] || {};
+
       try {
         const response = await axios.get(
           "http://localhost:5000/api/rooms/room-folder-structure",
           {
             headers: {
               token: localStorage.getItem("token"),
-              email: localStorage.getItem("email"),
+              email:
+                action === "joined" ? hostEmail : localStorage.getItem("email"),
               roomid: roomOrProjectId,
             },
           }
         );
         console.log("Room Folders :", response.data);
-        setFolders(response.data); // ✅ Set folder for room
-        // if (isCollab && yFoldersMap && yFoldersMap.size === 0) {
-        //   response.data.forEach((folder) => {
-        //     yFoldersMap.set(folder.name, { files: folder.files });
-        //   });
-        // }
+        setFolders(response.data); 
       } catch (error) {
         console.error("Error fetching room folder structure:", error);
       }
@@ -78,66 +79,6 @@ export const FileExplorer = ({
   useEffect(() => {
     fetchFolderStructure();
   }, [fetchFolderStructure]);
-
-  // useEffect(() => {
-  //   if (!isCollab || !yFoldersMap) return;
-
-  //   const updateFolders = () => {
-  //     const entries = Array.from(yFoldersMap.entries()).map(
-  //       ([folderName, folderData]) => ({
-  //         name: folderName,
-  //         files: (folderData.files || []).map((file) => ({
-  //           id: file.id,
-  //           name: file.name,
-  //           language: file.language,
-  //           content: file.content,
-  //         })),
-  //       })
-  //     );
-
-  //     setFolders(entries);
-  //   };
-
-  //   const saveChangesToDB = debounce(async () => {
-  //     const folderData = Array.from(yFoldersMap.entries()).map(
-  //       ([folderName, folderData]) => ({
-  //         name: folderName,
-  //         files: (folderData.files || []).map((file) => ({
-  //           id: file.id,
-  //           name: file.name,
-  //           language: file.language,
-  //           content: file.content,
-  //         })),
-  //       })
-  //     );
-
-  //     try {
-  //       await axios.post(
-  //         "http://localhost:5000/api/rooms/update-room-folder-structure",
-  //         { folders: folderData },
-  //         {
-  //           headers: {
-  //             token: localStorage.getItem("token"),
-  //             email: localStorage.getItem("email"),
-  //             roomid: roomOrProjectId,
-  //           },
-  //         }
-  //       );
-  //       console.log("Room folder structure synced to DB");
-  //     } catch (err) {
-  //       console.error("Failed to sync room structure to DB", err);
-  //     }
-  //   }, 1000); // debounce to avoid flooding server
-
-  //   yFoldersMap.observeDeep(() => {
-  //     updateFolders();
-  //     saveChangesToDB();
-  //   });
-
-  //   updateFolders();
-
-  //   return () => yFoldersMap.unobserveDeep(updateFolders);
-  // }, [isCollab, yFoldersMap, roomOrProjectId]);
 
   useEffect(() => {
     if (!isCollab || !yFoldersMap) return;
@@ -202,15 +143,6 @@ export const FileExplorer = ({
       }
     }
 
-    // if (isCollab) {
-    //   if (yFoldersMap.has(name)) return;
-    //   yFoldersMap.set(name, { files: [] });
-    // } else {
-    //   if (folders.some(f => f.name === name)) return;
-    //   const newFolders = [...folders, { name, files: [] }];
-    //   setFolders(newFolders);
-    //   localStorage.setItem("synProjectFolders", JSON.stringify(newFolders));
-    // }
   };
 
   const handleAddFile = async () => {
@@ -273,35 +205,6 @@ export const FileExplorer = ({
         console.error("Project File Creation Failed :", error);
       }
     }
-
-    // if (isCollab) {
-    //   if (!yFoldersMap.has(folderName)) return;
-    //   const folder = yFoldersMap.get(folderName);
-    //   folder.files.push({
-    //     name: fileName,
-    //     content: "",
-    //     language: fileName.split(".").pop(),
-    //   });
-    //   yFoldersMap.set(folderName, folder);
-    // } else {
-    //   const updatedFolders = folders.map((folder) =>
-    //     folder.name === folderName
-    //       ? {
-    //           ...folder,
-    //           files: [
-    //             ...folder.files,
-    //             {
-    //               name: fileName,
-    //               content: "",
-    //               language: fileName.split(".").pop(),
-    //             },
-    //           ],
-    //         }
-    //       : folder
-    //   );
-    //   setFolders(updatedFolders);
-    //   localStorage.setItem("synProjectFolders", JSON.stringify(updatedFolders));
-    // }
   };
 
   const handleDownloadSession = async () => {

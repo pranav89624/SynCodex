@@ -58,52 +58,6 @@ export const createRoom = async (req, res) => {
   }
 };
 
-// export const createRoom = async (req, res) => {
-//   try {
-//     const {
-//       token,
-//       email,
-//       roomId,
-//       name,
-//       description,
-//       isInterviewMode,
-//       invitedPeople,
-//     } = req.body;
-
-
-//     if (!name || !roomId) {
-//       return res
-//       .status(400)
-//       .json({ error: "Project name, roomId are required" });
-//     }
-    
-//     const userRef = db.collection("users").doc(email);
-//     const userSnap = await userRef.get();
-
-//     if (!userSnap.exists) {
-//       return res.status(404).json({ error: "User not found" });
-//     }
-
-//     const roomData = {
-//       roomId,
-//       name,
-//       description: description || "",
-//       isInterviewMode: isInterviewMode,
-//       invitedPeople: invitedPeople || [],
-//       createdAt: new Date().toISOString(),
-//     };
-    
-//     await userRef.collection("rooms").doc(roomId).set(roomData);
-
-//     return res
-//       .status(201)
-//       .json({ message: "Room created", roomId,roomData});
-//   } catch (error) {
-//     console.error("Error creating room:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
-
 // Get All Rooms
 export const getMyRooms = async (req, res) => {
   const email = req.headers.email; // ✅ Read from headers
@@ -324,48 +278,3 @@ export const deleteRoom = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
-
-// Update entire room folder structure (save changes to db (folder file)) ❤️❤️❤️ working me nahi hai
-// export const updateRoomFolderStructure = async (req, res) => {
-//   try {
-//     const email = req.headers["email"];
-//     const roomId = req.headers["roomid"];
-//     const { folders } = req.body;
-
-//     if (!email || !roomId || !folders) {
-//       return res.status(400).json({ error: "Email, roomId, and folders are required" });
-//     }
-
-//     const foldersRef = db
-//       .collection("users")
-//       .doc(email)
-//       .collection("rooms")
-//       .doc(roomId)
-//       .collection("folderStructure");
-
-//     // 🔥 Delete all existing folders first
-//     const existingFoldersSnap = await foldersRef.get();
-//     const batch = db.batch();
-
-//     existingFoldersSnap.forEach((doc) => {
-//       batch.delete(doc.ref);
-//     });
-
-//     // 🔥 Add updated folders
-//     folders.forEach((folder) => {
-//       const folderRef = foldersRef.doc(folder.name);
-//       batch.set(folderRef, {
-//         name: folder.name,
-//         files: folder.files || [],
-//       });
-//     });
-
-//     await batch.commit();
-
-//     return res.status(200).json({ message: "Room structure updated successfully" });
-//   } catch (error) {
-//     console.error("Error updating room structure:", error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };

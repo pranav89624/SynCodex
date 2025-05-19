@@ -9,20 +9,19 @@ export default function JoinRoomModal({ onClose }) {
   const [submitButton, setSubmitButton] = useState("Check Room");
   const [isInterviewMode, setIsInterviewMode] = useState(false);
   const [roomAvail, setRoomAvail] = useState(false);
-const [hostEmail, setHostEmail] = useState(null);
-
+  const [hostEmail, setHostEmail] = useState(null);
 
   const checkRoom = async () => {
     if (!joinRoomId.trim()) {
       toast.error("Please Enter Room ID To Join.");
       return;
     }
-    
+
     setSubmitButton("Checking room...");
     try {
       const res = await axios.post(
         "http://localhost:5000/api/rooms/check-room",
-        {roomId: joinRoomId }
+        { roomId: joinRoomId }
       );
 
       if (res.status === 404) {
@@ -41,7 +40,7 @@ const [hostEmail, setHostEmail] = useState(null);
       console.error("Room Checking Failed:", error);
       toast.error("Failed to check room. It may not exist.");
       setSubmitButton("Check Room");
-    } 
+    }
   };
 
   const joinRoom = async () => {
@@ -65,8 +64,24 @@ const [hostEmail, setHostEmail] = useState(null);
         setSubmitButton("Check Room");
         if (res.data.isInterviewMode) {
           sessionStorage.setItem("roomId", joinRoomId);
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [joinRoomId]: { action: "joined", hostEmail: hostEmail },
+            })
+          );
+
           window.open("/interview-guidelines", "_blank");
         } else {
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [joinRoomId]: { action: "joined", hostEmail: hostEmail },
+            })
+          );
+
           window.open(`/collab-editor/${joinRoomId}`, "_blank");
         }
       }
@@ -77,15 +92,6 @@ const [hostEmail, setHostEmail] = useState(null);
       setLoading(false);
     }
   };
-
-  // const joinRoom = () => {
-  //   if (!joinRoomId.trim()) {
-  //     toast.error("Please Enter Room ID To Join.");
-  //     return;
-  //   }
-  //   // For Collab Editor (Not Interview)
-  //   window.open(`/collab-editor/${joinRoomId}`, "_blank");
-  // };
 
   return (
     <div className="fixed inset-0 bg-[#00000093] bg-opacity-50 flex items-center justify-center z-50">
