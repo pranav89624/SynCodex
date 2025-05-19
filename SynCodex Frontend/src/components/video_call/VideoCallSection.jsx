@@ -14,11 +14,7 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
   const [micDisable, setMicDisable] = useState(true);
   const [camDisable, setCamDisable] = useState(true);
   const [speakerOff, setSpeakerOff] = useState(false);
-  const [remoteMicOff, setRemoteMicOff] = useState(true);
-  const [remoteCamOn, setRemoteCamOn] = useState(true);
-
-  const [isRemoteConnected, setIsRemoteConnected] = useState(false);
-
+  const [remoteMicOff, setRemoteMicOff] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -35,20 +31,13 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
       socket.emit("join-room", roomIdVCS);
 
       socket.on("all-users", async (users) => {
-        users.forEach((userId) => {
-          createPeer(userId, true);  // true => I am the caller
-        });
-        // if (users.length > 0) {
-        //   createPeer(users[0], true);
-        // }
+        if (users.length > 0) {
+          createPeer(users[0], true);
+        }
       });
 
       socket.on("user-joined", (userId) => {
         console.log("New user joined:", userId);
-        //
-        createPeer(userId,true); // true => isCaller
-        setIsRemoteConnected(true);
-        //
       });
 
       socket.on("offer", async ({ sdp, caller }) => {
@@ -73,16 +62,8 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
 
       socket.on("media-toggled", (data) => {
         console.log("Remote media toggled received", data);
-        setRemoteMicOff(data.mic); // mic === true means it's ON
-        setRemoteCamOn(data.cam); // data.cam === true means camera is on
+        setRemoteMicOff(!data.mic); // mic === true means it's ON
       });
-
-      //
-      socket.on("user-left", () => {
-        console.log("User disconnected");
-        setIsRemoteConnected(false);
-      });
-      //
     };
 
     start();
@@ -151,137 +132,6 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
     });
   };
 
-  // const toggleCam = async () => {
-  //   const enable = !camDisable;
-  //   setCamDisable(enable);
-  //   if (enable) {
-  //     try {
-  //       const newStream = await navigator.mediaDevices.getUserMedia({
-  //         video: true,
-  //         audio: micDisable, // keep audio state as is
-  //       });
-  //       const newVideoTrack = newStream.getVideoTracks()[0];
-  //       const oldTrack = localStream.current.getVideoTracks()[0];
-  //       if (oldTrack) localStream.current.removeTrack(oldTrack);
-  //       localStream.current.addTrack(newVideoTrack);
-  //       if (localVideoRef.current) {
-  //         localVideoRef.current.srcObject = localStream.current;
-  //       }
-  //       const sender = peerConnection.current?.getSenders().find(
-  //         (s) => s.track.kind === "video"
-  //       );
-  //       if (sender) sender.replaceTrack(newVideoTrack);
-  
-  //     } catch (err) {
-  //       console.error("Camera access failed:", err);
-  //       return;
-  //     }
-  //   } else {
-  //     const videoTrack = localStream.current?.getVideoTracks()[0];
-  //     if (videoTrack) {
-  //       videoTrack.enabled = false;
-  //     }
-  //   }
-  //   socket.emit("media-toggled", {
-  //     room: roomIdVCS,
-  //     mic: micDisable,
-  //     cam: enable,
-  //   });
-  // };
-  
-
-  // const toggleCam = async () => {
-  //   const enabled = !camDisable;
-  //   console.log("Local viedo ref 1 :: ",localVideoRef.current);
-  //       const videoTrack = localStream.current.getVideoTracks()[0];
-  //       if (enabled && localVideoRef.current == null) {
-  //         console.log("IFFF Called ::");
-  //         localVideoRef.current.srcObject = await navigator.mediaDevices.getUserMedia({
-  //           video: true,
-  //           audio: micDisable,
-  //         });
-  //         console.log("Local viedo ref 2 :: ",localVideoRef.current);
-  //       }else{
-  //         console.log("ELSE Called ::");
-  //     videoTrack.enabled = enabled;
-  //     console.log("Vidoe track.enabled :: ",videoTrack.enabled);
-
-  //   }
-  //   setCamDisable(enabled);
-  //   socket.emit("media-toggled", {
-  //     room: roomIdVCS,
-  //     mic: micDisable,
-  //     cam: enabled,
-  //   });
-  // };
-
-  // const toggleCam = () => {
-  //   const newCamStatus = !camDisable;
-  
-    // const videoTrack = localStream.current.getVideoTracks()[0];
-    // if (videoTrack) {
-    //   videoTrack.enabled = newCamStatus;
-    // }
-  
-    // // Force reassigning video stream to fix black screen
-    // if (newCamStatus && localVideoRef.current) {
-    //   localVideoRef.current.srcObject = localStream.current;
-    // }
-  
-  //   setCamDisable(!newCamStatus);
-  
-  //   socket.emit("media-toggled", {
-  //     room: roomIdVCS,
-  //     mic: micDisable,
-  //     cam: newCamStatus,
-  //   });
-  // };
-
-  // const toggleCam = async () => {
-  //   const enable = !camDisable;
-  
-  //   if (enable) {
-  //     try {
-  //       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-  //       const videoTrack = stream.getVideoTracks()[0];
-  
-  //       // Replace the existing track with new one
-  //       const sender = peerConnection.current
-  //         ?.getSenders()
-  //         .find((s) => s.track.kind === "video");
-  
-  //       if (sender) {
-  //         sender.replaceTrack(videoTrack);
-  //       }
-  
-  //       localStream.current.removeTrack(localStream.current.getVideoTracks()[0]);
-  //       localStream.current.addTrack(videoTrack);
-  
-  //       if (localVideoRef.current) {
-  //         localVideoRef.current.srcObject = localStream.current;
-  //       }
-  
-  //     } catch (err) {
-  //       console.error("Error re-accessing camera", err);
-  //       return;
-  //     }
-  //   } else {
-  //     // Just disable the track
-  //     const videoTrack = localStream.current.getVideoTracks()[0];
-  //     if (videoTrack) videoTrack.enabled = false;
-  //   }
-  
-  //   setCamDisable(!enable);
-  
-  //   socket.emit("media-toggled", {
-  //     room: roomIdVCS,
-  //     mic: micDisable,
-  //     cam: enable,
-  //   });
-  // };
-  
-  
-
   const toggleSpeaker = () => {
     if (remoteVideoRef.current) {
       const newMuted = !remoteVideoRef.current.muted;
@@ -307,8 +157,6 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
         localMicStatus={micDisable}
         remoteMicStatus={remoteMicOff}
         localCamDisable={camDisable}
-        remoteCamDisable={remoteCamOn}
-        isRemoteConnected={isRemoteConnected}
       />
 
       {/* Video Call Toolbar */}
