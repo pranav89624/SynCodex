@@ -38,11 +38,16 @@ export const FileExplorer = ({
 
   const fetchFolderStructure = useCallback(async () => {
     if (isCollab) {
+      const collabActions = JSON.parse(
+        localStorage.getItem("collabActions") || "{}"
+      );
+      const { action, hostEmail } = collabActions[roomOrProjectId] || {};
+
       try {
         const response = await API.get("/api/rooms/room-folder-structure", {
           headers: {
             token: localStorage.getItem("token"),
-            email: localStorage.getItem("email"),
+            email: action === "joined" ? hostEmail : localStorage.getItem("email"),
             roomid: roomOrProjectId,
           },
         });

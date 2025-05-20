@@ -15,9 +15,9 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
   const [camDisable, setCamDisable] = useState(true);
   const [speakerOff, setSpeakerOff] = useState(false);
   const [remoteMicOff, setRemoteMicOff] = useState(false);
-  const [remoteCamOn, setRemoteCamOn] = useState(true);
+  // const [remoteCamOn, setRemoteCamOn] = useState(true);
 
-  const [isRemoteConnected, setIsRemoteConnected] = useState(false);
+  // const [isRemoteConnected, setIsRemoteConnected] = useState(false);
 
   useEffect(() => {
     if (!socket) return;
@@ -34,21 +34,21 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
       socket.emit("join-room", roomIdVCS);
 
       socket.on("all-users", async (users) => {
-        // if (users.length > 0) {
-        //   createPeer(users[0], true);
-        // }
-        users.forEach((userId) => {
-          createPeer(userId, true);  // true => I am the caller
-        });
+        if (users.length > 0) {
+          createPeer(users[0], true);
+        }
+        // users.forEach((userId) => {
+        //   createPeer(userId, true);  // true => I am the caller
+        // });
       });
 
       socket.on("user-joined", (userId) => {
         console.log("New user joined:", userId);
 
-         //
-        createPeer(userId,true); // true => isCaller
-        setIsRemoteConnected(true);
-        //
+        //  //
+        // createPeer(userId,true); // true => isCaller
+        // setIsRemoteConnected(true);
+        // //
       });
 
       socket.on("offer", async ({ sdp, caller }) => {
@@ -74,7 +74,7 @@ const VideoCallSection = ({ roomIdVCS, isInterviewMode }) => {
       socket.on("media-toggled", (data) => {
         console.log("Remote media toggled received", data);
         setRemoteMicOff(!data.mic); // mic === true means it's ON
-        setRemoteCamOn(data.cam); // data.cam === true means camera is on
+        // setRemoteCamOn(data.cam); // data.cam === true means camera is on
       });
 
       socket.on("user-left", () => {

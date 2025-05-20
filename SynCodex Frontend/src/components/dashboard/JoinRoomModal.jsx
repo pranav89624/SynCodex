@@ -63,9 +63,24 @@ export default function JoinRoomModal({ onClose }) {
         toast.success("Room Joined Successfully!");
         setSubmitButton("Check Room");
         if (isInterviewMode) {
-          sessionStorage.setItem("roomId", joinRoomId);
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [joinRoomId]: { action: "joined", hostEmail: hostEmail },
+            })
+          );
+
           window.open("/interview-guidelines", "_blank");
         } else {
+          localStorage.setItem(
+            "collabActions",
+            JSON.stringify({
+              ...JSON.parse(localStorage.getItem("collabActions") || "{}"),
+              [joinRoomId]: { action: "joined", hostEmail: hostEmail },
+            })
+          );
+
           window.open(`/collab-editor/${joinRoomId}`, "_blank");
         }
       }

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, LogOut, ClipboardList, UserRound, Bell } from "lucide-react";
 import { toast } from "react-toastify";
+import useMeta from "../hooks/useMeta";
 
 import UserAvatar from "../components/userAvatar";
 import DashboardView from "../components/dashboard/DashboardView";
@@ -9,6 +10,7 @@ import AccountView from "../components/dashboard/AccountView";
 import { useUser } from "../context/UserContext";
 
 export default function Dashboard() { 
+  useMeta();
   const [activeTab, setActiveTab] = useState("sessions");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [Box, setBox] = useState(false);

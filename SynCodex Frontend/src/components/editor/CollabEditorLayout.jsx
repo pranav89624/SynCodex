@@ -8,6 +8,7 @@ import { SocketProvider } from "../../context/SocketProvider";
 import { CollabEditorPane } from "./CollabEditorPane";
 import { useYjsProvider } from "../../hooks/useYjsProvider";
 import CodeExecutionResult from "./CodeExecutionResult";
+import HtmlPreview from "./HtmlPreview";
 import { runCode } from "../../services/codeExec";
 import axios from "axios";
 
@@ -21,9 +22,13 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
   const [output, setOutput] = useState("");
   const [showOutput, setShowOutput] = useState(false);
   const [isRunning, setIsRunning] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   const fetchRoomDetails = useCallback(async () => {
     if (!provider) return;
+
+    const collabActions = JSON.parse(localStorage.getItem("collabActions") || "{}");
+    const { action, hostEmail } = collabActions[roomId] || {};
 
     try {
       const response = await axios.get(
@@ -31,7 +36,7 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
         {
           headers: {
             token: localStorage.getItem("token"),
-            email: localStorage.getItem("email"),
+            email: action === "joined" ? hostEmail : localStorage.getItem("email"),
             roomid: roomId,
           },
         }
@@ -64,14 +69,23 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
     return () => awareness.off("change", updateName);
   }, [provider, fetchRoomDetails, setSessionName]);
 
+  useEffect(() => {
+    setShowPreview(false);
+  }, [activeFile?.name]);
+
+  const handlePreviewClick = () => setShowPreview((prev) => !prev);
+  const handleClosePreview = () => setShowPreview(false);
+
+  const isHtmlFile = activeFile?.name?.endsWith?.(".html");
+
   const detectLang = (file) => {
-    if (!file) return "plaintext";
-    if (file.endsWith(".py")) return "python";
-    if (file.endsWith(".js")) return "js";
-    if (file.endsWith(".ts")) return "ts";
-    if (file.endsWith(".java")) return "java";
-    if (file.endsWith(".cpp")) return "cpp";
-    if (file.endsWith(".c")) return "c";
+    if (!file?.name) return "plaintext";
+    if (file?.name.endsWith(".py")) return "python";
+    if (file?.name.endsWith(".js")) return "js";
+    if (file?.name.endsWith(".ts")) return "ts";
+    if (file?.name.endsWith(".java")) return "java";
+    if (file?.name.endsWith(".cpp")) return "cpp";
+    if (file?.name.endsWith(".c")) return "c";
     return "plaintext";
   };
 
@@ -103,7 +117,11 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
 
   return (
     <>
-      <EditorNav onRunClick={handleRunClick} />
+      <EditorNav
+        onRunClick={handleRunClick} 
+        onPreviewClick={handlePreviewClick}
+        isHtmlFile={!!isHtmlFile}
+      />
 
       <div className="h-[calc(100vh-4rem)] flex overflow-x-clip bg-[#21232f]">
         <div
@@ -176,6 +194,12 @@ export default function CollabEditorLayout({ roomId, isInterviewMode }) {
                   roomId={roomId}
                   isInterviewMode={isInterviewMode}
                 />
+
+                {showPreview && (
+                  <div className="w-1/2 border-l border-gray-600">
+                    <HtmlPreview rawHtml={collabEditorRef.current.getCode()} onClose={handleClosePreview} />
+                  </div>
+                )}
               </div>
               {showOutput && (
                 <CodeExecutionResult
